@@ -114,11 +114,17 @@ if (isset($_REQUEST['json']))
 	if (!isset($json['header'])) return;
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;
-	// if (isset($json->header['enc'])) {} //FIX: adapt for encryption
+	// if (isset($json->header['enc'])) {} //TODO: adapt for encryption
 	
-	$requests = new Requests(); //Smashed epic switch
-	$requests->$json["body"]["_t"]($json);
-	unset($requests);
+	if (function_exists($json['body']['_t'])) {
+		$requests = new Requests(); 
+		$requests->$json["body"]["_t"]($json);
+		unset($requests);
+	}
+	else {
+		//TODO: Logging
+		PRINT_ERROR_MSG('NULL');
+	}
 	
 	return;
 }
