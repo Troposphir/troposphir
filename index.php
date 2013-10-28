@@ -116,7 +116,7 @@ if (isset($_REQUEST['json']))
 	if (!isset($json['body']['_t'])) return;
 	// if (isset($json->header['enc'])) {} //TODO: adapt for encryption
 	
-	if (function_exists($json['body']['_t'])) {
+	if (method_exists(Requests, $json['body']['_t'])) {
 		$requests = new Requests(); 
 		$requests->$json["body"]["_t"]($json);
 		unset($requests);
