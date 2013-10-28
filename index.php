@@ -111,9 +111,9 @@ if (isset($_REQUEST['json']))
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
  
 	//check that json query is valid
-	if (!isset($json2['header'])) return;
-	if (!isset($json2['body'])) return;
-	if (!isset($json2['body']['_t'])) return;
+	if (!isset($json['header'])) return;
+	if (!isset($json['body'])) return;
+	if (!isset($json['body']['_t'])) return;
 	// if (isset($json->header['enc'])) {} //FIX: adapt for encryption
 	
 	$requests = new Requests(); //Smashed epic switch
