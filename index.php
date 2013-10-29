@@ -46,64 +46,6 @@ $GLOBALS = array
 );  
 
 
-
-   //$table = QUERY_DB("UPDATE `" . $GLOBALS['dbUsersTable'] . '` SET token=710081493');
-   //var_dump($table);
-    
-   //$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['dbUsersTable'] . '`');
-   //var_dump($table);
-     
-//================README================
-// * VERSION: 1.1.0
-// * NOTES:   
-//     -To Configure Game Context (level browser level/tutorial level/important urls) 
-//       Go To getGameContextReq() function 
-//     -MySQL Query Syntax May Have to Be Slightly Adjusted At Function QUERY_DB()
-//     -Any fields with the tag [MODIFIED BY DLL] indicates that field doesn't matter and is given a set value by the modified game dll.
-//
-// * Required Files and Folders: 
-//     - "index.php"   
-//     - "/map"
-//     - "/map/index.php"
-//     - "/image"
-//     - "/image/index.php"
-//
-// * MySQL Requirements:
-//     1) Add A Database As Given By ['dbDatabase']
-//     2) Configure $GLOBALS For username, password, and database name 
-//     3) Uncomment Following On First Run. Keep Commented Afterwards.
-//         QUERY_DB("CREATE TABLE IF NOT EXISTS `" . $GLOBALS['dbMapsTable'] . "`(`id` int,`name` text,`description` text,`author` text,`dc` int,`rating` int,`difficulty` int,`ownerId` int,`downloads` int,`dataId` int,`screenshotId` int,`version` int,`draft` tinytext,`nextLevelId` int,`editable` tinytext,`deleted` tinytext,`gcid` int,`editMode` int,`xis.lotd` int,`is.lotd` tinytext,`xp.reward` int,`xp.level` tinytext, `xgms` int,`gms` int,`gmm` int,`gff` int,`gsv` int,`gbs` int,`gde` int,`gdb` int,`gctf` int,`gab` int,`gra` int,`gco` int,`gtc` int,`gmmp1` int,`gmmp2` int,`gmcp1` int,`gmcp2` int,`gmcdt` int,`gmcff` int,`ast` int,`aal` int,`ghosts` int,`ipad` int,`dcap` int,`dmic` int)");
-//         QUERY_DB("CREATE TABLE IF NOT EXISTS `" . $GLOBALS['dbUsersTable'] . "`(`userId` int, `username` text, `password` text, `token` int, `created` int, `avaid` int, `sessionToken` int, `isDev` text, `is.lotdMaster` text, `isXPMaster` text, `development` text, `external` text, `flags` int, `locale` text, `verified` text, `xpp` int, `isClubMember` text, `paidBy` text, `sapo` text, `vehicleInstanceSetId` text, `activableItemShorcuts` text, `saInstalled` text, `signature` int)");
-//NOT THIS QUERY_DB("INSERT INTO " . $GLOBALS['dbMapsTable'] . "(id,name,description, author, dc, rating, difficulty, ownerId, downloads, dataId, screenshotId, version, draft, nextLevelId, editable, deleted, gcid, editMode, `xis.lotd`, `is.lotd`, `xp.Reward`, `xp.level`, xgms, gms, gmm, gff, gsv, gbs, gde, gdb, gctf, gab, gra, gco, gtc, gmmp1, gmmp2, gmcp1, gmcp2, gmcdt, gmcff, ast, aal, ghosts, ipad, dcap, dmic ) VALUES('21689','1-1 Cosa Plains','Tutorial Level', 'okaysamurai', 0, 5, 1, 0, 0, 66048, 4152, 2, 'false', 0, 'false', 'false',0, 0, 0, 'false', 0, 'false', 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)"); 
-//    QUERY_DB("UPDATE maps SET ownerId='0' WHERE `ownerId`='1'");
-//      QUERY_DB("ALTER TABLE `maps` ADD `xp.level` TINYTEXT");
-/*
- QUERY_DB("ALTER TABLE `users` denc");
- QUERY_DB("ALTER TABLE `users` `dpuc`");
- QUERY_DB("ALTER TABLE `users` `dcoc`");
- QUERY_DB("ALTER TABLE `users` `dtrc`");
- QUERY_DB("ALTER TABLE `users` `damc`");
- QUERY_DB("ALTER TABLE `users` `dphc`");
- QUERY_DB("ALTER TABLE `users` `ddoc`");
- QUERY_DB("ALTER TABLE `users` `dkec`");
- QUERY_DB("ALTER TABLE `users` `dgcc`");
- QUERY_DB("ALTER TABLE `users` `dmvc`");
- QUERY_DB("ALTER TABLE `users` `dsbc`");
- QUERY_DB("ALTER TABLE `users` `dhzc`");
- QUERY_DB("ALTER TABLE `users` `dmuc`");
- QUERY_DB("ALTER TABLE `users` `dtmi`");
- QUERY_DB("ALTER TABLE `users` `ddtm`");
- QUERY_DB("ALTER TABLE `users` `dttm`");
- QUERY_DB("ALTER TABLE `users` `dedc`");
- QUERY_DB("ALTER TABLE `users` `dtsc`");
- QUERY_DB("ALTER TABLE `users` `dopc`");
- QUERY_DB("ALTER TABLE `users` `dpoc`");
-*/
-
-
-//QUERY_DB("ALTER TABLE `users` MODIFY saInstalled TINYTEXT");
-
-
 //=================CODE==================
 if (isset($_REQUEST['json']))
 {
@@ -137,7 +79,10 @@ else
  
  
 
-//SERVER FUNCTIONS
+
+
+
+
 function QUERY_DB($query)
 {
  if($query != null)
@@ -253,39 +198,39 @@ class Requests {
 				"_t":"mfmessage",
 				"body":{
 				"assetEndpoint":"' . $GLOBALS['host'] . $GLOBALS['path_assets'] . '",
-						"mailboxEndpoint":"",
-						"friendsUrl":"",
-						"masterServerHost":"' . $GLOBALS['host'] . '",
-								"masterServerPort":80,
-								"natFacilitatorPort":0,
-								"redCarpetTutorialLevelId":21689,
-								"charCustLevelId":21689,
-								"levelBrowserLevelId":21689,
-								"tutorialUserId":0,
-								"unityBundleUrl":"",
-								"staticImagesUrl":"' . $GLOBALS['host'] . $GLOBALS['path_images'] . '",
-										"staticMapUrl":"' . $GLOBALS['host'] . $GLOBALS['path_maps'] . '",
-												"staticAvatarUrl":"' . $GLOBALS['host'] . $GLOBALS['path_images'] . '/avatars"
-	}
-	}';
+				"mailboxEndpoint":"",
+				"friendsUrl":"",
+				"masterServerHost":"' . $GLOBALS['host'] . '",
+				"masterServerPort":80,
+				"natFacilitatorPort":0,
+				"redCarpetTutorialLevelId":21689,
+				"charCustLevelId":21689,
+				"levelBrowserLevelId":21689,
+				"tutorialUserId":0,
+				"unityBundleUrl":"",
+				"staticImagesUrl":"' . $GLOBALS['host'] . $GLOBALS['path_images'] . '",
+				"staticMapUrl":"' . $GLOBALS['host'] . $GLOBALS['path_maps'] . '",
+				"staticAvatarUrl":"' . $GLOBALS['host'] . $GLOBALS['path_images'] . '/avatars"
+				}
+		}';
 	}
 
 	static function getLoadingTipReq()
 	{
 		$tips = array(
-				"This server is hosted by OneMoreBlock. Come visit us at www.OneMoreBlock.com!",
-				"This custom Atmosphir server was put together by OneMoreBlock user Nin. Thanks Nin!",
-				"Currently, it isn't possible to log in or register for an account. Sorry, we're working on it!"
-	 );
+			"This server is hosted by OneMoreBlock. Come visit us at www.OneMoreBlock.com!",
+			"This custom Atmosphir server was put together by OneMoreBlock user Nin. Thanks Nin!",
+			"Currently, it isn't possible to log in or register for an account. Sorry, we're working on it!"
+	 	);
 
 		echo CJSON::encode(
 				array(
-						"header" => array("_t" => "mfheader"),
-						"_t"     => "mfmessage",
-						"body"   => array(
-								"categoryName" => "",
-								"tip" => $tips[rand(0, count($tips)-1)]
-						)
+					"header" => array("_t" => "mfheader"),
+					"_t"     => "mfmessage",
+					"body"   => array(
+							"categoryName" => "",
+							"tip" => $tips[rand(0, count($tips)-1)]
+					)
 				)
 		);
 	}
@@ -295,11 +240,9 @@ class Requests {
 		$ping = mktime(date("Y:m:d"),date("H:m:s")) ;
 		echo CJSON::encode(
 				array(
-						"header" => array("_t" => "mfheader"),
-						"_t"     => "mfmessage",
-						"body"   => array(
-								"timestamp" => $ping
-						)
+					"header" => array("_t" => "mfheader"),
+					"_t"     => "mfmessage",
+					"body"   => array("timestamp" => $ping)
 				)
 		);
 	}
@@ -326,17 +269,17 @@ class Requests {
 	{
 		echo CJSON::encode(
 				array(
-						"header" => array("_t" => "mfheader"),
-						"_t"     => "mfmessage",
-						"body"   => array(
-								"fres" => array(
-										"results" => array(array(
-												"pattern" =>	"[fuck][fuark][fuk]"
-										))
-								)
-						)
+					"header" => array("_t" => "mfheader"),
+					"_t"     => "mfmessage",
+					"body"   => array(
+							"fres" => array(
+									"results" => array(array(
+											"pattern" =>	"[fuck][fuark][fuk]"
+									))
+							)
+					)
 				)
-	 );
+		 );
 	}
 
 	static function getLevelByIdReq($json)
@@ -353,27 +296,26 @@ class Requests {
 		echo '{"header":{"_t":"mfheader"},
 				"_t":"mfmessage",
 				"body":{
-				"level":
-				{
-				"id":' . $table[0]['id'] . ',
+					"level": {
+						"id":' . $table[0]['id'] . ',
 						"name":"' . $table[0]['name'] . '",
-								"description":"' . $table[0]['description'] . '",
-										"author":"' . $table[0]['author'] . '",
-												"ownerId":' . $table[0]['ownerId'] . ',
-														"downloads":' . $table[0]['downloads'] . ',
-																"dataId":' . $table[0]['dataId'] . ',
-																		"screenshotId":' . $table[0]['screenshotId'] . ',
-																				"draft":' . $table[0]['draft'] . ',
-																						"version":' . $table[0]['version'] . ',
-																								"nextLevelId":' . $table[0]['nextLevelId'] . ',
-																										"editable":' . $table[0]['editable'] . ',
-																												"props":{
-																												"gcid":"' . $table[0]['gcid'] . '",
-																														"editMode":"' . $table[0]['gcid'] .'"
-	}
-	}
-	}
-	}';
+						"description":"' . $table[0]['description'] . '",
+						"author":"' . $table[0]['author'] . '",
+						"ownerId":' . $table[0]['ownerId'] . ',
+						"downloads":' . $table[0]['downloads'] . ',
+						"dataId":' . $table[0]['dataId'] . ',
+						"screenshotId":' . $table[0]['screenshotId'] . ',
+						"draft":' . $table[0]['draft'] . ',
+						"version":' . $table[0]['version'] . ',
+						"nextLevelId":' . $table[0]['nextLevelId'] . ',
+						"editable":' . $table[0]['editable'] . ',
+						"props":{
+							"gcid":"' . $table[0]['gcid'] . '",
+							"editMode":"' . $table[0]['gcid'] .'"
+						}
+					}
+				}
+		}';
 	}
 
 	static function getLevelsByAuthorReq($json)
@@ -388,36 +330,36 @@ class Requests {
 				"fres":{
 				"total":' . count($table) . ',
 						"results":[';
+	
 		for($i=$json['body']['freq']['start']; $i < count($table); $i++)
 		{
 			echo '{
-					"id":' . $table[$i]['id'] . ',
-							"name":"' . $table[$i]['name'] . '",
-									"description":"' . $table[$i]['description'] . '",
-											"ownerId":' . $table[$i]['ownerId'] . ',
-													"downloads":' . $table[$i]['downloads'] . ',
-															"version":' . $table[$i]['version'] . ',
-																	"draft":' . $table[$i]['draft'] . ',
-																			"author":"' . $table[$i]['author'] . '",
-																					"editable":' . $table[$i]['editable'] . ',
-																							"dataId":' . $table[$i]['dataId'] . ',
-																									"screenshotId":' . $table[$i]['screenshotId'] . ',
-																											"rating":"' . $table[$i]['rating'] . '",
-																													"difficulty":"' . $table[$i]['difficulty'] . '",
-																															"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"},
-																																	"lc":{
-																																	"props":{
-		}
-		}
-		}';
-		 if (($i+1) < (count($table))) {
-		 	echo ',';
-		 }
+				"id":' . $table[$i]['id'] . ',
+				"name":"' . $table[$i]['name'] . '",
+				"description":"' . $table[$i]['description'] . '",
+				"ownerId":' . $table[$i]['ownerId'] . ',
+				"downloads":' . $table[$i]['downloads'] . ',
+				"version":' . $table[$i]['version'] . ',
+				"draft":' . $table[$i]['draft'] . ',
+				"author":"' . $table[$i]['author'] . '",
+				"editable":' . $table[$i]['editable'] . ',
+				"dataId":' . $table[$i]['dataId'] . ',
+				"screenshotId":' . $table[$i]['screenshotId'] . ',
+				"rating":"' . $table[$i]['rating'] . '",
+				"difficulty":"' . $table[$i]['difficulty'] . '",
+				"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"},
+				"lc":{
+					"props":{}
+				}
+			}';
+		 	if (($i+1) < (count($table))) {
+		 		echo ',';
+		 	}
 
 		} //end of for loop
 		echo ']
-	}
-	}
+					}
+			}
 	}';
 
 	}
@@ -438,44 +380,44 @@ class Requests {
 			for($i=$json['body']['freq']['start']; $i < count($table); $i++)
 			{
 				echo '{
-						"id":"' . $table[$i]['id'] . '",
-								"name":"' . $table[$i]['name'] . '",
-										"description":"' . $table[$i]['description'] . '",
-												"ownerId":"' . $table[$i]['ownerId'] . '",
-														"dc":"' . $table[$i]['dc'] . '",
-																"version":"' . $table[$i]['version'] . '",
-																		"draft":"' . $table[$i]['draft'] . '",
-																				"author":"' . $table[$i]['author'] . '",
-																						"editable":"' . $table[$i]['editable'] . '",
-																								"dataId":"' . $table[$i]['dataId'] . '",
-																										"screenshotId":"' . $table[$i]['screenshotId'] . '",
-																												"rating":"' . $table[$i]['rating'] . '",
-																														"difficulty":"' . $table[$i]['difficulty'] . '",
-																																"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"},
-																																		"lc":{
-																																		"props":{
-																																		"is.lotd":"' . $table[$i]['is.lotd'] . '"
-			}
-			}
-			}';
+					"id":"' . $table[$i]['id'] . '",
+					"name":"' . $table[$i]['name'] . '",
+					"description":"' . $table[$i]['description'] . '",
+					"ownerId":"' . $table[$i]['ownerId'] . '",
+					"dc":"' . $table[$i]['dc'] . '",
+					"version":"' . $table[$i]['version'] . '",
+					"draft":"' . $table[$i]['draft'] . '",
+					"author":"' . $table[$i]['author'] . '",
+					"editable":"' . $table[$i]['editable'] . '",
+					"dataId":"' . $table[$i]['dataId'] . '",
+					"screenshotId":"' . $table[$i]['screenshotId'] . '",
+					"rating":"' . $table[$i]['rating'] . '",
+					"difficulty":"' . $table[$i]['difficulty'] . '",
+					"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"},
+					"lc":{
+						"props":{
+							"is.lotd":"' . $table[$i]['is.lotd'] . '"
+						}
+					}
+				}';
 				if (($i+1) < (count($table))) {
 					echo ',';
 				}
 
 			} //end of for loop
 			echo ']
-		}
-		}
-		}';
+					}
+				}
+			}';
 		}
 		else
 		{
 			echo '{"header":{"_t":"mfheader", "debug":"true"},
 					"_t":"mfmessage",
 					"body":{
-					"fres":{"total":0,"results":[]}
-		}
-		}';
+						"fres":{"total":0,"results":[]}
+					}
+			}';
 		}
 	}
 
@@ -493,27 +435,27 @@ class Requests {
 		for($i=$json['body']['freq']['start']; $i < count($table); $i++)
 		{
 			echo '{
-					"id":' . $table[$i]['id'] . ',
-							"name":"' . $table[$i]['name'] . '",
-									"description":"' . $table[$i]['description'] . '",
-											"ownerId":' . $table[$i]['ownerId'] . ',
-													"draft":' . strtolower($table[$i]['draft']) . ',
-															"downloads":' . $table[$i]['downloads'] . ',
-																	"version":' . $table[$i]['version'] . ',
-																			"editable":' . strtolower($table[$i]['editable']) . ',
-																					"dataId":' . $table[$i]['dataId'] . ',
-																							"screenshotId":' . $table[$i]['screenshotId'] . ',
-																									"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"}
-		}';
+				"id":' . $table[$i]['id'] . ',
+				"name":"' . $table[$i]['name'] . '",
+				"description":"' . $table[$i]['description'] . '",
+				"ownerId":' . $table[$i]['ownerId'] . ',
+				"draft":' . strtolower($table[$i]['draft']) . ',
+				"downloads":' . $table[$i]['downloads'] . ',
+				"version":' . $table[$i]['version'] . ',
+				"editable":' . strtolower($table[$i]['editable']) . ',
+				"dataId":' . $table[$i]['dataId'] . ',
+				"screenshotId":' . $table[$i]['screenshotId'] . ',
+				"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"}
+			}';
 			if (($i+1) < (3)) {
 				echo ',';
 			}
 
 		}
 		echo ']
-	}
-	}
-	}';
+				}
+			}
+		}';
 
 	}
 
