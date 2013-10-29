@@ -46,7 +46,6 @@ $GLOBALS = array
   'dbMapsTable'  => $configs['table_name_maps'],
   'dbUsersTable' => $configs['table_name_users']
 );  
-$dbAtmo = new Database($GLOBALS['dbDatabase'], $GLOBALS['dbServer'], $GLOBALS['dbusername'], $GLOBALS['dbpassword']);
 
 
    //$table = QUERY_DB("UPDATE `" . $GLOBALS['dbUsersTable'] . '` SET token=710081493');
