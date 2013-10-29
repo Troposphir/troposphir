@@ -16,35 +16,37 @@
 //  You should have received a copy of the GNU Affero General Public License 
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 //////////////////////////////////////////////////////////////////////////////
-
 //REFERENCE: http://www.wmtips.com/php/tips-optimizing-php-code.htm
 
 error_reporting(0);
 require("./include/CDatabase.php");
 require("./include/CJSON.php");
 
-//=============CONFIGURATIONS============
 //prevent caching
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 //JSON standard MIME header
-header('Content-type: application/json');
+//header('Content-type: application/json');
+
  
+
+//=============CONFIGURATIONS============
+$configs = parse_ini_file('configs.ini');
 $path_parts = pathinfo($_SERVER['SCRIPT_NAME']);
 $GLOBALS = array
  (
-  'path_images' => '/image',
-  'path_maps'   => '/map',
-  'path_assets' => '/asset',
-  'host'        => $_SERVER['SERVER_NAME'] . $path_parts['dirname'],
-  'dbusername'  => '[REDACTED]',
-  'dbpassword'  => '[REDACTED]',
-  'dbDatabase' =>  '[REDACTED]',
-  'dbServer' => '[REDACTED]',
-  'dbMapsTable' => 'maps',
-  'dbUsersTable' => 'users'
+  'path_images'  => $configs['path_images'],
+  'path_maps'    => $configs['path_maps'],
+  'path_assets'  => $configs['path_assets'],
+  'host'         => $_SERVER['SERVER_NAME'] . $path_parts['dirname'],
+  'dbusername'   => $configs['db_user'],
+  'dbpassword'   => $configs['db_password'],
+  'dbDatabase'   => $configs['db_name'],
+  'dbServer'     => $configs['db_host'],
+  'dbMapsTable'  => $configs['table_name_maps'],
+  'dbUsersTable' => $configs['table_name_users']
 );  
-
+$dbAtmo = new Database($GLOBALS['dbDatabase'], $GLOBALS['dbServer'], $GLOBALS['dbusername'], $GLOBALS['dbpassword']);
 
 
    //$table = QUERY_DB("UPDATE `" . $GLOBALS['dbUsersTable'] . '` SET token=710081493');
@@ -103,7 +105,6 @@ $GLOBALS = array
 
 //QUERY_DB("ALTER TABLE `users` MODIFY saInstalled TINYTEXT");
 
-
 //=================CODE==================
 if (isset($_REQUEST['json']))
 {
@@ -111,20 +112,24 @@ if (isset($_REQUEST['json']))
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
  
 	//check that json query is valid
-	if (!isset($json2['header'])) return;
-	if (!isset($json2['body'])) return;
-	if (!isset($json2['body']['_t'])) return;
+	if (!isset($json['header'])) return;
+	if (!isset($json['body'])) return;
+	if (!isset($json['body']['_t'])) return;
 	// if (isset($json->header['enc'])) {} //FIX: adapt for encryption
 	
-	$requests = new Requests(); //Smashed epic switch
-	$requests->$json["body"]["_t"]($json);
-	unset($requests);
-	
+	if (method_exists(Requests, $json['body']['_t'])) {
+		$requests = new Requests(); 
+		$requests->$json["body"]["_t"]($json);
+		unset($requests);
+	}
+	else {
+		//TODO: Log
+		PRINT_ERROR_MSG('NULL');
+	}
 	return;
 }
 else
 {	
-
   PRINT_ERROR_MSG('NULL');
   return;
 }
