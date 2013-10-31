@@ -503,7 +503,7 @@ class Requests {
 																							"screenshotId":' . $table[$i]['screenshotId'] . ',
 																									"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"}
 		}';
-			if (($i+1) < (3)) {
+			if (($i+1) < (count($table))) {
 				echo ',';
 			}
 
