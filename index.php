@@ -34,6 +34,7 @@ header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 //=============CONFIGURATIONS============
 $configs = parse_ini_file('configs.ini');
 $path_parts = pathinfo($_SERVER['SCRIPT_NAME']);
+$path_parts["dirname"] = str_replace("\\", "/", $path_parts['dirname']);
 $GLOBALS['configs']['site'] = $_SERVER['SERVER_NAME'] . $path_parts['dirname'];
 
 //==================CODE=================
