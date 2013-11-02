@@ -37,6 +37,8 @@ $configs = parse_ini_file('configs.ini');
 $path_parts = pathinfo($_SERVER['SCRIPT_NAME']);
 $path_parts["dirname"] = str_replace("\\", "/", $path_parts['dirname']);
 $GLOBALS['configs']['site'] = $_SERVER['SERVER_NAME'] . $path_parts['dirname'];
+//Following should be uncommented and run once.
+
 
 //==================CODE=================
 if (isset($_REQUEST['json'])) {
@@ -812,8 +814,7 @@ class Requests {
 		if (!isset($json['body']['password'])) return;
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . '` WHERE `username`="' . $json['body']['username'] . '"');
 		if (empty($table)) {
-			$lastrow = QUERY_DB("SELECT * FROM " . $GLOBALS['configs']['table_name_users'] . " ORDER BY userId DESC LIMIT 1");
-			QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_users'] . "(username,password,userId, token, created, avaid, sessionToken, finished, wins, losses, abandons, memberSince, clubMemberSince, levelDesigned,levelComments,designModeTime) VALUES('" . $json['body']['username'] . "','" . md5($json['body']['password']) . "','" . ($lastrow[0]['userId']+1) . "', '" . rand(100000000, 999999999) . "', '0', '0', '0', 'false', '0', '0', '0', '0', '0', '0', '0', '0')");
+			QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_users'] . "(username,password,userId, token, created, avaid, sessionToken, finished, wins, losses, abandons, memberSince, clubMemberSince, levelDesigned,levelComments,designModeTime) VALUES('" . $json['body']['username'] . "','" . md5($json['body']['password']) . "',null, '" . rand(100000000, 999999999) . "', '0', '0', '0', 'false', '0', '0', '0', '0', '0', '0', '0', '0')");
 			$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . '` WHERE `username`="' . $json['body']['username'] . '" AND `password`="' . md5($json['body']['password']) . '"');
 			if (empty($table)) return;
 
