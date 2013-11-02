@@ -23,10 +23,8 @@ $_REQUEST['lid'] Needs To Be Checked With Map DataBase For Security Check
 */
 
 //downloads map from current directory if it exists
-if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id']))
-{ 
-   if (file_exists('./' . $_REQUEST['id']))
-   {
+if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) { 
+   if (file_exists('./' . $_REQUEST['id'])) {
      echo file_get_contents('./' . $_REQUEST['id']);
    }
 }
