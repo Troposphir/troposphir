@@ -503,24 +503,26 @@ class Requests {
 	}
 
 	//NOTE: INCOMPLETE
-	static function loginReq($json)
-	{
+	static function loginReq($json) {
 		if (!isset($json['body']['username'])) return;
 		if (!isset($json['body']['password'])) return;
 
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `username`='" . $json['body']['username']. "' AND `password`='"  . md5($json['body']['password']) . "'");
-		if (!empty($table))
-		{
-			echo '{"header":{"_t":"mfheader", "debug":"true"},
-					"_t":"mfmessage",
-					"body":{
-						"token":"' . $table[0]['token'] . '",
-						"userId":' .  $table[0]['userId'] . '
-					}
-			}';
-		}
-		else
-		{
+		if (!empty($table)) {
+			echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug": "true"
+	},
+	"_t": "mfmessage",
+	"body": {
+		"token":"' . $table[0]['token'] . '",
+		"userId":' .  $table[0]['userId'] . '
+	}
+}
+			';
+		} else {
 			PRINT_ERROR_MSG('NULL');
 			return;
 		}
@@ -807,27 +809,29 @@ class Requests {
 	}
 
 	//INCOMPLETE
-	static function registerUserReq($json)
-	{
+	static function registerUserReq($json) {
 		if (!isset($json['body']['username'])) return;
 		if (!isset($json['body']['password'])) return;
-
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . '` WHERE `username`="' . $json['body']['username'] . '"');
-		if (empty($table))
-		{
+		if (empty($table)) {
 			$lastrow = QUERY_DB("SELECT * FROM " . $GLOBALS['configs']['table_name_users'] . " ORDER BY userId DESC LIMIT 1");
 			QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_users'] . "(username,password,userId, token, created, avaid, sessionToken, finished, wins, losses, abandons, memberSince, clubMemberSince, levelDesigned,levelComments,designModeTime) VALUES('" . $json['body']['username'] . "','" . md5($json['body']['password']) . "','" . ($lastrow[0]['userId']+1) . "', '" . rand(100000000, 999999999) . "', '0', '0', '0', 'false', '0', '0', '0', '0', '0', '0', '0', '0')");
 			$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . '` WHERE `username`="' . $json['body']['username'] . '" AND `password`="' . md5($json['body']['password']) . '"');
 			if (empty($table)) return;
 
-			echo '{"header":{"_t":"mfheader", "debug":"true"},
-					"_t":"mfmessage",
-					"body":
-					{
-						"token":"' . $table[0]['token'] . '",
-						"userId":"' . $table[0]['userId'] . '"
-					}
-			}';
+			echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug": "true"
+	},
+	"_t":"mfmessage",
+	"body": {
+		"token":"' . $table[0]['token'] . '",
+		"userId":"' . $table[0]['userId'] . '"
+	}
+}
+			';
 		}
 	}
 
