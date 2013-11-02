@@ -195,22 +195,20 @@ class Requests {
 		);
 	}
 
-	static function postEventReq($json)
-	{
+	static function postEventReq($json) {
 		if(!isset($json['body']['event'])) return;
 		if(!isset($json['body']['event']['type'])) return;
 
-		switch ($json['body']['event']['type'])
-		{
+		switch ($json['body']['event']['type']) {
 			case 'firstInstallAndLogin':
 				break;
 			case 'guestPlay': //Guest Played a Level
 				//TODO: Check for Play Count Boosting With TimeStamp -> $json['body']['event']['timestamp']
 				//Why Is This Have UID? -> $json['body']['event']['uid']
 				QUERY_DB("UPDATE " . $GLOBALS['configs']['table_name_maps'] . " SET dc=dc+1 WHERE `id`='" . $json['body']['event']['v3'] . "'");
-				echo '{"header":{"_t":"mfheader"}, "_t":"mfmessage", "body":{} }';
 				break;
 		}
+		echo '{"header":{"_t":"mfheader"}, "_t":"mfmessage", "body":{} }';
 	}
 
 	static function getProfanityListReq()
@@ -910,9 +908,15 @@ class Requests {
 
 	//NOTE: INCOMPLETE
 	static function addLevelReq($json) {
-		$lastrow = QUERY_DB("SELECT * FROM " . $GLOBALS['configs']['table_name_maps'] . " ORDER BY `id` DESC LIMIT 1");
-		$userTable = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $json['body']['level']['ownerId'] . "'");
-		QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_maps'] . "(id,name,description, author, downloads, editable, ownerId, draft) VALUES('" . $lastrow[0]['id'] + 1 . "','" . $json['body']['level']['name'] . "','" . $json['body']['level']['description'] . "','" . $userTable['username'] . "', '" . $json['body']['level']['downloads'] . "', '" . $json['body']['level']['editable']  . "', '" . $json['body']['level']['ownerId']   . "', '" . $json['body']['level']['draft'] . "')");
+		$maps = $GLOBALS['configs']['table_name_maps'];
+		$levelName =  $json['body']['level']['name'];
+		$levelOwner = $json['body']['level']['ownerId'];
+		$levelDescription = $json['body']['level']['description'];
+		$levelIsDraft = $json['body']['level']['draft'];
+		$levelIsEditable = $json['body']['level']['editable'];
+		$levelDownloadCount = $json['body']['level']['downloads'];
+		$userTable = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $levelOwner . "'");
+		QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_maps'] . "(id,name,description, author, downloads, editable, ownerId, draft) VALUES(NULL,'" .$levelName . "','" . $levelDescription . "','" . $userTable['username'] . "', '" . $levelDownloadCount . "', '" . $levelIsEditable . "', '" . $levelOwner . "', '" . $levelIsDraft . "')");
 
 		echo '
 {
