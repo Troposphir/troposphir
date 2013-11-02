@@ -861,41 +861,51 @@ class Requests {
 	}
 
 	//NOTE: REQUIRES TESTING
-	static function getUserIpAddressReq($json)
-	{
-		echo '{"header":{"_t":"mfheader", "debug":"true"},
-				"_t":"mfmessage",
-				"body": {
-					"ipAddress":"' . $_SERVER['REMOTE_ADDR'] . '"
-				}
-		}';
+	static function getUserIpAddressReq($json) {
+		echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug":"true"
+	},
+	"_t":"mfmessage",
+	"body": {
+		"ipAddress":"' . $_SERVER['REMOTE_ADDR'] . '"
+	}
+}
+		';
 	}
 
-	static function getUserByIdReq($json)
-	{
+	static function getUserByIdReq($json) {
 		if (!isset($json['body']['uid'])) return;
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $json['body']['uid'] . "'");
 		if (empty($table)) return;
 
-		echo '{"header":{"_t":"mfheader", "debug":"true"},
-				"_t":"mfmessage",
-				"body":{
-					"verified":"[MODIFIED BY DLL]",
-					"xpp":' . $table[0]["xpp"] . ',
-					"isClubMember":' . $table[0]["isClubMember"] . ',
-					"paidBy":"' . $table[0]["paidBy"] . '",
-					"user":{
-						"props":{
-							"development":"' . $table[0]["development"] . '",
-							"external":"' . $table[0]["external"] . '"
-						},
-						"username":"' . $table[0]["username"] . '",
-						"created":' . $table[0]["created"] . ',
-						"flags":' . $table[0]["flags"] . ',
-						"locale":"' . $table[0]["locale"] . '"
-					}
-				}
-		}';
+		echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug":"true"
+	},
+	"_t":"mfmessage",
+	"body": {
+		"verified":"[MODIFIED BY DLL]",
+		"xpp":' . $table[0]["xpp"] . ',
+		"isClubMember":' . $table[0]["isClubMember"] . ',
+		"paidBy":"' . $table[0]["paidBy"] . '",
+		"user": {
+			"props":{
+				"development":"' . $table[0]["development"] . '",
+				"external":"' . $table[0]["external"] . '"
+			},
+			"username":"' . $table[0]["username"] . '",
+			"created":' . $table[0]["created"] . ',
+			"flags":' . $table[0]["flags"] . ',
+			"locale":"' . $table[0]["locale"] . '"
+		}
+	}
+}
+		';
 	}
 
 	//NOTE: INCOMPLETE
