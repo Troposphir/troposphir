@@ -21,12 +21,13 @@
 error_reporting(0);
 require("./include/CDatabase.php");
 require("./include/CJSON.php");
+require("./include/queryDB.php");
 
 //prevent caching
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 //JSON standard MIME header
-//header('Content-type: application/json');
+header('Content-type: application/json');
 
 //================GLOBALS================
 //$dbAtmo = new Database($GLOBALS['configs']['db_name'], $GLOBALS['configs']['db_host'], $GLOBALS['configs']['db_user'], $GLOBALS['configs']['db_password']);
@@ -38,8 +39,7 @@ $path_parts["dirname"] = str_replace("\\", "/", $path_parts['dirname']);
 $GLOBALS['configs']['site'] = $_SERVER['SERVER_NAME'] . $path_parts['dirname'];
 
 //==================CODE=================
-if (isset($_REQUEST['json']))
-{
+if (isset($_REQUEST['json'])) {
 	//decode json query
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
  
@@ -50,18 +50,13 @@ if (isset($_REQUEST['json']))
 	// if (isset($json->header['enc'])) {} //FIX: adapt for encryption
 	
 	if (method_exists(Requests, $json['body']['_t'])) {
-		$requests = new Requests(); 
-		$requests->$json["body"]["_t"]($json);
-		unset($requests);
-	}
-	else {
+		Requests::$json["body"]["_t"]($json);
+	} else {
 		//TODO: Log
 		PRINT_ERROR_MSG('NULL');
 	}
 	return;
-}
-else
-{	
+} else {	
 	PRINT_ERROR_MSG('NULL');
 	return;
 }
@@ -69,128 +64,101 @@ else
  
 
 //SERVER FUNCTIONS
-function QUERY_DB($query)
+
+function PRINT_ERROR_MSG($error) {
+	$MFPErrorCode = array(
+		'ACCOUNT_NOT_FOUND' => 0xcc,
+		'ALREADY' => 6,
+		'APP_NOT_FOUND' => 200,
+		'AUTH_BANNED' => 0x68,
+		'AUTH_FAILED' => 0x65,
+		'AUTH_NOT_PERMITTED' => 0x66,
+		'AUTH_REQUIRED' => 100,
+		'AUTH_UNVERIFIED' => 0x67,
+		'DUPLICATE_LEVEL' => 0x1f5,
+		'DUPLICATE_MESSAGE' => 0x1f6,
+		'DUPLICATE_MP_SESSION' => 0x1f8,
+		'DUPLICATE_OBJECT' => 500,
+		'DUPLICATE_TAG_ENTRY' => 0x1f7,
+		'EMAIL_ALREADY_USED' => 0x259,
+		'EMAIL_INVALID' => 600,
+		'FOLDER_NOT_FOUND' => 0xcb,
+		'INTERNAL' => 1,
+		'INVALID' => 8,
+		'INVALID_OPERATION_LEVEL' => 0x130,
+		'INVALID_OPERATION_MESSAGE' => 0x12f,
+		'INVALID_OPERATION_PURCHASE' => 0x131,
+		'INVALID_OPERATION_SESSION' => 0x12e,
+		'INVALID_OPERATION_STRATOS' => 0x12d,
+		'INVALID_OPERATION_USER' => 300,
+		'ITEM_NOT_FOUND' => 0xcd,
+		'ITEM_SET_NOT_FOUND' => 0xd1,
+		'LEVEL_CONFIG_NOT_FOUND' => 210,
+		'LEVEL_NOT_FOUND' => 0xca,
+		'LEVEL_SESSION_NOT_FOUND' => 0xce,
+		'MALFORMED' => 4,
+		'MESSAGE_NOT_FOUND' => 0xd0,
+		'MP_SESSION_NOT_FOUND' => 0xcf,
+		'NO_HANDLER' => 3,
+		'NOCODEC' => 5,
+		'NONE' => 0,
+		'NOT_FOUND' => 7,
+		'NULL'=> 2,
+		'PASSWORD_INVALID' => 0x25d,
+		'THING_NOT_FOUND' => 400,
+		'TOO_MANY' => 9,
+		'USER_ALREADY_USED' => 0x25c,
+		'USER_EXTERNAL_FALSE'=> 0x260,
+		'USER_HAS_REDCARPET' => 0x261,
+		'USER_INVALID' => 0x25a,
+		'USER_INVALID_CHARS' => 0x25e,
+		'USER_NOT_EXTERNAL' => 0x25f,
+		'USER_NOT_FOUND' => 0xc9,
+		'USER_PROFANITY' => 0x25b
+	);
+
+
+	echo '
 {
-	if($query != null)
-	{
-		//ADJUST MYSQL SYNTAX
-		$begpos = strpos($query, "AND ct:[");
-		if ($begpos !== false) {
-			$endpos = strpos($query, ']', $begpos) + 1; 
-			$query = substr($query, 0, $begpos) . substr($query, $endpos, strlen($query));
-		}  
-
-		$query = str_replace(':', '=', $query);
-		$query = str_replace('xis.lotd', "'xis.lotd'", $query);
-		$query = str_replace('is.lotd', "`is.lotd`", $query);
-		$query = str_replace('xp.reward', "'xp.reward'", $query);
-		$query = str_replace('xp.level', "'xp.level'", $query);
-
-		//ADJUST MYSQL SYNTAX
-		$array = array(); 
-		$link = mysql_connect($GLOBALS['configs']['db_host'],$GLOBALS['configs']['db_user'],$GLOBALS['configs']['db_password']);
-		if ($link == NULL) {echo 'There were problems connecting to the database.'; return NULL;}
-
-		$success = mysql_select_db($GLOBALS['configs']['db_name'], $link); 
-		if ($success == false) {echo "Database could not be found."; return NULL;}
-   
-		$result = mysql_query(stripslashes(mysql_real_escape_string($query)));
-		if (!$result) {echo "Invalid Query."; return NULL;}
-   
-		while($row = mysql_fetch_assoc($result)) {
-			array_push($array, $row);
+  	"header": {
+  		"_t":"mfheader"
+	},
+	"body": {
+		"_t":"mferror",
+		"props": {
+  			"errcode":' . hexdec($MFPErrorCode[$error]) . '
 		}
-		mysql_free_result($result);
-		mysql_close($link);
-
-		return $array;  
 	}
 }
-
-function PRINT_ERROR_MSG($error)
-{
- $MFPErrorCode = array(
-   'ACCOUNT_NOT_FOUND' => 0xcc,
-   'ALREADY' => 6,
-   'APP_NOT_FOUND' => 200,
-   'AUTH_BANNED' => 0x68,
-   'AUTH_FAILED' => 0x65,
-   'AUTH_NOT_PERMITTED' => 0x66,
-   'AUTH_REQUIRED' => 100,
-   'AUTH_UNVERIFIED' => 0x67,
-   'DUPLICATE_LEVEL' => 0x1f5,
-   'DUPLICATE_MESSAGE' => 0x1f6,
-   'DUPLICATE_MP_SESSION' => 0x1f8,
-   'DUPLICATE_OBJECT' => 500,
-   'DUPLICATE_TAG_ENTRY' => 0x1f7,
-   'EMAIL_ALREADY_USED' => 0x259,
-   'EMAIL_INVALID' => 600,
-   'FOLDER_NOT_FOUND' => 0xcb,
-   'INTERNAL' => 1,
-   'INVALID' => 8,
-   'INVALID_OPERATION_LEVEL' => 0x130,
-   'INVALID_OPERATION_MESSAGE' => 0x12f,
-   'INVALID_OPERATION_PURCHASE' => 0x131,
-   'INVALID_OPERATION_SESSION' => 0x12e,
-   'INVALID_OPERATION_STRATOS' => 0x12d,
-   'INVALID_OPERATION_USER' => 300,
-   'ITEM_NOT_FOUND' => 0xcd,
-   'ITEM_SET_NOT_FOUND' => 0xd1,
-   'LEVEL_CONFIG_NOT_FOUND' => 210,
-   'LEVEL_NOT_FOUND' => 0xca,
-   'LEVEL_SESSION_NOT_FOUND' => 0xce,
-   'MALFORMED' => 4,
-   'MESSAGE_NOT_FOUND' => 0xd0,
-   'MP_SESSION_NOT_FOUND' => 0xcf,
-   'NO_HANDLER' => 3,
-   'NOCODEC' => 5,
-   'NONE' => 0,
-   'NOT_FOUND' => 7,
-   'NULL'=> 2,
-   'PASSWORD_INVALID' => 0x25d,
-   'THING_NOT_FOUND' => 400,
-   'TOO_MANY' => 9,
-   'USER_ALREADY_USED' => 0x25c,
-   'USER_EXTERNAL_FALSE'=> 0x260,
-   'USER_HAS_REDCARPET' => 0x261,
-   'USER_INVALID' => 0x25a,
-   'USER_INVALID_CHARS' => 0x25e,
-   'USER_NOT_EXTERNAL' => 0x25f,
-   'USER_NOT_FOUND' => 0xc9,
-   'USER_PROFANITY' => 0x25b
-  );
-
-
-  echo '{"header":{"_t":"mfheader"},
-	   "body":{
-		   "_t":"mferror",
-		   "props":{"errcode":' . hexdec($MFPErrorCode[$error]) . '}
-		  }
-	   }';
+  	';
 }
 
 class Requests {
-	static function getGameContextReq()
-	{
-		echo '{"header":{"_t":"mfheader"},
-				"_t":"mfmessage",
-				"body":{
-				"assetEndpoint":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_assets'] . '",
-				"mailboxEndpoint":"",
-				"friendsUrl":"",
-				"masterServerHost":"' . $GLOBALS['configs']['site'] . '",
-				"masterServerPort":80,
-				"natFacilitatorPort":0,
-				"redCarpetTutorialLevelId":21689,
-				"charCustLevelId":21689,
-				"levelBrowserLevelId":21689,
-				"tutorialUserId":0,
-				"unityBundleUrl":"",
-				"staticImagesUrl":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_images'] . '",
-				"staticMapUrl":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_maps'] . '",
-				"staticAvatarUrl":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_images'] . '/avatars"
-				}
-		}';
+	static function getGameContextReq() {
+		echo '
+{
+	"header": {
+		"_t": "mfheader"
+	},
+	"_t": "mfmessage",
+	"body": {
+		"assetEndpoint":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_assets'] . '",
+		"mailboxEndpoint":"",
+		"friendsUrl":"",
+		"masterServerHost":"' . $GLOBALS['configs']['site'] . '",
+		"masterServerPort":80,
+		"natFacilitatorPort":0,
+		"redCarpetTutorialLevelId":21689,
+		"charCustLevelId":21689,
+		"levelBrowserLevelId":21689,
+		"tutorialUserId":0,
+		"unityBundleUrl":"",
+		"staticImagesUrl":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_images'] . '",
+		"staticMapUrl":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_maps'] . '",
+		"staticAvatarUrl":"' . $GLOBALS['configs']['site'] . $GLOBALS['configs']['path_images'] . '/avatars"
+	}
+}
+		';
 	}
 
 	static function getLoadingTipReq()
@@ -927,38 +895,45 @@ class Requests {
 	}
 
 	//NOTE: INCOMPLETE
-	static function addLevelReq($json)
-	{
-
+	static function addLevelReq($json) {
 		$lastrow = QUERY_DB("SELECT * FROM " . $GLOBALS['configs']['table_name_maps'] . " ORDER BY `id` DESC LIMIT 1");
 		$userTable = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $json['body']['level']['ownerId'] . "'");
 		QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_maps'] . "(id,name,description, author, downloads, editable, ownerId, draft) VALUES('" . $lastrow[0]['id'] + 1 . "','" . $json['body']['level']['name'] . "','" . $json['body']['level']['description'] . "','" . $userTable['username'] . "', '" . $json['body']['level']['downloads'] . "', '" . $json['body']['level']['editable']  . "', '" . $json['body']['level']['ownerId']   . "', '" . $json['body']['level']['draft'] . "')");
 
-		echo '{"header":{"_t":"mfheader", "debug":"true"},
-				"_t":"mfmessage",
-				"body":{
-					"levelId":"' . $lastrow[0]['id'] + 1 . '"
-				}
-		}';
+		echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug": "true"
+	},
+	"_t": "mfmessage",
+	"body": {
+		"levelId":"' . $lastrow[0]['id'] + 1 . '"
+	}
+}
+		';
 	}
 
 
 	//Incomplete
 	//To Do: Red Carpet Handle
 	//Response: {"header":{"_t":"mfheader", "auth":"0", "debug":"true"}, "_t":"mfmessage", "body":{"_t":"getRedCarpetReq", "userId":1}}
-	static function getRedCarpetReq($json)
-	{
+	static function getRedCarpetReq($json) {
 		if (!isset($json['body']['userId'])) return;
-
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $json['body']['userId'] . "'");
-		if (!empty($table))
-		{
-			echo '{"header":{"_t":"mfheader", "debug":"true"},
-					"_t":"mfmessage",
-					"body":{
-						"finished":"' . $table[0]['finished'] . '"
-					}
-			}';
+		if (!empty($table)) {
+			echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug":"true"
+	},
+	"_t":"mfmessage",
+	"body": {
+		"finished":"' . $table[0]['finished'] . '"
+	}
+}
+			';
 		}
 	}
 
