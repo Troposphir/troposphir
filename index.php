@@ -44,7 +44,6 @@ $GLOBALS['configs']['site'] = $_SERVER['SERVER_NAME'] . $path_parts['dirname'];
 if (isset($_REQUEST['json'])) {
 	//decode json query
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
- 
 	//check that json query is valid
 	if (!isset($json['header'])) return;
 	if (!isset($json['body'])) return;
@@ -266,49 +265,58 @@ class Requests {
 		}';
 	}
 
-	static function getLevelsByAuthorReq($json)
-	{
+	static function getLevelsByAuthorReq($json) {
 		if (!isset($json['body']['authorId'])) return;
 		if (!isset($json['body']['freq']['start'])) return;
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_maps'] . '` WHERE `ownerId`="' . $json['body']['authorId'] . '"');
 
-		echo '{"header":{"_t":"mfheader"},
-				"_t":"mfmessage",
-				"body":{
-				"fres":{
-				"total":' . count($table) . ',
-						"results":[';
-									for($i=$json['body']['freq']['start']; $i < count($table); $i++)
-									{
-										echo '{
-												"id":' . $table[$i]['id'] . ',
-												"name":"' . $table[$i]['name'] . '",
-												"description":"' . $table[$i]['description'] . '",
-												"ownerId":' . $table[$i]['ownerId'] . ',
-												"downloads":' . $table[$i]['downloads'] . ',
-												"version":' . $table[$i]['version'] . ',
-												"draft":' . $table[$i]['draft'] . ',
-												"author":"' . $table[$i]['author'] . '",
-												"editable":' . $table[$i]['editable'] . ',
-												"dataId":' . $table[$i]['dataId'] . ',
-												"screenshotId":' . $table[$i]['screenshotId'] . ',
-												"rating":"' . $table[$i]['rating'] . '",
-												"difficulty":"' . $table[$i]['difficulty'] . '",
-												"props":{"gcid":"' . $table[$i]['gcid'] . '", "editMode":"' . $table[$i]['editMode'] . '"},
-												"lc":{
-														"props":{
-														}
-												}
-										}';
-										if (($i+1) < (count($table))) {
-											echo ',';
-										}
-
-									} //end of for loop
-						echo ']
+		echo '
+{
+	"header": {
+		"_t": "mfheader"
+	},
+	"_t": "mfmessage",
+	"body": {
+		"fres": {
+			"total":' . count($table) . ',
+			"results": [';
+				for($i=$json['body']['freq']['start']; $i < count($table); $i++) {
+					echo '
+				{
+					"id":' . $table[$i]['id'] . ',
+					"name":"' . $table[$i]['name'] . '",
+					"description":"' . $table[$i]['description'] . '",
+					"ownerId":' . $table[$i]['ownerId'] . ',
+					"downloads":' . $table[$i]['downloads'] . ',
+					"version":' . $table[$i]['version'] . ',
+					"draft":' . $table[$i]['draft'] . ',
+					"author":' . $table[$i]['author'] . ',
+					"editable":' . $table[$i]['editable'] . ',
+					"dataId":' . $table[$i]['dataId'] . ',
+					"screenshotId":' . $table[$i]['screenshotId'] . ',
+					"rating":' . $table[$i]['rating'] . ',
+					"difficulty":' . $table[$i]['difficulty'] . ',
+					"props": {
+						"gcid":' . $table[$i]['gcid'] . ', 
+						"editMode":"' . $table[$i]['editMode'] . '"
+					},
+					"lc": {
+						"props": {
+							
+						}
+					}
 				}
-				}
-		}';
+					';
+					if (($i+1) < (count($table))) {
+						echo ',';
+					}
+				} //end of for loop
+		echo '
+			]
+		}
+	}
+}
+		';
 
 	}
 	//INCOMPLETE
@@ -918,7 +926,6 @@ class Requests {
 		$levelDownloadCount = $json['body']['level']['downloads'];
 		$userTable = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $levelOwner . "'");
 		QUERY_DB("INSERT INTO " . $GLOBALS['configs']['table_name_maps'] . "(id,name,description, author, downloads, editable, ownerId, draft) VALUES(NULL,'" .$levelName . "','" . $levelDescription . "','" . $userTable['username'] . "', '" . $levelDownloadCount . "', '" . $levelIsEditable . "', '" . $levelOwner . "', '" . $levelIsDraft . "')");
-
 		echo '
 {
 	"header": {
@@ -927,7 +934,7 @@ class Requests {
 	},
 	"_t": "mfmessage",
 	"body": {
-		"levelId":"' . $lastrow[0]['id'] + 1 . '"
+		"levelId":"' . mysql_insert_id() . '"
 	}
 }
 		';
@@ -935,7 +942,7 @@ class Requests {
 
 
 	//Incomplete
-	//To Do: Red Carpet Handle
+	//TODO: Red Carpet Handle
 	//Response: {"header":{"_t":"mfheader", "auth":"0", "debug":"true"}, "_t":"mfmessage", "body":{"_t":"getRedCarpetReq", "userId":1}}
 	static function getRedCarpetReq($json) {
 		if (!isset($json['body']['userId'])) return;
@@ -1013,20 +1020,26 @@ class Requests {
 		if (!isset($json['body']['userId'])) return;
 
 		$table = QUERY_DB("SELECT * FROM `" . $GLOBALS['configs']['table_name_users'] . "` WHERE `userId`='" . $json['body']['userId'] . "'");
-		echo '{"header":{"_t":"mfheader", "debug":"true"},
-				"_t":"mfmessage",
-				"body":{
-				"wins":"' . $table[0]['wins'] . '",
-				"losses":"' . $table[0]['losses'] . '",
-				"abandons":"' . $table[0]['abandons'] . '",
-				"memberSince":"' . $table[0]['memberSince'] . '",
-				"clubMemberSince":"' . $table[0]['clubMemberSince'] . '",
-				"levelDesigned":"' . $table[0]['levelDesigned'] . '"
-				"forumPost":"0",
-				"levelComments":"' . $table[0]['levelComments'] . '",
-				"designModeTime":"' . $table[0]['designModeTime'] . '"
-				}
-		}';
+		echo '
+{
+	"header": {
+		"_t": "mfheader", 
+		"debug":"true"
+	},
+	"_t":"mfmessage",
+	"body": {
+		"wins":' . $table[0]['wins'] . ',
+		"losses":' . $table[0]['losses'] . ',
+		"abandons":' . $table[0]['abandons'] . ',
+		"memberSince":' . $table[0]['memberSince'] . ',
+		"clubMemberSince":' . $table[0]['clubMemberSince'] . ',
+		"levelDesigned":' . $table[0]['levelDesigned'] . ',
+		"forumPost":0,
+		"levelComments":' . $table[0]['levelComments'] . ',
+		"designModeTime":' . $table[0]['designModeTime'] . '
+	}
+}
+		';
 	}
 
 	static function a_getUserBadgesReq($json)
