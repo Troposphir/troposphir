@@ -44,8 +44,15 @@ if(isset($_REQUEST["json"])) {
 	if (!isset($json['header'])) return;
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;
-	require($json["body"]["_t"].".php");
-	$request = new $json["body"]["_t"]();
+	
+	$reqtype   = basename($json["body"]["_t"]); 
+
+	$whiteList = array('derp' => 'derp.php'); 
+	$associated_file = $whiteList[$reqtype];
+	if ($associated_file == '') return;
+	
+	require($associated_file);
+	$request = new $reqtype();
 	$request->work($json);
 	$request->send();
 }
