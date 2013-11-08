@@ -1,4 +1,5 @@
 <?php 
+require('configs.php');
 class RequestResponse {
 	private $body;
 	private $header;
@@ -62,8 +63,8 @@ class RequestResponse {
 	public function send() {
 		echo json_encode(array(
 			"header" => $this->header,
-			"body" => $this->body,
-			"_t" => get_class($this)
+			"_t" => get_class($this),
+			"body" => $this->body
 		));
 	}
 	public function addBody($key, $value) {
