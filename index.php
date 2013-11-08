@@ -20,6 +20,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 //////////////////////////////////////////////////////////////////////////////
 error_reporting(0);
+require('configs.php');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 header('Content-type: application/json');
@@ -29,10 +30,10 @@ if(isset($_REQUEST["json"])) {
 	if (!isset($json['header'])) return;
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;
-	
+
 	$reqtype   = basename($json["body"]["_t"]); 
-	require('scripts/' . $reqtype . '.php');
-	$request = new $reqtype();
+	require('./scripts/' . $reqtype . '.php');
+	$request = new $reqtype($config);
 	$request->work($json);
 	$request->send();
 }

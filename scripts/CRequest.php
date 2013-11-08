@@ -1,9 +1,9 @@
 <?php 
-require('configs.php');
 class RequestResponse {
-	private $body;
-	private $header;
-	protected $errorCodes = array(
+	private $body_;
+	private $header_;
+	protected $config_;
+	protected $errorCodes_ = array(
 			'ACCOUNT_NOT_FOUND' => 0xcc,
 			'ALREADY' => 6,
 			'APP_NOT_FOUND' => 200,
@@ -53,30 +53,31 @@ class RequestResponse {
 			'USER_NOT_FOUND' => 0xc9,
 			'USER_PROFANITY' => 0x25b
 	);
-	public function __construct() {
-		$this->body = array(); 
-		$this->header = array(
+	public function __construct($config) {
+		$this->config_ = $config;
+		$this->body_   = array(); 
+		$this->header_ = array(
 			"_t" => "mfheader"
 		);
 	}
 	public function work($json) {}
 	public function send() {
 		echo json_encode(array(
-			"header" => $this->header,
+			"header" => $this->header_,
 			"_t" => get_class($this),
-			"body" => $this->body
+			"body" => $this->body_
 		));
 	}
 	public function addBody($key, $value) {
-		$this->body[$key] = $value;
+		$this->body_[$key] = $value;
 	}
 	public function addHeader($key, $value) {
-		$this->header[$key] = $value;
+		$this->header_[$key] = $value;
 	}
 	public function error($code) {
-		$this->body = array();
+		$this->body_ = array();
 		$this->addBody("props", array(
-			"errcode" => hexdec($this->errorCodes[$code])
+			"errcode" => hexdec($this->errorCodes_[$code])
 		));
 	}
 }
