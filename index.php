@@ -19,6 +19,8 @@
 
 error_reporting(0);
 require('configs.php');
+require("./scripts/CDatabase.php");
+header('X-Powered-By: Troposphir Beta');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 header('Content-type: application/json');
@@ -29,7 +31,8 @@ if(isset($_REQUEST["json"])) {
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;
 
-	$reqtype   = str_replace(chr(0), '', basename($json["body"]["_t"])); 
+	$reqtype = str_replace(chr(0), '', basename($json["body"]["_t"]));
+	if (substr($reqtype, 0, 1) == "C") return; //do not acess Class files
 	if (!file_exists("./scripts/$reqtype.php")) return;
 	
 	require("./scripts/$reqtype.php");

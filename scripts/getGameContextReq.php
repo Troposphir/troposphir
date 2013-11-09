@@ -20,10 +20,10 @@
 require("CRequest.php");
 class getGameContextReq extends RequestResponse {
 	public function work($json) {
-		$this->addBody('assetEndpoint', $this->config_['site'] . $this->config_['dir_assets']);
+		$this->addBody('assetEndpoint', $this->config['site'] . $this->config['dir_assets']);
 		$this->addBody('mailboxEndpoint', "");
 		$this->addBody('friendsUrl', "");
-		$this->addBody('masterServerHost', $this->config_['site']);
+		$this->addBody('masterServerHost', $this->config['site']);
 		$this->addBody('masterServerPort', 80);
 		$this->addBody('natFacilitatorPort', 0);
 		$this->addBody('redCarpetTutorialLevelId', 21689);
@@ -31,9 +31,9 @@ class getGameContextReq extends RequestResponse {
 		$this->addBody('levelBrowserLevelId', 21689);
 		$this->addBody('tutorialUserId', 0);
 		$this->addBody('unityBundleUrl', "");
-		$this->addBody('staticImagesUrl', $this->config_['site'] . $this->config_['dir_imgs']);
-		$this->addBody('staticMapUrl', $this->config_['site'] . $this->config_['dir_maps']);
-		$this->addBody('staticAvatarUrl', $this->config_['site'] . $this->config_['dir_imgs']);
+		$this->addBody('staticImagesUrl', $this->config['site'] . $this->config['dir_imgs']);
+		$this->addBody('staticMapUrl', $this->config['site'] . $this->config['dir_maps']);
+		$this->addBody('staticAvatarUrl', $this->config['site'] . $this->config['dir_imgs']);
 	}
 }
 ?>

@@ -16,11 +16,10 @@
   You should have received a copy of the GNU Affero General Public License 
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
-
 class RequestResponse {
 	private $body_;
 	private $header_;
-	protected $config_;
+	protected $config;
 	protected $errorCodes_ = array(
 			'ACCOUNT_NOT_FOUND' => 0xcc,
 			'ALREADY' => 6,
@@ -72,7 +71,7 @@ class RequestResponse {
 			'USER_PROFANITY' => 0x25b
 	);
 	public function __construct($config) {
-		$this->config_ = $config;
+		$this->config = $config;
 		$this->body_   = array(); 
 		$this->header_ = array(
 			"_t" => "mfheader"
@@ -80,11 +79,13 @@ class RequestResponse {
 	}
 	public function work($json) {}
 	public function send() {
-		echo json_encode(array(
+		$content = json_encode(array(
 			"header" => $this->header_,
-			"_t" => get_class($this),
+			"_t" => "mfmessage",
 			"body" => $this->body_
 		));
+		echo $content;
+		$this->log("Sent data: " . $content);
 	}
 	public function addBody($key, $value) {
 		$this->body_[$key] = $value;
@@ -97,5 +98,14 @@ class RequestResponse {
 		$this->addBody("props", array(
 			"errcode" => hexdec($this->errorCodes_[$code])
 		));
+	}
+	public function log($text) {
+		if ($this->config["logging"] == "enabled") {
+			$file = fopen($this->config["request_log"], "a"); 
+			if ($file) {
+				fwrite($file, "[".date("Y-m-d H:i:s")."] ".get_class($this).": ".$text."\n");
+				fclose($file);
+			}
+		}
 	}
 }
