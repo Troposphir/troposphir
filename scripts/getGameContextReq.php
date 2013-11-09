@@ -17,7 +17,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-require("CRequest.php");
 class getGameContextReq extends RequestResponse {
 	public function work($json) {
 		$this->addBody('assetEndpoint', $this->config['site'] . $this->config['dir_assets']);

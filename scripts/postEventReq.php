@@ -17,7 +17,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 
-require("CRequest.php");
 class postEventReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json["body"]["event"]["type"]));
@@ -25,12 +24,13 @@ class postEventReq extends RequestResponse {
 			case "firstInstallAndLogin":
 				break;
 			case "guestPlay":
-				$db = new Database();
+				$db = new Database($this->config['driver'], $this->config['host'], 
+					$this->config['dbname'], $this->config['user'], $this->config['password']);
 				$db->query("UPDATE @table SET dc=dc+1 WHERE `id`='@id'", array(
 					"table" => $this->config["table_user"],
 					"id" => $json["body"]["event"]["v3"]
 				));
-				$db->close();
+				$db = null;
 				break;
 		}
 		$this->log("Handled event: ".$json["body"]["event"]["type"]);

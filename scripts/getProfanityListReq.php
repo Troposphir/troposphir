@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,6 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-require("CRequest.php");
 class getProfanityListReq extends RequestResponse {
 	public function work($json) {
 		$this->addBody("fres", array(

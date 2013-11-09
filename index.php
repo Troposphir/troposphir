@@ -19,6 +19,7 @@
 
 error_reporting(0);
 require('configs.php');
+require("./scripts/CRequest.php");
 require("./scripts/CDatabase.php");
 header('X-Powered-By: Troposphir Beta');
 header('Cache-Control: no-cache, must-revalidate');

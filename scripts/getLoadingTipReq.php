@@ -17,7 +17,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-require("CRequest.php");
 class getLoadingTipReq extends RequestResponse {
 	public $tips = array(
 		"This server is hosted by OneMoreBlock. Come visit us at http://onemoreblock.com/!",
