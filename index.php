@@ -29,8 +29,10 @@ if(isset($_REQUEST["json"])) {
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;
 
-	$reqtype   = basename($json["body"]["_t"]); 
-	require('./scripts/' . $reqtype . '.php');
+	$reqtype   = str_replace(chr(0), '', basename($json["body"]["_t"])); 
+	if (!file_exists("./scripts/$reqtype.php")) return;
+	
+	require("./scripts/$reqtype.php");
 	$request = new $reqtype($config);
 	$request->work($json);
 	$request->send();
