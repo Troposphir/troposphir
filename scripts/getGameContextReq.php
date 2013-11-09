@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Troposhir Project
+  Troposphir - Part of the Tropopshir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
