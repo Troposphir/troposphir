@@ -12,27 +12,41 @@
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU Affero General Public License for more details.
+<?php
+/*==============================================================================
+	Troposphir - Part of the Troposphir Project
+	Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as
+	published by the Free Software Foundation, either version 3 of the
+	License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
 
 	You should have received a copy of the GNU Affero General Public License 
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class Database {
-	private $connection;
-	public function __construct() {
-		//using MySQLi, see docs at http://www.php.net/manual/en/class.mysqli.php
-		$this->connection = new mysqli($config["host"], $config["user"], $config["password"], $config["dbname"]);
+class Database extends PDO {
+	public function __construct($driver, $host, $dbname, $user, $password) {
+		parent::__construct("$driver:host=$host;dbname=$dbname", $user, $password);
 	}
-	public function query($queryString, $params) {
+	
+	public function query($statement, $params) {
+		//PDO doesn't prevent SQL Injections through the query() function
 		if (!is_null($params)) {
 			foreach ($params as $i =>$param) {
-				$queryString = str_replace("@".$i, $param, $queryString);
+				$statement = str_replace("@".$i, $param, $statement);
 			}
 		}
-		$this->connection->query($queryString);
+		parent::query($statement);
 	}
 	public function close() {
-		$this->connection->close();
+		
 	}
 }
 ?>

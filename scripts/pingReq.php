@@ -17,7 +17,6 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-require("CRequest.php");
 class pingReq extends RequestResponse {
 	public function work($json) {
 		$ping = mktime();
