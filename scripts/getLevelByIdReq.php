@@ -42,7 +42,7 @@ class getLevelByIdReq extends RequestResponse {
 		$level = array();
 		$row = $results->fetch();
 		foreach ($fields as $field) {
-			$level[$field] = $row[0][$field];
+			$level[$field] = $row[$field];
 		}
 		$this->addBody("level", $level);
 	}
