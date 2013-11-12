@@ -23,7 +23,7 @@ class getLevelByIdReq extends RequestResponse {
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version", 
-			"nextLevelId", "editable", "gcid"
+			"nextLevelId", "editable", "gcid", "editMode"
 		);
 		if (!isset($json["body"]["levelId"]) || 
 			!is_numeric($json["body"]["levelId"])){
@@ -42,7 +42,7 @@ class getLevelByIdReq extends RequestResponse {
 		$level = array();
 		$row = $results->fetch();
 		foreach ($fields as $field) {
-			$level[$field] = $row[$field];
+			$level[$field] = $this->convertJSONTypes($row[$field]);
 		}
 		$this->addBody("level", $level);
 	}
