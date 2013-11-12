@@ -83,7 +83,7 @@ class RequestResponse {
 			"header" => $this->header_,
 			"_t" => "mfmessage",
 			"body" => $this->body_
-		));
+		), JSON_NUMERIC_CHECK);
 		echo $content;
 		$this->log("Sent data: " . $content);
 	}
