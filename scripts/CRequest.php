@@ -108,4 +108,19 @@ class RequestResponse {
 			}
 		}
 	}
+	public function convertJSONTypes($val) {
+		if (is_array($val)) {
+			$new = array();
+			foreach ($val as $k => $v) {
+				$new[$k] = $this->convertJSONTypes($v);
+			}
+			return $new;
+		} elseif (strtolower($val) == "true") {
+			return true;
+		} elseif (strtolower($val) == "false") {
+			return false;
+		} else {
+			return $val;
+		}
+	}
 }
