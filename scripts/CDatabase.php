@@ -43,10 +43,18 @@ class Database extends PDO {
 				$statement = str_replace("@".$i, $param, $statement);
 			}
 		}
-		parent::query($statement);
+		return parent::query($statement);
 	}
-	public function close() {
-		
+	public function arrayToSQLGroup($array = array(), $decorators = array("(", ")", "`")) {
+		$str = $decorators[0];
+		foreach ($array as $i => $field) {
+			$str = $str.$decorators[2].$field.$decorators[2];
+			if ($i != count($array)-1) {
+				$str = $str.", ";
+			}
+		}
+		$str = $str.$decorators[1];
+		return $str;
 	}
 }
 ?>
