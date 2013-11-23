@@ -17,43 +17,38 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getLevelByIdReq extends RequestResponse {
+class a_getLcReq extends RequestResponse {
 	public function work($json) {
 		$fields = array( //We don't need the myriad of properties stored in the maps table, so we'll query only the columns we need.
-			"id", "name", "description", "author", 
-			"ownerId", "downloads", "dataId", 
-			"screenshotId", "draft", "version", 
-			"nextLevelId", "editable", "gcid", "editMode"
+			"is.lotd", "xp.reward", "xgms", "gms", 
+			"gmm", "gff", "gsv", "gbs", "gde", "gdb", 
+			"gctf", "gab", "gra", "gco", "gtc", "gmmp1", "gmmp2",
+			"gmcp1", "gmcp2", "gmcdt", "gmcff", "ast", "aal", "ghosts",
+			"ipad", "dcap", "dmic", "denc", "dpuc", "dcoc", "dtrc", "damc",
+			"dphc", "ddoc", "dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", 
+			"dtmi", "ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc"
 		);
-		if (!isset($json["body"]["levelId"]) || 
-			!is_numeric($json["body"]["levelId"])){
-			return;
-		}
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM `@table` WHERE `id`=@levelId", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("","","`")),
-			"table" 	=> $this->config["table_map"],
-			"levelId" 	=> $json["body"]["levelId"]
+		$statement = $db->query("SELECT @fields FROM @table", array(
+			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
+			"table" 	=> $this->config["table_map"]
 		));
 		
 		if ($db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
-			$level = array();
-			$rows = $statement->fetch();
+			$props = array();
+			$row = $statement->fetch();
 			foreach ($fields as $field) {
-				$level[$field] = $this->convertJSONTypes($rows[$field]);
+				$props[$field] = $this->convertJSONTypes($row[$field]);
+				$this->convertToString($props[$field]);
 			}
 		
-			//convert integers that ought to be a string
-			$this->convertToString($level['gcid']);
-			$this->convertToString($level['name']);
-			$this->convertToString($level['author']);
-			$this->convertToString($level['description']);
-		
-			$this->addBody("level", $level);
+			$level_config = array(
+				"props" => $props,
+			);
+			$this->addBody("lc", $level_config);
 		}
 	}
-	
 }
 ?>

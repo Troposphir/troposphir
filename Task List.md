@@ -2,8 +2,8 @@
 ----------------------------------------
 - [ ] getLevelsByAuthorReq  
 - [ ] a_llsReq  
-- [ ] a_getLcReq  
-- [ ] loginReq  
+- [x] a_getLcReq  
+- [x] loginReq  
 - [ ] findItemisReq  
 - [ ] findItemsReq  
 - [ ] findItemSetsReq  

@@ -26,15 +26,15 @@ class getFirstUserExperienceReq extends RequestResponse {
  			"nextLevelId", "editable", "gcid", "editMode"
 		);
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$results = $db->query("SELECT @fields FROM @table", array(
+		$statement = $db->query("SELECT @fields FROM @table", array(
 			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_map"]
 		));
-		if ($results === false) {
+		if ($db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
-			for ($count = 0; $row = $results->fetch(); $count++) {
+			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$level = array();
 				
 				foreach ($fields as $field) {
