@@ -17,16 +17,15 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-/*
-:TO FINISH:
-$_REQUEST['lid'] Needs To Be Checked With Map DataBase For Security Check
-*/
+//TODO: Check level id against database?
+//download map from current directory if it exists
 
-//downloads map from current directory if it exists
-if (isset($_REQUEST['id']) && is_numeric($_REQUEST['id'])) { 
-   if (file_exists('./' . $_REQUEST['id'])) {
-     echo file_get_contents('./' . $_REQUEST['id']);
-   }
+error_reporting(0);
+if (isset($_REQUEST['id'])) { 
+    $id = filter_var(basename($_REQUEST['id']), FILTER_VALIDATE_INT);
+	if (file_exists("./$id")) {
+		echo file_get_contents("./$id");
+	}
 }
 
 ?>
