@@ -83,7 +83,7 @@ class RequestResponse {
 			"header" => $this->header_,
 			"_t" => "mfmessage",
 			"body" => $this->body_
-		), JSON_NUMERIC_CHECK);
+		));	//The current server doesn't support JSON_NUMERIC_CHECK.
 		echo $content;
 		$this->log("Sent data: " . $content);
 	}
@@ -108,6 +108,11 @@ class RequestResponse {
 			}
 		}
 	}
+	
+	public function convertToString(&$val) {
+		settype($val, "string");
+	}
+	
 	public function convertJSONTypes($val) {
 		if (is_array($val)) {
 			$new = array();
@@ -115,6 +120,9 @@ class RequestResponse {
 				$new[$k] = $this->convertJSONTypes($v);
 			}
 			return $new;
+		} else if (is_numeric($val)) {
+			settype($val, "integer");
+			return $val;
 		} elseif (strtolower($val) == "true") {
 			return true;
 		} elseif (strtolower($val) == "false") {
