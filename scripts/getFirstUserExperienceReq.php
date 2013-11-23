@@ -23,7 +23,7 @@ class getFirstUserExperienceReq extends RequestResponse {
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version",
- 			"nextLevelId", "editable", "gcid"
+ 			"nextLevelId", "editable", "gcid", "editMode"
 		);
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
 		$results = $db->query("SELECT @fields FROM @table", array(
@@ -36,15 +36,28 @@ class getFirstUserExperienceReq extends RequestResponse {
 			$levelList = array();
 			for ($count = 0; $row = $results->fetch(); $count++) {
 				$level = array();
+				
 				foreach ($fields as $field) {
 					$level[$field] = $this->convertJSONTypes($row[$field]);
 				}
+				//Append 'props' onto $level
+				$props = array();
+				$props['gcid']     = $level['gcid'];     unset($level['gcid']);
+				$props['editMode'] = $level['editMode']; unset($level['editMode']);
+				$level['props'] = $props;
+				
+				//Handle special case numeric strings that need to be integers instead
+				$this->convertToString($level['name']);
+				$this->convertToString($level['description']);
+				$this->convertToString($level['props']['gcid']);
+				$this->convertToString($level['props']['editMode']);
+				
 				$levelList[] = $level;
 				$count = $count+1;
 			}
 			$fres = array(
-				"results" => $levelList,
-				"count" => $count
+				"total" => $count,
+				"results" => $levelList
 			);
 			$this->addBody("fres", $fres);
 		}

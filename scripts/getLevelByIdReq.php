@@ -39,12 +39,21 @@ class getLevelByIdReq extends RequestResponse {
 			$this->error("NOT_FOUND");
 			return;
 		}
+		
 		$level = array();
 		$row = $results->fetch();
 		foreach ($fields as $field) {
 			$level[$field] = $this->convertJSONTypes($row[$field]);
 		}
+		
+		//convert integers that ought to be a string
+		$this->convertToString($level['gcid']);
+		$this->convertToString($level['name']);
+		$this->convertToString($level['author']);
+		$this->convertToString($level['description']);
+		
 		$this->addBody("level", $level);
 	}
+	
 }
 ?>
