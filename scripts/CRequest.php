@@ -73,9 +73,7 @@ class RequestResponse {
 	public function __construct($config) {
 		$this->config = $config;
 		$this->body_   = array(); 
-		$this->header_ = array(
-			"_t" => "mfheader"
-		);
+		$this->header_ = array("_t" => "mfheader");
 	}
 	public function work($json) {}
 	public function send() {
@@ -94,9 +92,9 @@ class RequestResponse {
 		$this->header_[$key] = $value;
 	}
 	public function error($code) {
-		$this->body_ = array();
+		$this->addBody("_t", "mferror");
 		$this->addBody("props", array(
-			"errcode" => hexdec($this->errorCodes_[$code])
+			"errcode" => (string)$this->errorCodes_[$code]
 		));
 	}
 	public function log($text) {
@@ -113,6 +111,7 @@ class RequestResponse {
 		settype($val, "string");
 	}
 	
+	//Todo: Setup our database properly so we don't have to use this.
 	public function convertJSONTypes($val) {
 		if (is_array($val)) {
 			$new = array();
