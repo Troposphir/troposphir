@@ -1,0 +1,79 @@
+<?php
+/*==============================================================================
+  Troposphir - Part of the Tropopshir Project
+  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Affero General Public License for more details.
+
+  You should have received a copy of the GNU Affero General Public License 
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+==============================================================================*/
+/*Level of the Day
+XP Reward
+Can Play Solo
+Can Host
+Find Finish Flag
+Survival Time Limit
+Beat Score
+Defeat Enemies
+Defeat Bosses
+Can Host CTF
+Can Host Atmo Ball
+Can Host Race
+Can Host Free Combat
+Can Host Team Combat
+Minimum Coop Players
+Max Coop Players
+Minimum Computer Players
+Max Computer Players
+Default Computer Time
+Friendly Fire Enabled
+Abilities State
+Allowed Abilities
+Ghosts
+Ipad
+Is Ipad
+Map Items Count
+*/
+class a_getLcReq extends RequestResponse {
+	public function work($json) {
+		if (!isset($json["body"]["lid"]) &&
+			is_numeric($json["body"]["lid"])) return;]
+		
+		$fields = array(
+			"is.lotd", "xp.reward", "xgms", "gms", "gmm", "gff",
+			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco",
+			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt", 
+			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic",
+			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc",
+			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi", 
+			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc"
+		);
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+		$results = $db->query("SELECT @fields FROM `@table`", array(
+			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
+			"table" 	=> $this->config["table_map"]
+		));
+		if ($results === false || empty($results)) {
+			$this->error("NOT_FOUND");
+		} else {
+			$level = array();
+			$row = $results->fetch();
+			foreach ($fields as $field) {
+				$level[$field] = $this->convertJSONTypes($row[$field]);
+			}
+			$this->addBody("lc", array(
+				"props" => $level
+			));
+		}
+	}
+}
+?>
