@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -16,24 +16,26 @@
   You should have received a copy of the GNU Affero General Public License 
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
-
-class getRedCarpetReq extends RequestResponse {
+//GET PLAYER'S CURRENTLY EQUIPPED ITEMS
+//INCOMPLETE
+class findItemInstanceSetsReq extends RequestResponse {
 	public function work($json) {
-		//Check input
-		if (!isset($json['body']['userId'])) return;
+		if (!isset($json['body']['oid'])) return;
+		if (!isset($json['body']['name'])) return;
+
+		$itemSetsList = array();				
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT finished FROM `@table` WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['userId']
-		));
-		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error('NOT_FOUND');
-		} else {
-			$row = $statement->fetch();
-			$this->addBody('finished', $row['finished']);
-		}
+		$itemSetOne = array();
+		$itemSetOne['id']     = 142;
+		$itemSetOne['itemis'] = array(132, 131); 
+		$itemSetsList[] = $itemSetOne;
+	
+		$fres = array(
+			"total" => 1,
+			"results" => $itemSetsList
+		);
+	
+		$this->addBody("fres", $fres);
 	}
 }
 ?>

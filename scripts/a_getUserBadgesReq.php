@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -17,22 +17,25 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getRedCarpetReq extends RequestResponse {
+class a_getUserBadgesReq extends RequestResponse {
 	public function work($json) {
-		//Check input
-		if (!isset($json['body']['userId'])) return;
+		if(!isset($json['body']['uid'])) return;
+		$fields = array("wins", "losses", "abandons");
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT finished FROM `@table` WHERE `userId`='@userId'", array(
+		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
+			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['userId']
+			"userId"    => $json['body']['uid']
 		));
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error('NOT_FOUND');
+			$this->error("NOT_FOUND");
 		} else {
 			$row = $statement->fetch();
-			$this->addBody('finished', $row['finished']);
+			$this->addBody("won", $row['wins']);
+			$this->addBody("lost", $row['losses']);
+			$this->addBody("abandoned", $row['abandons']);
 		}
 	}
 }

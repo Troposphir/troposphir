@@ -6,21 +6,21 @@
 - [x] loginReq  
 - [x] findItemisReq  
 - [x] findItemsReq  
-- [ ] findItemSetsReq  
-- [ ] findItemInstanceSetsReq  
+- [x] findItemSetsReq  
+- [x] findItemInstanceSetsReq  
 - [x] getProfilesReq  
-- [ ] updateProfReq  
-- [ ] registerUserReq  
-- [ ] findAccountsReq  
-- [ ] getUserIpAddressReq  
-- [ ] getUserByIdReq  
+- [x] updateProfReq  
+- [x] registerUserReq  
+- [x] findAccountsReq  
+- [x] getUserIpAddressReq  
+- [x] getUserByIdReq  
 - [ ] addLevelReq  
 - [x] getRedCarpetReq  
 - [ ] createAssetReq (Incomplete)  
 - [ ] updateItemiSetReq (Incomplete)  
-- [ ] getQuickStatsReq (Incomplete)  
-- [ ] a_getUserBadgesReq   
-- [ ] getFriendsByIdReq 
+- [x] getQuickStatsReq  
+- [x] a_getUserBadgesReq   
+- [x] getFriendsByIdReq 
 
 2. Complete the following functions
 ---------------------------------------
@@ -28,4 +28,5 @@
 - [] findItemsReq
 - [] createAssetReq
 - [] updateItemiSetReq
-- [] getQuickStatsReq
+- [] getFriendsByIdReq
+- [] findItemInstanceSetsReq
