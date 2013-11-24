@@ -35,10 +35,10 @@ class a_llsReq extends RequestResponse {
 		//Todo: Change dll instead from Lucene to SQL format.
 		//This doesn't work in all cases.
 		$query = str_replace(':', '=', $query);
-		$query = str_replace('xis.lotd', "'xis.lotd'", $query);
-		$query = str_replace('is.lotd', "`is.lotd`", $query);
-		$query = str_replace('xp.reward', "'xp.reward'", $query);
-		$query = str_replace('xp.level', "'xp.level'", $query);
+		$query = str_replace('xis.lotd', "'xisLOTD'", $query);
+		$query = str_replace('is.lotd', "`isLOTD`", $query);
+		$query = str_replace('xp.reward', "'xpReward'", $query);
+		$query = str_replace('xp.level', "'xpLevel'", $query);
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
 		$statement = $db->query("SELECT * FROM `@table` WHERE @query", array(

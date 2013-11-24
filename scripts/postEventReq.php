@@ -26,14 +26,13 @@ class postEventReq extends RequestResponse {
 			case "guestPlay":
 				$db = new Database($this->config['driver'], $this->config['host'], 
 					$this->config['dbname'], $this->config['user'], $this->config['password']);
-				$db->query("UPDATE `@table` SET `dc`=`dc`+1 WHERE `id`='@id'", array(
-					"table" => $this->config["table_user"],
+				$statement = $db->query("UPDATE `@table` SET `dc`=`dc`+1 WHERE `id`='@id'", array(
+					"table" => $this->config["table_map"],
 					"id" => $json["body"]["event"]["v3"]
 				));
 				$db = null;
 				break;
 		}
-		$this->log("Handled event: ".$json["body"]["event"]["type"]);
 	}
 }
 ?>

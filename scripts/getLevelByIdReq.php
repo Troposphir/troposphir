@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -50,10 +50,10 @@ class getLevelByIdReq extends RequestResponse {
 			$level["downloads"]   = (integer)$rows["downloads"];
 			$level["dataId"]      = (integer)$rows["dataId"];
 			$level["screenshotId"]= (integer)$rows["screenshotId"];
-			$level["draft"]       = (bool)$rows["draft"];
+			$level["draft"]       = ($rows["draft"]) ? true : false;
 			$level["version"]     = (integer)$rows["version"];
 			$level["nextLevelId"] = (integer)$rows["nextLevelId"];
-			$level["editable"]    = (bool)$rows["editable"];
+			$level["editable"]    = ($rows["editable"]) ? true : false;
 			
 			$props = array();
 			$props["gcid"]     = (string)$rows["gcid"];

@@ -57,9 +57,9 @@ class getLevelsByAuthorReq extends RequestResponse {
 				$level["difficulty"]  = (string)$row["difficulty"];
 				$level["dataId"]      = (integer)$row["dataId"];
 				$level["screenshotId"]= (integer)$row["screenshotId"];
-				$level["draft"]       = (bool)$row["draft"];
+				$level["draft"]       = ($rows["draft"]) ? true : false;
 				$level["version"]     = (integer)$row["version"];
-				$level["editable"]    = (bool)$row["editable"];
+				$level["editable"]    = ($rows["editable"]) ? true : false;
 			
 				$props = array();
 				$props["gcid"]     = (string)$row["gcid"];

@@ -23,7 +23,7 @@ class a_getLcReq extends RequestResponse {
 			is_numeric($json["body"]["lid"])) return;
 		
 		$fields = array( 
-			"is.lotd", "xp.reward", "xgms", "gms", "gmm", "gff", 
+			"isLOTD", "xpReward", "xgms", "gms", "gmm", "gff", 
 			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco", 
 			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt", 
 			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic", 

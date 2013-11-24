@@ -23,7 +23,7 @@ class getRedCarpetReq extends RequestResponse {
 		if (!isset($json['body']['userId'])) return;
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT finished FROM `@table` WHERE `userId`='@userId'", array(
+		$statement = $db->query("SELECT `finished` FROM `@table` WHERE `userId`='@userId'", array(
 			"table" 	=> $this->config["table_user"],
 			"userId"    => $json['body']['userId']
 		));
