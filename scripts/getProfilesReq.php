@@ -34,8 +34,8 @@ class getProfilesReq extends RequestResponse {
 			$profileList = array();
 			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$profile = array();
-				$profile["id"]      = $row['userId'];
-				$profile["created"] = $row['created'];
+				$profile["id"]      = (integer)$row['userId'];
+				$profile["created"] = (integer)$row['created'];
 				
 				$props = array();
 				$props["avaid"]                 = (string)$row["avaid"];
