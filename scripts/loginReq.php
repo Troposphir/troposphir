@@ -19,15 +19,17 @@
 
 class loginReq extends RequestResponse {
 	public function work($json) {
-		$fields = array ( 
-			"token", "userId"
-		);
 		if (!isset($json["body"]["password"])) return;
 		if (!isset($json["body"]["username"])) return;
 		
+		$fields = array ( 
+			"token", "userId"
+		);
+		
 		$db = new Database($this->config['driver'], $this->config['host'], 
 					$this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM `@table` WHERE `username`='@username' AND `password`='@password'", array(
+		$statement = $db->query("SELECT @fields FROM `@table` WHERE `username`='@username' AND `password`='@password'", array(
+					"fields" => $db->arrayToSQLGroup($fields, array("", "", "`")),
 					"table" => $this->config["table_user"],
 					"username" => $json["body"]["username"],
 					"password" => md5($json["body"]["password"])
@@ -37,8 +39,8 @@ class loginReq extends RequestResponse {
 			$this->error("USER_NOT_FOUND");
 		} else {
 			$user = $statement->fetch();
-			$this->addBody("token", $user['token']);
-			$this->addBody("userId", $user['userId']);
+			$this->addBody("token",  (string)$user['token']);
+			$this->addBody("userId", (integer)$user['userId']);
 		}			
 		$db = null;
 	}
