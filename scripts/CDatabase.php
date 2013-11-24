@@ -21,14 +21,14 @@ class Database extends PDO {
 		parent::__construct("$driver:host=$host;dbname=$dbname", $user, $password);
 	}
 	
-	public function query($statement, $params) {
+	public function query($query, $params) {
 		//PDO doesn't prevent SQL Injections through the query() function
-		if (!is_null($params)) {
+		if (!is_null($params)) {	
 			foreach ($params as $i =>$param) {
-				$statement = str_replace("@".$i, $param, $statement);
+				$query = str_replace("@".$i, $param, $query);
 			}
 		}
-		return parent::query($statement);
+		return parent::query(stripslashes($query));
 	}
 	public function arrayToSQLGroup($array = array(), $decorators = array("(", ")", "`")) {
 		$str = $decorators[0];

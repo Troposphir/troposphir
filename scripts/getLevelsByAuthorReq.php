@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -26,17 +26,17 @@ class getLevelsByAuthorReq extends RequestResponse {
 			$this->error("MALFORMED");
 			return;
 		}
-		$fields = array( //We don't need the myriad of properties stored in the maps table, so we'll query only the columns we need.
+		$fields = array( 
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version",
  			"nextLevelId", "editable", "gcid"
 		);
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$results = $db->query("SELECT @fields FROM @table WHERE `ownerId` = '@owner' LIMIT @start,9999999999", array(
+		$results = $db->query("SELECT @fields FROM @table WHERE `ownerId` = '@ownerId' LIMIT @start,9999999999", array(
 			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_map"],
-			"owner" 	=> $json["body"]["authorId"],
+			"ownerId" 	=> $json["body"]["authorId"],
 			"start" 	=> $json["body"]["freq"]["start"]
 		));
 		
@@ -44,12 +44,31 @@ class getLevelsByAuthorReq extends RequestResponse {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
-			$count = 0
-			for (; $row = $results->fetch(); $count++) {
+			for ($count = 0; $row = $results->fetch(); $count++) {
 				$level = array();
-				foreach ($fields as $field) {
-					$level[$field] = $this->convertJSONTypes($row[$field]);
-				}
+				
+				$level["id"]          = (integer)$row["id"];
+				$level["name"]        = (string)$row["name"];
+				$level["description"] = (string)$row["description"];
+				$level["author"]      = (string)$row["author"];
+				$level["ownerId"]     = (integer)$row["ownerId"];
+				$level["downloads"]   = (integer)$row["downloads"];
+				$level["rating"]      = (string)$row["rating"];
+				$level["difficulty"]  = (string)$row["difficulty"];
+				$level["dataId"]      = (integer)$row["dataId"];
+				$level["screenshotId"]= (integer)$row["screenshotId"];
+				$level["draft"]       = (bool)$row["draft"];
+				$level["version"]     = (integer)$row["version"];
+				$level["editable"]    = (bool)$row["editable"];
+			
+				$props = array();
+				$props["gcid"]     = (string)$row["gcid"];
+				$props["editMode"] = (string)$row["editMode"];				
+				$level["props"] = $props;
+			
+				$lc = array("props" => array());
+				$level["lc"] = $lc;
+				
 				$levelList[] = $level;
 			}
 			$fres = array(
