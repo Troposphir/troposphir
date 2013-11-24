@@ -16,8 +16,8 @@
 - [x] getUserByIdReq  
 - [ ] addLevelReq  
 - [x] getRedCarpetReq  
-- [ ] createAssetReq (Incomplete)  
-- [ ] updateItemiSetReq (Incomplete)  
+- [x] createAssetReq (Incomplete)  
+- [x] updateItemiSetReq (Incomplete)  
 - [x] getQuickStatsReq  
 - [x] a_getUserBadgesReq   
 - [x] getFriendsByIdReq 

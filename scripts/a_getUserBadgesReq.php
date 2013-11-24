@@ -33,9 +33,9 @@ class a_getUserBadgesReq extends RequestResponse {
 			$this->error("NOT_FOUND");
 		} else {
 			$row = $statement->fetch();
-			$this->addBody("won", $row['wins']);
-			$this->addBody("lost", $row['losses']);
-			$this->addBody("abandoned", $row['abandons']);
+			$this->addBody("won", (integer)$row['wins']);
+			$this->addBody("lost", (integer)$row['losses']);
+			$this->addBody("abandoned", (integer)$row['abandons']);
 		}
 	}
 }

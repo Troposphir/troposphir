@@ -48,7 +48,7 @@ class getUserByIdReq extends RequestResponse {
 			
 			$this->addBody("verified", (string)"true"); //Modified by DLL
 			$this->addBody("xpp", (integer)$row['xpp']);
-			$this->addBody('isClubMember', (bool)$row['isClubMember']);
+			$this->addBody('isClubMember', ($rows["isClubMember"]) ? true : false);
 			$this->addBody('paidBy', (string)$row['paidBy']);
 			$this->addBody("user", $user);
 		}
