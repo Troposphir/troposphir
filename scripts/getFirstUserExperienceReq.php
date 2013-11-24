@@ -19,7 +19,7 @@
 
 class getFirstUserExperienceReq extends RequestResponse {
 	public function work($json) {
-		$fields = array( //We don't need the myriad of properties stored in the maps table, so we'll query only the columns we need.
+		$fields = array( 
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version",
@@ -30,30 +30,30 @@ class getFirstUserExperienceReq extends RequestResponse {
 			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_map"]
 		));
-		if ($db->getRowCount($statement) <= 0) {
+		
+		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
 			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$level = array();
+				$level["id"]            = (integer)$row["id"];
+				$level["name"]          = (string)$row["name"];
+				$level["description"]   = (string)$row["description"];
+				$level["ownerId"]       = (integer)$row["ownerId"];
+				$level["draft"]         = (bool)$row["draft"];
+				$level["downloads"]     = (integer)$row["downloads"];
+				$level["version"]       = (integer)$row["version"];
+				$level["editable"]      = (bool)$row["editable"];
+				$level["dataId"]        = (integer)$row["dataId"];
+				$level["screenshotId"]  = (integer)$row["screenshotId"];
 				
-				foreach ($fields as $field) {
-					$level[$field] = $this->convertJSONTypes($row[$field]);
-				}
-				//Append 'props' onto $level
 				$props = array();
-				$props['gcid']     = $level['gcid'];     unset($level['gcid']);
-				$props['editMode'] = $level['editMode']; unset($level['editMode']);
-				$level['props'] = $props;
-				
-				//Handle special case numeric strings that need to be integers instead
-				$this->convertToString($level['name']);
-				$this->convertToString($level['description']);
-				$this->convertToString($level['props']['gcid']);
-				$this->convertToString($level['props']['editMode']);
+				$props["gcid"]     = (string)$row["gcid"];
+				$props["editMode"] = (string)$row["editMode"];
+				$level["props"] = $props;
 				
 				$levelList[] = $level;
-				$count = $count+1;
 			}
 			$fres = array(
 				"total" => $count,

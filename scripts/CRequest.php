@@ -106,28 +106,4 @@ class RequestResponse {
 			}
 		}
 	}
-	
-	public function convertToString(&$val) {
-		settype($val, "string");
-	}
-	
-	//Todo: Setup our database properly so we don't have to use this.
-	public function convertJSONTypes($val) {
-		if (is_array($val)) {
-			$new = array();
-			foreach ($val as $k => $v) {
-				$new[$k] = $this->convertJSONTypes($v);
-			}
-			return $new;
-		} else if (is_numeric($val)) {
-			settype($val, "integer");
-			return $val;
-		} elseif (strtolower($val) == "true") {
-			return true;
-		} elseif (strtolower($val) == "false") {
-			return false;
-		} else {
-			return $val;
-		}
-	}
 }

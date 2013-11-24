@@ -32,7 +32,6 @@ if(isset($_REQUEST["json"])) {
 		!isset($json['body']['_t'])) return;
 
 	$reqtype = str_replace(chr(0), '', basename($json["body"]["_t"]));
-	echo $reqtype;
 	if (substr($reqtype, 0, 1) == "C") return; //do not acess Class files
 	if (!file_exists("./scripts/$reqtype.php")) return;
 	require("./scripts/$reqtype.php");

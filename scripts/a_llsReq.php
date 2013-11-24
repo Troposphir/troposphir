@@ -19,29 +19,60 @@
 
 class a_llsReq extends RequestResponse {
 	public function work($json) {
-		if (!isset($json["body"]["query"]) ||
-			(!isset($json["body"]["freq"]["start"]) &&
-			 is_numeric($json["body"]["freq"]["start"]))) return;
+		//Check input
+		if (!isset($json["body"]["query"])) return;
+		if (!isset($json["body"]["freq"]["start"])) return;
+		if (!is_numeric($json["body"]["freq"]["start"])) return;
+		
+		//Adjust user's query syntax to conform to appropriate database syntax.
+		$query = $json["body"]["query"];
+		$begpos = strpos($query, "AND ct:[");
+		if ($begpos !== false) {
+			$endpos = strpos($query, ']', $begpos) + 1; 
+			$query = substr($query, 0, $begpos) . substr($query, $endpos, strlen($query));
+		}  
+		$query = str_replace(':', '=', $query);
+		$query = str_replace('xis.lotd', "'xis.lotd'", $query);
+		$query = str_replace('is.lotd', "`is.lotd`", $query);
+		$query = str_replace('xp.reward', "'xp.reward'", $query);
+		$query = str_replace('xp.level', "'xp.level'", $query);
+		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$results = $db->query("SELECT * FROM `@table` WHERE @query", array(
+		$statement = $db->query("SELECT * FROM `@table` WHERE @query", array(
 			"table" 	=> $this->config["table_map"],
-			"query" 	=> $json["body"]["query"]
+			"query" 	=> $query
 		));
-		if ($results === false) {
+		
+		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
-			$count = 0;
-			for (; $row = $results->fetch(); $count++) {
+			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$level = array();
-				foreach ($fields as $field) {
-					$level[$field] = $this->convertJSONTypes($row[$field]);
-				}
+				$level["id"]          = (string)$row["id"];
+				$level["name"]        = (string)$row["name"];
+				$level["description"] = (string)$row["description"];
+				$level["ownerId"]     = (string)$row["ownerId"];
+				$level["dc"]          = (string)$row["dc"]; 
+				$level["version"]     = (string)$row["version"];
+				$level["author"]      = (string)$row["author"];
+				$level["draft"]       = (string)$row["draft"];
+				$level["editable"]    = (string)$row["editable"];
+
+				$props = array();
+				$props["gcid"]     = (string)$row["gcid"];
+				$props["editMode"] = (string)$row["editMode"];
+				$level["props"]    = $props;
+				
+				$lc = array("props" => array());
+				$lc["props"]["is.lotd"] = (string)$row["is.lotd"];
+				$level["lc"]            = $lc;
+				
 				$levelList[] = $level;
 			}
 			$fres = array(
-				"results" 	=> $levelList,
-				"count" 	=> $count
+				"total" 	=> $count,
+				"results" 	=> $levelList
 			);
 			$this->addBody("fres", $fres);
 		}

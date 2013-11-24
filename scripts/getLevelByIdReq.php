@@ -36,21 +36,30 @@ class getLevelByIdReq extends RequestResponse {
 			"levelId" 	=> $json["body"]["levelId"]
 		));
 		
-		if ($db->getRowCount($statement) <= 0) {
+		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
-			$level = array();
 			$rows = $statement->fetch();
-			foreach ($fields as $field) {
-				$level[$field] = $this->convertJSONTypes($rows[$field]);
-			}
-		
-			//convert integers that ought to be a string
-			$this->convertToString($level['gcid']);
-			$this->convertToString($level['name']);
-			$this->convertToString($level['author']);
-			$this->convertToString($level['description']);
-		
+			$level = array();
+			
+			$level["id"]          = (integer)$rows["id"];
+			$level["name"]        = (string)$rows["name"];
+			$level["description"] = (string)$rows["description"];
+			$level["author"]      = (string)$rows["author"];
+			$level["ownerId"]     = (integer)$rows["ownerId"];
+			$level["downloads"]   = (integer)$rows["downloads"];
+			$level["dataId"]      = (integer)$rows["dataId"];
+			$level["screenshotId"]= (integer)$rows["screenshotId"];
+			$level["draft"]       = (bool)$rows["draft"];
+			$level["version"]     = (integer)$rows["version"];
+			$level["nextLevelId"] = (integer)$rows["nextLevelId"];
+			$level["editable"]    = (bool)$rows["editable"];
+			
+			$props = array();
+			$props["gcid"]     = (string)$rows["gcid"];
+			$props["editMode"] = (string)$rows["editMode"];
+			$level["props"] = $props;
+			
 			$this->addBody("level", $level);
 		}
 	}
