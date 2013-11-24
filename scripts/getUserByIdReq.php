@@ -17,7 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getProfilesReq extends RequestResponse {
+class getUserByIdReq extends RequestResponse {
 	public function work($json) {
 		//Check input
 		if (!isset($json['body']['uid'])) return;
@@ -29,36 +29,29 @@ class getProfilesReq extends RequestResponse {
 		));
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error("NOT_FOUND");
+			$this->error("USER_NOT_FOUND");
 		} else {
-			$profileList = array();
-			for ($count = 0; $row = $statement->fetch(); $count++) {
-				$profile = array();
-				$profile["id"]      = (integer)$row['userId'];
-				$profile["created"] = (integer)$row['created'];
-				
-				$props = array();
-				$props["avaid"]                 = (string)$row["avaid"];
-				$props["signature"]             = (string)$row["signature"];
-				$props["sessionToken"]          = (string)$row["sessionToken"];
-				$props["isLOTDMaster"]          = (string)(bool)$row["isLOTDMaster"];
-				$props["isXPMaster"]            = (string)(bool)$row["isXPMaster"];
-				$props["sapo"]                  = (string)$row["sapo"];
-				$props["vehicleInstanceSetId"]  = (string)$row["vehicleInstanceSetId"];
-				$props["activableItemShorcuts"] = (string)$row["activableItemShorcuts"];
-				$props["saInstalled"]           = (string)$row["saInstalled"];
-				$profile["props"] = $props;
-				
-				$profileList[] = $profile;
-			}
-			$fres = array(
-				"total" 	=> $count,
-				"results" 	=> $profileList
-			);
-			$this->addBody("fres", $fres);
+			$row = $statement->fetch();
+			
+			//Setup user:{ array
+			$user = array();
+			$user['username']  = (string)$row['username'];
+			$user['created']   = (integer)$row['created'];
+			$user['flags']     = (integer)$row['flags'];
+			$user['locale']    = (string)$row['locale'];
+			
+			//Setup user:{prop:{ array
+			$props = array();
+			$props['development'] = (string)$row['development'];
+			$props['external']    = (string)$row['external'];
+			$user['props'] = $props;
+			
+			$this->addBody("verified", (string)"true"); //Modified by DLL
+			$this->addBody("xpp", (integer)$row['xpp']);
+			$this->addBody('isClubMember', (bool)$row['isClubMember']);
+			$this->addBody('paidBy', (string)$row['paidBy']);
+			$this->addBody("user", $user);
 		}
-		
-		$db = null;
 	}
 }
 ?>

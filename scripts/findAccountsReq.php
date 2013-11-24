@@ -17,47 +17,41 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getProfilesReq extends RequestResponse {
+//INCOMPLETE
+//'oid' somehow links different accounts together
+class findAccountsReq extends RequestResponse {
 	public function work($json) {
 		//Check input
-		if (!isset($json['body']['uid'])) return;
+		if (!isset($json['body']['oid'])) return;
+		
+		$fields = array(
+			'userId', 'username', 'cid', 'amt'
+		);
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM `@table` WHERE `userId`='@userId'", array(
+		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
+			"fields"    => $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_user"],
-			"userId" 	=> $json['body']['uid']
+			"userId" 	=> $json['body']['oid']
 		));
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
-			$profileList = array();
+			$accountList = array();
 			for ($count = 0; $row = $statement->fetch(); $count++) {
-				$profile = array();
-				$profile["id"]      = (integer)$row['userId'];
-				$profile["created"] = (integer)$row['created'];
+				$account = array();
+				$account['id']   = (integer)$row['userId'];
+				$account['name'] = (string)$row['username'];
 				
-				$props = array();
-				$props["avaid"]                 = (string)$row["avaid"];
-				$props["signature"]             = (string)$row["signature"];
-				$props["sessionToken"]          = (string)$row["sessionToken"];
-				$props["isLOTDMaster"]          = (string)(bool)$row["isLOTDMaster"];
-				$props["isXPMaster"]            = (string)(bool)$row["isXPMaster"];
-				$props["sapo"]                  = (string)$row["sapo"];
-				$props["vehicleInstanceSetId"]  = (string)$row["vehicleInstanceSetId"];
-				$props["activableItemShorcuts"] = (string)$row["activableItemShorcuts"];
-				$props["saInstalled"]           = (string)$row["saInstalled"];
-				$profile["props"] = $props;
-				
-				$profileList[] = $profile;
-			}
-			$fres = array(
-				"total" 	=> $count,
-				"results" 	=> $profileList
-			);
-			$this->addBody("fres", $fres);
+				$balance = array();
+				$balance['cid'] = (integer)$row['cid'];
+				$balance['amt'] = (integer)$row['amt'];
+				$account['balance'] = $balance;
+				$accountList[] = $account;
+			}	
+			$this->addBody("fres", array("results" => $accountList));
 		}
-		
 		$db = null;
 	}
 }

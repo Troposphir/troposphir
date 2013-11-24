@@ -17,47 +17,38 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getProfilesReq extends RequestResponse {
+class getQuickStatsReq extends RequestResponse {
 	public function work($json) {
 		//Check input
-		if (!isset($json['body']['uid'])) return;
+		if (!isset($json['body']['userId'])) return;
+		
+		$fields = array(
+			'wins', 'losses', 'abandons', 'memberSince', 'clubMemberSince', 
+			'levelDesigned', 'levelComments', 'designModeTime'
+		);
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM `@table` WHERE `userId`='@userId'", array(
+		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
+			"fields"    => $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_user"],
-			"userId" 	=> $json['body']['uid']
+			"userId" 	=> $json['body']['userId']
 		));
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
-			$profileList = array();
-			for ($count = 0; $row = $statement->fetch(); $count++) {
-				$profile = array();
-				$profile["id"]      = (integer)$row['userId'];
-				$profile["created"] = (integer)$row['created'];
-				
-				$props = array();
-				$props["avaid"]                 = (string)$row["avaid"];
-				$props["signature"]             = (string)$row["signature"];
-				$props["sessionToken"]          = (string)$row["sessionToken"];
-				$props["isLOTDMaster"]          = (string)(bool)$row["isLOTDMaster"];
-				$props["isXPMaster"]            = (string)(bool)$row["isXPMaster"];
-				$props["sapo"]                  = (string)$row["sapo"];
-				$props["vehicleInstanceSetId"]  = (string)$row["vehicleInstanceSetId"];
-				$props["activableItemShorcuts"] = (string)$row["activableItemShorcuts"];
-				$props["saInstalled"]           = (string)$row["saInstalled"];
-				$profile["props"] = $props;
-				
-				$profileList[] = $profile;
-			}
-			$fres = array(
-				"total" 	=> $count,
-				"results" 	=> $profileList
-			);
-			$this->addBody("fres", $fres);
+			$row = $statement->fetch();
+	
+			$this->addBody("wins", (string)$row['wins']);	
+			$this->addBody("losses", (string)$row['losses']);	
+			$this->addBody("abandons", (string)$row['abandons']);	
+			$this->addBody("memberSince", (string)$row['memberSince']);	
+			$this->addBody("clubMemberSince", (string)$row['clubMemberSince']);	
+			$this->addBody("levelDesigned", (string)$row['levelDesigned']);	
+			$this->addBody("forumPost", "0");	
+			$this->addBody("levelComments", (string)$row['levelComments']);	
+			$this->addBody("designModeTime", (string)$row['designModeTime']);	
 		}
-		
 		$db = null;
 	}
 }

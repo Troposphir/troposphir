@@ -33,7 +33,7 @@ class getLevelsByAuthorReq extends RequestResponse {
  			"nextLevelId", "editable", "gcid"
 		);
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$results = $db->query("SELECT @fields FROM @table WHERE `ownerId` = '@ownerId' LIMIT @start,9999999999", array(
+		$statement = $db->query("SELECT @fields FROM @table WHERE `ownerId` = '@ownerId' LIMIT @start,9999999999", array(
 			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_map"],
 			"ownerId" 	=> $json["body"]["authorId"],

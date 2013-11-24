@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -17,23 +17,33 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getRedCarpetReq extends RequestResponse {
+///armor = 20
+//none = 0
+//perk = 10
+//INCOMPLETE	
+class findItemSetsReq extends RequestResponse {
 	public function work($json) {
-		//Check input
-		if (!isset($json['body']['userId'])) return;
+		$fres = array();
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT finished FROM `@table` WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['userId']
-		));
+		$itemSet = array();
+		$itemSet["items"]     = array(10);
+		$itemSet["id"]        = 142;
+		$itemSet["name"]      = "Guest Item Set";
+		$itemSet["created"]   = 12412412;
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error('NOT_FOUND');
-		} else {
-			$row = $statement->fetch();
-			$this->addBody('finished', $row['finished']);
-		}
+		$props = array();
+		$props['shown']   = 'true';
+		$props['is.free'] = 'true';
+		$props['is.pro']  = 'false';
+		$props['is.gift'] = 'false';
+		$props['is.featured'] = 'false';
+		$props['label']   = 'Label';
+		$props['description'] = 'Default Items For Guests';
+		$props['genders'] = '0,1';
+		$props['setCategory'] = '20';
+		$itemSet['props'] = $props;
+	
+		$this->addBody("fres", array("results" => array($itemSet)));
 	}
 }
 ?>

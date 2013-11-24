@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
@@ -17,23 +17,9 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getRedCarpetReq extends RequestResponse {
+class getUserIpAddressReq extends RequestResponse {
 	public function work($json) {
-		//Check input
-		if (!isset($json['body']['userId'])) return;
-		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT finished FROM `@table` WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['userId']
-		));
-		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error('NOT_FOUND');
-		} else {
-			$row = $statement->fetch();
-			$this->addBody('finished', $row['finished']);
-		}
+		$this->addBody("ipAddress", $_SERVER['REMOTE_ADDR']);
 	}
 }
 ?>
