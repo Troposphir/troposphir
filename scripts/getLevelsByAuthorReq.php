@@ -39,7 +39,8 @@ class getLevelsByAuthorReq extends RequestResponse {
 			"owner" 	=> $json["body"]["authorId"],
 			"start" 	=> $json["body"]["freq"]["start"]
 		));
-		if ($results === false) {
+		
+		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
