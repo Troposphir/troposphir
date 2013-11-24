@@ -31,6 +31,9 @@ class a_llsReq extends RequestResponse {
 			$endpos = strpos($query, ']', $begpos) + 1; 
 			$query = substr($query, 0, $begpos) . substr($query, $endpos, strlen($query));
 		}  
+		
+		//Todo: Change dll instead from Lucene to SQL format.
+		//This doesn't work in all cases.
 		$query = str_replace(':', '=', $query);
 		$query = str_replace('xis.lotd', "'xis.lotd'", $query);
 		$query = str_replace('is.lotd', "`is.lotd`", $query);

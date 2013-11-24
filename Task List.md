@@ -1,7 +1,7 @@
 1. Port over the following functions
 ----------------------------------------
-- [ ] getLevelsByAuthorReq  
-- [ ] a_llsReq  
+- [x] getLevelsByAuthorReq  
+- [x] a_llsReq  
 - [x] a_getLcReq  
 - [x] loginReq  
 - [ ] findItemisReq  
