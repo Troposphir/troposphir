@@ -36,10 +36,10 @@ class getLevelByIdReq extends RequestResponse {
 			"levelId" 	=> $json["body"]["levelId"]
 		));
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
+		$rows = $statement->fetch();
+		if ($rows == false || count($rows) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
-			$rows = $statement->fetch();
 			$level = array();
 			
 			$level["id"]          = (integer)$rows["id"];

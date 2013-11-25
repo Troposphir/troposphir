@@ -25,9 +25,9 @@ class getGameContextReq extends RequestResponse {
 		$this->addBody('masterServerHost', $this->config['site']);
 		$this->addBody('masterServerPort', 80);
 		$this->addBody('natFacilitatorPort', 0);
-		$this->addBody('redCarpetTutorialLevelId', 21689);
-		$this->addBody('charCustLevelId', 21689);
-		$this->addBody('levelBrowserLevelId', 21689);
+		$this->addBody('redCarpetTutorialLevelId', 1);
+		$this->addBody('charCustLevelId', 1);
+		$this->addBody('levelBrowserLevelId', 1);
 		$this->addBody('tutorialUserId', 0);
 		$this->addBody('unityBundleUrl', "");
 		$this->addBody('staticImagesUrl', $this->config['site'] . $this->config['dir_imgs']);
