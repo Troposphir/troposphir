@@ -82,6 +82,11 @@ class RequestResponse {
 			"_t" => "mfmessage",
 			"body" => $this->body_
 		));	//The current server doesn't support JSON_NUMERIC_CHECK.
+
+		//Todo: Find a more elegant way to turn "body":[] into "body":{}
+		if (empty($this->body_)) {
+			$content = str_replace('[]', '{}', $content) ;
+		}	
 		echo $content;
 		$this->log("Sent data: " . $content);
 	}

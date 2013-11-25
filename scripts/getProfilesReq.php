@@ -41,6 +41,7 @@ class getProfilesReq extends RequestResponse {
 				$props["avaid"]                 = (string)$row["avaid"];
 				$props["signature"]             = (string)$row["signature"];
 				$props["sessionToken"]          = (string)$row["sessionToken"];
+				$props['isDev']                 = (string)$row['isDev'];
 				$props["isLOTDMaster"]          = (string)$row["isLOTDMaster"];
 				$props["isXPMaster"]            = (string)$row["isXPMaster"];
 				$props["sapo"]                  = (string)$row["sapo"];

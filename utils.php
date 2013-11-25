@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*==============================================================================
 	Troposphir - Part of the Troposphir Project
 	Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
@@ -17,27 +17,11 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-//error_reporting(0);
-require('configs.php');
-require('utils.php');
-require("./scripts/CRequest.php");
-require("./scripts/CDatabase.php");
-header('X-Powered-By: Troposphir Beta');
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
-header('Content-type: application/json');
-if(isset($_REQUEST["json"])) {
-	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
-	if (!isset($json['header']) ||
-		!isset($json['body']) ||
-		!isset($json['body']['_t'])) return;
+function startsWith($haystack, $needle) {
+    return strpos($haystack, $needle) === 0;
+}
 
-	$reqtype = str_replace(chr(0), '', basename($json["body"]["_t"]));
-	if (substr($reqtype, 0, 1) == "C") return; //do not acess Class files
-	if (!file_exists("./scripts/$reqtype.php")) return;
-	require("./scripts/$reqtype.php");
-	$request = new $reqtype($config);
-	$request->work($json);
-	$request->send();
+function endsWith($haystack, $needle) {
+    return strpos($haystack, $needle) + strlen($needle) === strlen($haystack);
 }
 ?>
