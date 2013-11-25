@@ -26,9 +26,14 @@ class createAssetReq extends RequestResponse {
 		if (!isset($json["body"]["asset"]["_t"])) return;
 		if (!is_numeric($json["body"]["asset"]["ownerId"])) return;
 	
+		//Sanitize filename.
+		//Todo: Set a limit for length of filename
+		$filename = basename($json['body']['asset']['filename']);
+		$filename = preg_replace("/[^a-zA-Z0-9\_\.]/", "", $filename);
+		
 		if ($json["body"]["asset"]["_t"] == "imageAsset") {
-			$filename = basename($json['body']['asset']['filename']);
-			if (!endsWith($filename, '.png')) return;
+			//Validate filename
+			if (!preg_match("/^[a-zA-z]+\_\d+\.png$/", $filename)) return;
 			
 			$dir = '';
 			if (startsWith($filename, 'MapImage_')) $dir = 'maps';
@@ -46,15 +51,15 @@ class createAssetReq extends RequestResponse {
 			$this->addBody("asset", array("id" => (integer)$id));
 	
 		} else if ($json["body"]["asset"]["_t"] == "asset") {
-			$filename = basename($json['body']['asset']['filename']);
-			//Todo: Create a template atmo file in its stead if some other file detected.
-			if (!endsWith($filename, '.atmo')) return;
-
+			//Validate filename
+			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $string)) return;
+			
 			$my_file = $this->config['dir_maps'] . "/$filename";
 			$handle = fopen($my_file, 'w') or die("");
 			fwrite($handle, pack("H*", $json['body']['data']));
 			fclose($handle);
 			
+			//Todo: Figure out a way to remove this ugly hack.
 			$id = str_replace('.atmo', '', $id); 
 			$this->addBody("asset", array("id" => (integer)$id));
 		}
