@@ -40,11 +40,16 @@ class getLevelsByAuthorReq extends RequestResponse {
 			"start" 	=> $json["body"]["freq"]["start"]
 		));
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error("NOT_FOUND");
+		$all = $statement->fetchAll();
+		if ($all == false || count($all) <= 0) {
+			$fres = array(
+				"total"     => 0,
+				"results" 	=> array()
+			);
+			$this->addBody("fres", $fres);
 		} else {
 			$levelList = array();
-			for ($count = 0; $row = $results->fetch(); $count++) {
+			for ($count = 0; $row = $all[$count]; $count++) {
 				$level = array();
 				
 				$level["id"]          = (integer)$row["id"];
@@ -57,9 +62,9 @@ class getLevelsByAuthorReq extends RequestResponse {
 				$level["difficulty"]  = (string)$row["difficulty"];
 				$level["dataId"]      = (integer)$row["dataId"];
 				$level["screenshotId"]= (integer)$row["screenshotId"];
-				$level["draft"]       = ($rows["draft"]) ? true : false;
+				$level["draft"]       = (strtolower($rows["draft"]) == 'true')? true : false;
 				$level["version"]     = (integer)$row["version"];
-				$level["editable"]    = ($rows["editable"]) ? true : false;
+				$level["editable"]    = (strtolower($rows["editable"]) == 'true') ? true : false;
 			
 				$props = array();
 				$props["gcid"]     = (string)$row["gcid"];
@@ -73,7 +78,7 @@ class getLevelsByAuthorReq extends RequestResponse {
 			}
 			$fres = array(
 				"results" 	=> $levelList,
-				"count" 	=> $count
+				"total" 	=> $count
 			);
 			$this->addBody("fres", $fres);
 		}

@@ -24,7 +24,7 @@ class updateProfReq extends RequestResponse {
 		if (!isset($json['body']['props']['sessionToken'])) return;
 		
 		$fields = array('saInstalled', 'sessionToken', 'sapo', 'avaid', 
-			'activableItemShorcuts', 'vehicleInstanceSetId', 'signature'
+			'activableItemShorcuts', 'vehicleInstanceSetId', 'signature', 'userId'
 		);
 	
 		$query = '';

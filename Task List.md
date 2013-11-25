@@ -1,28 +1,4 @@
-1. Port over the following functions
-----------------------------------------
-- [x] getLevelsByAuthorReq  
-- [x] a_llsReq  
-- [x] a_getLcReq  
-- [x] loginReq  
-- [x] findItemisReq  
-- [x] findItemsReq  
-- [x] findItemSetsReq  
-- [x] findItemInstanceSetsReq  
-- [x] getProfilesReq  
-- [x] updateProfReq  
-- [x] registerUserReq  
-- [x] findAccountsReq  
-- [x] getUserIpAddressReq  
-- [x] getUserByIdReq  
-- [ ] addLevelReq  
-- [x] getRedCarpetReq  
-- [x] createAssetReq (Incomplete)  
-- [x] updateItemiSetReq (Incomplete)  
-- [x] getQuickStatsReq  
-- [x] a_getUserBadgesReq   
-- [x] getFriendsByIdReq 
-
-2. Complete the following functions
+1. Complete the following functions
 ---------------------------------------
 - [] findItemisReq
 - [] findItemsReq
@@ -30,3 +6,5 @@
 - [] updateItemiSetReq
 - [] getFriendsByIdReq
 - [] findItemInstanceSetsReq
+- [] updatePresenceReq
+- [] updateLevelReq

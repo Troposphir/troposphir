@@ -17,14 +17,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getFriendsByIdReq extends RequestResponse {
+class updatePresenceReq extends RequestResponse {
 	public function work($json) {
-		$this->addBody("total", 1);
-		$fres = array(
-			"total" => 1,
-			"results" => array(array("atype" => "FRIEND", "tuid" => 1))
-		);
-		$this->addBody("fres", $fres);
+		//Check input
+		if (!isset($json['body']['presenceKey']['uid'])) return;
+		
 	}
 }
 ?>

@@ -47,6 +47,8 @@ class a_getLcReq extends RequestResponse {
 			foreach ($fields as $field) {
 				$props[$field] = (string)$row[$field];
 			}
+			$props["is.lotd"] = $props['isLOTD']; unset($props['isLOTD']);
+			$props["xp.reward"] = $props['xpReward']; unset($props['xpReward']);
 			
 			$this->addBody("lc", array("props" => $props));
 		}

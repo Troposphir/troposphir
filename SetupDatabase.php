@@ -10,8 +10,8 @@ $db = new Database($config['driver'], $config['host'], $config['dbname'], $confi
 //that can only be done column by column, so instead we will:	
 //(1) create a new temporary table (name will have an appended "_temp") with appropriate column definitions
 $db->query("CREATE TABLE " . $config['table_user'] . "_temp ( 
-	userId INT PRIMARY KEY(userId),
-	username VARCHAR(255) NOT NULL, UNIQUE(username),
+	userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
 	token INT NOT NULL DEFAULT 0,
 	created INT NOT NULL DEFAULT 0,
@@ -96,13 +96,13 @@ $db->query("RENAME TABLE `" . $config['table_user'] . "_temp` TO `" . $config['t
 //that can only be done column by column, so instead we will:	
 //(1) create a new temporary table (name will have an appended "_temp") with appropriate column definitions
 $statement = $db->query("CREATE TABLE " . $config['table_map'] . "_temp ( 
-	id INT NOT NULL, PRIMARY KEY(id),
-	name VARCHAR(255) NOT NULL, UNIQUE(name),
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL UNIQUE,
 	description VARCHAR(255) NOT NULL DEFAULT '',
 	author VARCHAR(255) NOT NULL,
 	dc INT NOT NULL DEFAULT 0,
 	rating INT NOT NULL DEFAULT 0,
-	difficulty INT NOT NULL DEFAULT 0,
+	difficulty FLOAT NOT NULL DEFAULT 0,
 	ownerId INT NOT NULL DEFAULT 0,
 	downloads INT NOT NULL DEFAULT 0,
 	dataId INT NOT NULL DEFAULT 0,

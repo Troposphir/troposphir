@@ -50,10 +50,10 @@ class getLevelByIdReq extends RequestResponse {
 			$level["downloads"]   = (integer)$rows["downloads"];
 			$level["dataId"]      = (integer)$rows["dataId"];
 			$level["screenshotId"]= (integer)$rows["screenshotId"];
-			$level["draft"]       = ($rows["draft"]) ? true : false;
+			$level["draft"]       = (strtolower($rows["draft"]) == 'true') ? true : false;
 			$level["version"]     = (integer)$rows["version"];
 			$level["nextLevelId"] = (integer)$rows["nextLevelId"];
-			$level["editable"]    = ($rows["editable"]) ? true : false;
+			$level["editable"]    = (strtolower($rows["editable"]) == 'true') ? true : false;
 			
 			$props = array();
 			$props["gcid"]     = (string)$rows["gcid"];

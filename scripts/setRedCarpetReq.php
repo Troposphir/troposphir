@@ -17,41 +17,16 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
-class getUserByIdReq extends RequestResponse {
+class setRedCarpetReq extends RequestResponse {
 	public function work($json) {
 		//Check input
-		if (!isset($json['body']['uid'])) return;
+		if (!isset($json['body']['userId'])) return;
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM `@table` WHERE `userId`='@userId'", array(
+		$statement = $db->query("UPDATE `@table` SET `finished`='true' WHERE `userId`='@userId'", array(
 			"table" 	=> $this->config["table_user"],
-			"userId" 	=> $json['body']['uid']
+			"userId"    => $json['body']['userId']
 		));
-		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
-			$this->error("USER_NOT_FOUND");
-		} else {
-			$row = $statement->fetch();
-			
-			//Setup user:{ array
-			$user = array();
-			$user['username']  = (string)$row['username'];
-			$user['created']   = (integer)$row['created'];
-			$user['flags']     = (integer)$row['flags'];
-			$user['locale']    = (string)$row['locale'];
-			
-			//Setup user:{prop:{ array
-			$props = array();
-			$props['development'] = (string)$row['development'];
-			$props['external']    = (string)$row['external'];
-			$user['props'] = $props;
-			
-			$this->addBody("verified", (string)"true"); //Modified by DLL
-			$this->addBody("xpp", (integer)$row['xpp']);
-			$this->addBody('isClubMember', (strtolower($rows["isClubMember"]) == 'true') ? true : false);
-			$this->addBody('paidBy', (string)$row['paidBy']);
-			$this->addBody("user", $user);
-		}
 	}
 }
 ?>
