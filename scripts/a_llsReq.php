@@ -24,6 +24,16 @@ class a_llsReq extends RequestResponse {
 		if (!isset($json["body"]["freq"]["start"])) return;
 		if (!is_numeric($json["body"]["freq"]["start"])) return;
 		
+		$fields = array( 
+			"isLOTD", "xpReward", "xgms", "gms", "gmm", "gff", 
+			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco", 
+			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt", 
+			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic", 
+			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc", 
+			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi", 
+			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc"
+		);
+		
 		//Adjust user's query syntax to conform to appropriate database syntax.
 		$query = $json["body"]["query"];
 		$begpos = strpos($query, "AND ct:[");
@@ -52,24 +62,30 @@ class a_llsReq extends RequestResponse {
 			$levelList = array();
 			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$level = array();
-				$level["id"]          = (string)$row["id"];
-				$level["name"]        = (string)$row["name"];
-				$level["description"] = (string)$row["description"];
-				$level["ownerId"]     = (string)$row["ownerId"];
-				$level["dc"]          = (string)$row["dc"]; 
-				$level["version"]     = (string)$row["version"];
-				$level["author"]      = (string)$row["author"];
-				$level["draft"]       = (string)$row["draft"];
-				$level["editable"]    = (string)$row["editable"];
-
+				$level["id"]           = (string)$row["id"];
+				$level["name"]         = (string)$row["name"];
+				$level["description"]  = (string)$row["description"];
+				$level["ownerId"]      = (string)$row["ownerId"];
+				$level["dc"]           = (string)$row["dc"]; 
+				$level["version"]      = (string)$row["version"];
+				$level["draft"]        = (string)$row["draft"];
+				$level["author"]       = (string)$row["author"];
+				$level["editable"]     = (string)$row["editable"];
+				$level['screenshotId'] = (string)$row['screenshotId'];
+				$level['rating']       = (string)$row['rating'];
+				$level['difficulty']   = (string)$row['difficulty'];
+				
+				foreach ($fields as $field) {
+					$level[$field] = $row[$field];
+				}
+				$level["is.lotd"] = $level['isLOTD']; unset($level['isLOTD']);
+				$level["xp.reward"] = $level['xpReward']; unset($level['xpReward']);
+	
+				
 				$props = array();
 				$props["gcid"]     = (string)$row["gcid"];
 				$props["editMode"] = (string)$row["editMode"];
 				$level["props"]    = $props;
-				
-				$lc = array("props" => array());
-				$lc["props"]["is.lotd"] = (string)$row["is.lotd"];
-				$level["lc"]            = $lc;
 				
 				$levelList[] = $level;
 			}
