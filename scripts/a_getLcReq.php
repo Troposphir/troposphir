@@ -16,7 +16,7 @@
   You should have received a copy of the GNU Affero General Public License 
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
-
+if (!defined("INCLUDE_SCRIPT")) return;
 class a_getLcReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json["body"]["lid"]) &&

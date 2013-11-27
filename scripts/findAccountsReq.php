@@ -19,6 +19,7 @@
 
 //INCOMPLETE
 //'oid' somehow links different accounts together
+if (!defined("INCLUDE_SCRIPT")) return;
 class findAccountsReq extends RequestResponse {
 	public function work($json) {
 		//Check input

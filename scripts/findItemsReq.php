@@ -23,7 +23,7 @@
 //blockFactorsPoints has to be in range of 1-6 GetConvertedBlockFactor()
 //impulsePoints for Weapons (itypeId=5) is 0-5
 //impulseBlockFactor for Weapons is 1-6	
-
+if (!defined("INCLUDE_SCRIPT")) return;
 class findItemsReq extends RequestResponse {
 	public function work($json) {
 		$itemList = array();

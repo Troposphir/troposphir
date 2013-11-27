@@ -18,6 +18,7 @@
 ==============================================================================*/
 
 //Todo: Implement token generation method from client.
+if (!defined("INCLUDE_SCRIPT")) return;
 class registerUserReq extends RequestResponse {
 	public function work($json) {
 		//Check input

@@ -70,6 +70,7 @@ charCategoryMapping[0x21L] = CharCategory.extra = 200;
 //id:2 = ci_gender_female
 
 //INCOMPLETE
+if (!defined("INCLUDE_SCRIPT")) return;
 class findItemisReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json["body"]["ownerId"])) return;

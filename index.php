@@ -26,6 +26,7 @@ header('X-Powered-By: Troposphir Beta');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 header('Content-type: application/json');
+
 if(isset($_REQUEST["json"])) {
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
 	if (!isset($json['header']) ||
@@ -35,6 +36,8 @@ if(isset($_REQUEST["json"])) {
 	$reqtype = str_replace(chr(0), '', basename($json["body"]["_t"]));
 	if (substr($reqtype, 0, 1) == "C") return; //do not acess Class files
 	if (!file_exists("./scripts/$reqtype.php")) return;
+	
+	define("INCLUDE_SCRIPT", TRUE);
 	require("./scripts/$reqtype.php");
 	$request = new $reqtype($config);
 	$request->work($json);
