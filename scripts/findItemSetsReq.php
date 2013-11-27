@@ -21,6 +21,7 @@
 //none = 0
 //perk = 10
 //INCOMPLETE	
+if (!defined("INCLUDE_SCRIPT")) return;
 class findItemSetsReq extends RequestResponse {
 	public function work($json) {
 		$fres = array();

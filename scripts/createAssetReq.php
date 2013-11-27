@@ -18,6 +18,7 @@
 ==============================================================================*/
 
 //Todo: Added security measures.
+if (!defined("INCLUDE_SCRIPT")) return;
 class createAssetReq extends RequestResponse {
 	public function work($json) {
 		//Check input

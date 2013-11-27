@@ -18,6 +18,7 @@
 ==============================================================================*/
 //GET PLAYER'S CURRENTLY EQUIPPED ITEMS
 //INCOMPLETE
+if (!defined("INCLUDE_SCRIPT")) return;
 class findItemInstanceSetsReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json['body']['oid'])) return;
