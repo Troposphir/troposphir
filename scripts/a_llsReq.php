@@ -68,9 +68,9 @@ class a_llsReq extends RequestResponse {
 				$level["ownerId"]      = (string)$row["ownerId"];
 				$level["dc"]           = (string)$row["dc"]; 
 				$level["version"]      = (string)$row["version"];
-				$level["draft"]        = (string)$row["draft"];
+				$level["draft"]        = ((bool)$row['draft']) ? 'true' : 'false';
 				$level["author"]       = (string)$row["author"];
-				$level["editable"]     = (string)$row["editable"];
+				$level["editable"]     = ((bool)$row['editable']) ? 'true' : 'false';
 				$level['screenshotId'] = (string)$row['screenshotId'];
 				$level['rating']       = (string)$row['rating'];
 				$level['difficulty']   = (string)$row['difficulty'];
@@ -78,7 +78,8 @@ class a_llsReq extends RequestResponse {
 				foreach ($fields as $field) {
 					$level[$field] = $row[$field];
 				}
-				$level["is.lotd"] = $level['isLOTD']; unset($level['isLOTD']);
+				$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';
+				$level["is.lotd"]   = $level['isLOTD']; unset($level['isLOTD']);
 				$level["xp.reward"] = $level['xpReward']; unset($level['xpReward']);
 	
 				

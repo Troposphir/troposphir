@@ -41,10 +41,10 @@ class getFirstUserExperienceReq extends RequestResponse {
 				$level["name"]          = (string)$row["name"];
 				$level["description"]   = (string)$row["description"];
 				$level["ownerId"]       = (integer)$row["ownerId"];
-				$level["draft"]         = (strtolower($rows["draft"]) == 'true') ? true : false;
+				$level["draft"]         = ((bool)$row['draft']) ? true : false;
 				$level["downloads"]     = (integer)$row["downloads"];
 				$level["version"]       = (integer)$row["version"];
-				$level["editable"]      = (strtolower($rows["editable"]) == 'true') ? true : false;
+				$level["editable"]      = ((bool)$row['editable']) ? true : false;
 				$level["dataId"]        = (integer)$row["dataId"];
 				$level["screenshotId"]  = (integer)$row["screenshotId"];
 				

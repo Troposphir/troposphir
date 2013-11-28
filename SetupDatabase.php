@@ -17,23 +17,23 @@ $db->query("CREATE TABLE " . $config['table_user'] . "_temp (
 	created INT NOT NULL DEFAULT 0,
 	avaid INT NOT NULL DEFAULT 0,
 	sessionToken INT NOT NULL DEFAULT 0,
-	isDev VARCHAR(5) NOT NULL DEFAULT 'false',
-	isLOTDMaster VARCHAR(5) NOT NULL DEFAULT 'false',
-	isXPMaster VARCHAR(5) NOT NULL DEFAULT 'false',
-	development VARCHAR(5) NOT NULL DEFAULT 'false',
-	external VARCHAR(5) NOT NULL DEFAULT 'false',
+	isDev BOOL NOT NULL DEFAULT 0,
+	isLOTDMaster BOOL NOT NULL DEFAULT 0,
+	isXPMaster BOOL NOT NULL DEFAULT 0,
+	development BOOL NOT NULL DEFAULT 0,
+	external BOOL NOT NULL DEFAULT 0,
 	flags INT NOT NULL DEFAULT 0,
 	locale VARCHAR(255) NOT NULL DEFAULT '',
-	verified VARCHAR(5) NOT NULL DEFAULT 'false',
+	verified BOOL NOT NULL DEFAULT 0,
 	xpp INT NOT NULL DEFAULT 0,
-	isClubMember VARCHAR(5) NOT NULL DEFAULT 'false',
+	isClubMember BOOL NOT NULL DEFAULT 0,
 	paidBy VARCHAR(255) NOT NULL DEFAULT '',
 	sapo VARCHAR(255) NOT NULL DEFAULT '',
 	vehicleInstanceSetId INT NOT NULL DEFAULT 0,
 	activableItemShorcuts VARCHAR(255) NOT NULL DEFAULT '0;0;0;0;0;0;0;0;',
-	saInstalled VARCHAR(5) NOT NULL DEFAULT 'true',
+	saInstalled BOOL NOT NULL DEFAULT 0,
 	signature VARCHAR(255) NOT NULL DEFAULT '',
-	finished VARCHAR(5) NOT NULL DEFAULT 'false',
+	finished BOOL NOT NULL DEFAULT 0,
 	wins INT NOT NULL DEFAULT 0,
 	losses INT NOT NULL DEFAULT 0,
 	abandons INT NOT NULL DEFAULT 0,
@@ -71,17 +71,8 @@ if ($lastError[0] != "00000") {
 	
 //VARCHAR apparently does not treat blank values as null. 
 //So we replace empty strings with our own values.
-$db->query("UPDATE " . $config['table_user'] . "_temp SET isDev = 'false'	WHERE LOWER(isDev) <> 'false' AND LOWER(isDev) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET isLOTDMaster = 'false' WHERE LOWER(isLOTDMaster) <> 'false' AND LOWER(isLOTDMaster) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET isXPMaster = 'false'	WHERE LOWER(isXPMaster) <> 'false' AND LOWER(isXPMaster) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET development = 'false' WHERE LOWER(development) <> 'false' AND LOWER(development) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET external = 'false'	WHERE LOWER(external) <> 'false' AND LOWER(external) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET saInstalled = 'false'	WHERE LOWER(saInstalled) <> 'false' AND LOWER(saInstalled) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET verified = 'false'	WHERE LOWER(verified) <> 'false' AND LOWER(verified) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET isClubMember = 'false'	WHERE LOWER(isClubMember) <> 'false' AND LOWER(isClubMember) <> 'true'", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET activableItemShorcuts = '0;0;0;0;0;0;0;0;0;0;'	WHERE activableItemShorcuts = ''", null);
-$db->query("UPDATE " . $config['table_user'] . "_temp SET finished = 'false'	WHERE LOWER(finished) <> 'false' AND LOWER(finished) <> 'true'", null);	
-	
+//$db->query("UPDATE " . $config['table_user'] . "_temp SET activableItemShorcuts = '0;0;0;0;0;0;0;0;0;0;'	WHERE activableItemShorcuts = ''", null);
+
 //(3) drop the original
 $db->query("DROP TABLE " . $config['table_user'], null);
 	
@@ -108,14 +99,14 @@ $statement = $db->query("CREATE TABLE " . $config['table_map'] . "_temp (
 	dataId INT NOT NULL DEFAULT 0,
 	screenshotId INT NOT NULL DEFAULT 0,
 	version INT NOT NULL DEFAULT 0,
-	draft VARCHAR(5) NOT NULL DEFAULT '',
+	draft BOOL NOT NULL DEFAULT 0,
 	nextLevelId INT NOT NULL DEFAULT 0,
-	editable VARCHAR(5) NOT NULL DEFAULT 'false',
-	deleted VARCHAR(5) NOT NULL DEFAULT '',
+	editable BOOL NOT NULL DEFAULT 0,
+	deleted BOOL NOT NULL DEFAULT 0,
 	gcid INT NOT NULL DEFAULT 0,
 	editMode INT NOT NULL DEFAULT 0,
 	xisLOTD INT NOT NULL DEFAULT 0,
-	isLOTD VARCHAR(5) NOT NULL DEFAULT '',
+	isLOTD BOOL NOT NULL DEFAULT 0,
 	xpReward INT NOT NULL DEFAULT 0,
 	xgms INT NOT NULL DEFAULT 0,
 	gms INT NOT NULL DEFAULT 0,
@@ -188,14 +179,6 @@ if ($lastError[0] != "00000") {
 	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
 	return;
 }
-
-	
-//VARCHAR apparently does not treat blank values as null. 
-//So we replace empty strings with our own values.
-$db->query("UPDATE " . $config['table_map'] . "_temp SET draft = 'false'	WHERE LOWER(draft) <> 'false' AND LOWER(draft) <> 'true'", null);
-$db->query("UPDATE " . $config['table_map'] . "_temp SET editable = 'false' WHERE LOWER(editable) <> 'false' AND LOWER(editable) <> 'true'", null);
-$db->query("UPDATE " . $config['table_map'] . "_temp SET deleted = 'false'	WHERE LOWER(deleted) <> 'false' AND LOWER(deleted) <> 'true'", null);
-$db->query("UPDATE " . $config['table_map'] . "_temp SET is.lotd = 'false' WHERE LOWER(is.lotd) <> 'false' AND LOWER(is.lotd) <> 'true'", null);
 
 //(3) drop the original
 $db->query("DROP TABLE " . $config['table_map'], null);

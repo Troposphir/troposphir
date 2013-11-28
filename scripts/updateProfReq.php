@@ -60,12 +60,12 @@ class updateProfReq extends RequestResponse {
 			$props['avaid']                 = (string)$row['avaid'];
 			$props['signature']             = (string)$row['signature'];
 			$props['sessionToken']          = (string)$row['sessionToken'];
-			$props['isLOTDMaster']          = (string)$row['isLOTDMaster'];
-			$props['isXPMaster']            = (string)$row['isXPMaster'];
+			$props['isLOTDMaster']          = ((bool)$row['isLOTDMaster']) ? 'true' : 'false';
+			$props['isXPMaster']            = ((bool)$row['isXPMaster']) ? 'true' : 'false';
 			$props['sapo']                  = (string)$row['sapo'];
 			$props['vehicleInstanceSetId']  = (string)$row['vehicleInstanceSetId'];
 			$props['activableItemShorcuts'] = (string)$row['activableItemShorcuts'];
-			$props['saInstalled']           = (string)$row['saInstalled'];
+			$props['saInstalled']           = ((bool)$row['saInstalled']) ? 'true' : 'false';
 			$profile['props'] = $props;
 		
 			$this->addBody('profile', $profile);

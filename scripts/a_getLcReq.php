@@ -44,6 +44,7 @@ class a_getLcReq extends RequestResponse {
 			$this->error("NOT_FOUND");
 		} else {	
 			$props = array();
+			$row['isLOTD']   = ((bool)$row['isLOTD']) ? 'true' : 'false';
 			foreach ($fields as $field) {
 				$props[$field] = (string)$row[$field];
 			}

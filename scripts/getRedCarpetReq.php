@@ -32,7 +32,7 @@ class getRedCarpetReq extends RequestResponse {
 			$this->error('NOT_FOUND');
 		} else {
 			$row = $statement->fetch();
-			$this->addBody('finished', $row['finished']);
+			$this->addBody('finished', ((bool)$row['finished']) ? 'true' : 'false';);
 		}
 	}
 }
