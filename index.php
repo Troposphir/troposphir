@@ -32,8 +32,7 @@ if(isset($_REQUEST["json"])) {
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;
 
-	//To take into consideration: whitelisting?
-	$reqtype = preg_replace("/[^a-zA-Z]/", "", basename($json['body']['_t']));
+	$reqtype = preg_replace("/[^a-zA-Z\_]/", "", basename($json['body']['_t']));
 	if (!file_exists("./scripts/$reqtype.php")) return;
 
 	define("INCLUDE_SCRIPT",  TRUE);

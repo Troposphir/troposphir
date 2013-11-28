@@ -31,18 +31,18 @@ class a_getLcReq extends RequestResponse {
 			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi", 
 			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc"
 		);
+
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM @table WHERE `id`=@levelId", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_map"],
-			"levelId"   => $json["body"]["lid"]
-		));
+		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) .  
+		" FROM " . $this->config["table_map"] .
+		" WHERE `id`=:lid");
+		$statement->bindValue(':lid', $json['body']['lid'], PDO::PARAM_INT);
+		$statement->execute();		
+		$row = $statement->fetch();
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
+		if ($row == false || count($row) <= 0) {
 			$this->error("NOT_FOUND");
-		} else {
-			$row = $statement->fetch();
-			
+		} else {	
 			$props = array();
 			foreach ($fields as $field) {
 				$props[$field] = (string)$row[$field];
