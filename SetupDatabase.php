@@ -1,7 +1,7 @@
 <?php
 
 require('configs.php');
-require("./scripts/CDatabase.php");
+require("./include/CDatabase.php");
 
 $db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
 
