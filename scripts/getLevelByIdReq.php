@@ -30,34 +30,34 @@ class getLevelByIdReq extends RequestResponse {
 			return;
 		}
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM `@table` WHERE `id`=@levelId", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("","","`")),
-			"table" 	=> $this->config["table_map"],
-			"levelId" 	=> $json["body"]["levelId"]
-		));
+		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) .
+		" FROM " . $this->config["table_map"] .
+		" WHERE `id`=:levelId");
+		$statement->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
+		$statement->execute();
 		
-		$rows = $statement->fetch();
-		if ($rows == false || count($rows) <= 0) {
+		$row = $statement->fetch();
+		if ($row == false || count($row) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$level = array();
 			
-			$level["id"]          = (integer)$rows["id"];
-			$level["name"]        = (string)$rows["name"];
-			$level["description"] = (string)$rows["description"];
-			$level["author"]      = (string)$rows["author"];
-			$level["ownerId"]     = (integer)$rows["ownerId"];
-			$level["downloads"]   = (integer)$rows["downloads"];
-			$level["dataId"]      = (integer)$rows["dataId"];
-			$level["screenshotId"]= (integer)$rows["screenshotId"];
-			$level["draft"]       = (strtolower($rows["draft"]) == 'true') ? true : false;
-			$level["version"]     = (integer)$rows["version"];
-			$level["nextLevelId"] = (integer)$rows["nextLevelId"];
-			$level["editable"]    = (strtolower($rows["editable"]) == 'true') ? true : false;
+			$level["id"]          = (integer)$row["id"];
+			$level["name"]        = (string)$row["name"];
+			$level["description"] = (string)$row["description"];
+			$level["author"]      = (string)$row["author"];
+			$level["ownerId"]     = (integer)$row["ownerId"];
+			$level["downloads"]   = (integer)$row["downloads"];
+			$level["dataId"]      = (integer)$row["dataId"];
+			$level["screenshotId"]= (integer)$row["screenshotId"];
+			$level["draft"]       = (strtolower($row["draft"]) == 'true') ? true : false;
+			$level["version"]     = (integer)$row["version"];
+			$level["nextLevelId"] = (integer)$row["nextLevelId"];
+			$level["editable"]    = (strtolower($row["editable"]) == 'true') ? true : false;
 			
 			$props = array();
-			$props["gcid"]     = (string)$rows["gcid"];
-			$props["editMode"] = (string)$rows["editMode"];
+			$props["gcid"]     = (string)$row["gcid"];
+			$props["editMode"] = (string)$row["editMode"];
 			$level["props"] = $props;
 			
 			$this->addBody("level", $level);
