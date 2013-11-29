@@ -38,8 +38,8 @@ class a_getLcReq extends RequestResponse {
 		" WHERE `id`=:lid");
 		$statement->bindValue(':lid', $json['body']['lid'], PDO::PARAM_INT);
 		$statement->execute();		
-		$row = $statement->fetch();
 		
+		$row = $statement->fetch();
 		if ($row == false || count($row) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {	

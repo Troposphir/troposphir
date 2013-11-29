@@ -29,10 +29,17 @@ class a_getUserBadgesReq extends RequestResponse {
 			"userId"    => $json['body']['uid']
 		));
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) .  
+		" FROM " . $this->config["table_map"] .
+		" WHERE `userId`=:userId");
+		$statement->bindValue(':userId', $json['body']['uid'], PDO::PARAM_INT);
+		$statement->execute();		
+		
+		$row = $statement->fetch();
+		if ($row == false || count($row) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
-			$row = $statement->fetch();
 			$this->addBody("won", (integer)$row['wins']);
 			$this->addBody("lost", (integer)$row['losses']);
 			$this->addBody("abandoned", (integer)$row['abandons']);
