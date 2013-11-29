@@ -34,10 +34,19 @@ class loginReq extends RequestResponse {
 					"username" => $json["body"]["username"],
 					"password" => md5($json["body"]["password"])
 		));
-	
+		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("USER_NOT_FOUND");
 		} else {
+			//Update user ipAddress
+			$db->query("UPDATE @table 
+			SET `ipAddress`='@ipAddress' 
+			WHERE `username`='@username'", array(
+				'table' 	=> $this->config["table_user"],
+				'ipAddress' => $_SERVER['REMOTE_ADDR'],
+				'username'  => $json['body']['username']
+ 			));		
+		
 			$user = $statement->fetch();
 			$this->addBody("token",  (string)$user['token']);
 			$this->addBody("userId", (integer)$user['userId']);

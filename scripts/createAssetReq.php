@@ -30,8 +30,11 @@ class createAssetReq extends RequestResponse {
 		//Sanitize filename.
 		//Todo: Set a limit for length of filename
 		$filename = basename($json['body']['asset']['filename']);
-		$filename = preg_replace("/[^a-zA-Z0-9\_\.]/", "", $filename);
+		$filename = preg_replace("/[^a-zA-Z0-9\_\.]/", "", $filename);	
+		$fileId = preg_replace("/[^0-9]/", "", $filename);
+		if ($fileId == null) return;
 		
+		//---UPLOAD .PNG FILE---//
 		if ($json["body"]["asset"]["_t"] == "imageAsset") {
 			//Validate filename
 			if (!preg_match("/^[a-zA-z]+\_\d+\.png$/", $filename)) return;
@@ -45,24 +48,43 @@ class createAssetReq extends RequestResponse {
 			fwrite($handle, pack("H*", $json['body']['data']));
 			fclose($handle);
 			
-			//Todo: Figure out a way to remove this ugly hack.
-			$id = str_replace('.png', '', $filename); 
-			$id = str_replace('MapImage_', '', $id); 
-			$id = str_replace('AvatarImage_', '', $id); 
-			$this->addBody("asset", array("id" => (integer)$id));
+			$this->addBody("asset", array("id" => (integer)$fileId));
 	
+		//---UPLOAD .ATMO FILE---//
 		} else if ($json["body"]["asset"]["_t"] == "asset") {
 			//Validate filename
-			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $string)) return;
-			
-			$my_file = $this->config['dir_maps'] . "/$filename";
+			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $filename)) return;
+				
+			$my_file = $this->config['dir_maps'] . "/$fileId";
 			$handle = fopen($my_file, 'w') or die("");
 			fwrite($handle, pack("H*", $json['body']['data']));
 			fclose($handle);
 			
-			//Todo: Figure out a way to remove this ugly hack.
-			$id = str_replace('.atmo', '', $id); 
-			$this->addBody("asset", array("id" => (integer)$id));
+			$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+			
+			//Validate the user via an IP check.
+			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$ipStatement = $db->prepare("SELECT ipAddress 
+				FROM " . $this->config['table_user']  . 
+				" WHERE `userId`=:userId");
+			$ipStatement->bindValue(':userId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
+			$ipStatement->execute();
+			$row = $ipStatement->fetch();
+
+			if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
+				$this->log("Hacking attempt [createAssetReq()]: Attempting to alter another user's map data.");
+				return;
+			}
+		
+			//Update level data id
+			$statement = $db->prepare("UPDATE " . $this->config['table_map'] . 
+				" SET `dataId`=:dataId " . 
+				" WHERE `id`=:id");
+			$statement->bindValue(':dataId', $fileId, PDO::PARAM_INT);
+			$statement->bindValue(':id', $fileId, PDO::PARAM_INT);
+			$statement->execute();
+			
+			$this->addBody("asset", array("id" => (integer)$fileId));
 		}
 	}
 }

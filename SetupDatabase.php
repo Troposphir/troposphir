@@ -4,7 +4,6 @@ require('configs.php');
 require("./include/CDatabase.php");
 
 $db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
-
 //=====================SETUP USER TABLE=====================
 // There might be new changes we need to apply to our user table
 //that can only be done column by column, so instead we will:	
@@ -43,7 +42,8 @@ $db->query("CREATE TABLE " . $config['table_user'] . "_temp (
 	levelComments INT NOT NULL DEFAULT 0,
 	designModeTime INT NOT NULL DEFAULT 0,
 	cid INT NOT NULL DEFAULT 0,
-	amt INT NOT NULL DEFAULT 0
+	amt INT NOT NULL DEFAULT 0,
+	ip VARCHAR(252) NOT NULL DEFAULT '' 
 )", null);
 $lastError = $db->errorInfo();
 if ($lastError[0] != "00000") {
@@ -58,7 +58,7 @@ $db->query("INSERT INTO " . $config['table_user'] . "_temp (
 	verified, xpp, isClubMember, paidBy, sapo, vehicleInstanceSetId, 
 	activableItemShorcuts, saInstalled, signature, finished, wins,
 	losses, abandons, memberSince, clubMemberSince, levelDesigned, 
-	levelComments, designModeTime, cid, amt
+	levelComments, designModeTime, cid, amt, ip
 ) 
 SELECT *
 FROM " . $config['table_user']
