@@ -34,10 +34,11 @@ class registerUserReq extends RequestResponse {
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			//Insert new account into table
-			$statement = $db->query("INSERT INTO `@table` (username, password, userId, token) VALUES('@username','@password', null," . rand(100000000, 999999999) . ")", array(
+			$statement = $db->query("INSERT INTO `@table` (username, password, userId, token, ipAddress) VALUES('@username','@password', null," . rand(100000000, 999999999) . ", '@ipAddress')", array(
 				"table" 	=> $this->config["table_user"],
 				"username" 	=> $json['body']['username'],
-				"password"  => md5($json['body']['password'])
+				"password"  => md5($json['body']['password']),
+				"ipAddress" => $_SERVER['REMOTE_ADDR']
  			));		
 			
 			if ($statement == false || $db->getRowCount($statement) <= 0) {
