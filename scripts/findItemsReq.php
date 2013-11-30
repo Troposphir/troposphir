@@ -26,49 +26,49 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class findItemsReq extends RequestResponse {
 	public function work($json) {
-		$itemList = array();
-		
-		$itemOne = array();
-		$itemOne["id"]        = 10;
-		$itemOne["name"]      = "ci_wooden_sword";
-		$itemOne["itypeId"]   = 5;
-		$itemOne["created"]   = 9000;
-		$itemOne["isid"]      = 0;
-		$itemOne["levels"]    = 10;
-		$itemOneProps = array();
-		$itemOneProps["shown"]               = (string)"true";
-		$itemOneProps["vehicleCategory"]     = (string)"";
-		$itemOneProps["is.free"]             = (string)"true";
-		$itemOneProps["is.pro"]              = (string)"false";
-		$itemOneProps["is.gift"]             = (string)"false";
-		$itemOneProps["is.featured"]         = (string)"false";
-		$itemOneProps["duration"]            = (string)"100000";
-		$itemOneProps["description"]         = (string)"Wooden Sword";
-		$itemOneProps["upgrade.description"] = "";
-		$itemOneProps["is.rcextra"]          = (string)"false";
-		$itemOneProps["quickEquipped"]       = (string)"true";
-		$itemOneProps["gearType"]            = (string)"0";
-		$itemOneProps["damagePoints"]        = (string)"0";
-		$itemOneProps["damagePluses"]        = (string)"1";
-		$itemOneProps["blockFactorPoints"]   = (string)"1";
-		$itemOneProps["blockFactorPluses"]   = (string)"1";
-		$itemOneProps["impulsePoints"]       = (string)"1";
-		$itemOneProps["impulsePluses"]       = (string)"1";
-		$itemOneProps["impulseBlockFactorPoints"] = (string)"1";
-		$itemOneProps["impulseBlockFactorPluses"] = (string)"1";
-		$itemOneProps["label"]                   = (string)"Label";
-		$itemOneProps["genders"]                 = (string)"0,1";
-		$itemOne["props"]     = $itemOneProps;
-		$itemList[] = $itemOne;
 	
-		$itemTwo = array();
-		$itemTwo["id"]      = 9;
-		$itemTwo["name"]    = "ci_gender_male";
-		$itemTwo["itypeId"] = 2;
-		$itemTwo["isid"]    = 0;
-		$itemTwo["created"] = 12412412;
-		$itemTwo["levels"]  = 1;
-		$itemList[] = $itemTwo;
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+		$statement = $db->query("SELECT * FROM " . $this->config['table_items'], null);
+		
+		$itemList = array();
+		for ($count = 0; $row = $statement->fetch(); $count++) {
+			$item = array();
+			$item['name']     = (string)$row['name'];
+			$item['id']       = (integer)$row['id'];
+			$item['itypeId']  = (integer)$row['itypeId'];
+			$item['created']  = 0;
+			$item['isid']     = 0;
+			$item['levels']   = 0;
+			
+			/*
+			$itemProps = array();
+			$itemProps['shown']               = ((bool)$row['shown']) ? 'true' : 'false';
+			$itemProps['vehicleCategory']     = (string)$row['vehicleCategory'];
+			$itemProps['is.free']             = ((bool)$row['isFree']) ? 'true' : 'false';
+			$itemProps['is.pro']              = ((bool)$row['isPro']) ? 'true' : 'false';
+			$itemProps['is.gift']             = ((bool)$row['isGift']) ? 'true' : 'false';
+			$itemProps['is.featured']         = ((bool)$row['isFeatured']) ? 'true' : 'false';
+			$itemProps['duration']            = (string)$row['duration'];
+			$itemProps['description']         = (string)$row['description'];
+			$itemProps['upgrade.description'] = (string)$row['upgradeDescription'];
+			$itemProps['is.rcextra']          = ((bool)$row['isRCExtra']) ? 'true' : 'false';
+			$itemProps['quickEquipped']       = ((bool)$row['quickEquipped']) ? 'true' : 'false';
+			$itemProps['gearType']            = (string)$row['gearType'];
+			$itemProps['damagePoints']        = (string)$row['damagePoints'];
+			$itemProps['damagePluses']        = (string)$row['damagePluses'];
+			$itemProps['blockFactorPoints']   = (string)$row['blockFactorPoints'];
+			$itemProps['blockFactorPluses']   = (string)$row['blockFactorPluses'];
+			$itemProps['impulsePoints']       = (string)$row['impulsePoints'];
+			$itemProps['impulsePluses']       = (string)$row['impulsePluses'];
+			$itemProps['impulseBlockFactorPoints'] = (string)$row['impulseBlockFactorPoints'];
+			$itemProps['impulseBlockFactorPluses'] = (string)$row['impulseBlockFactorPluses'];
+			$itemProps['label']               = (string)$row['label'];
+			$itemProps['genders']             = (string)$row['genders'];
+			$item['props'] = $itemProps;
+			*/
+			
+			$itemList[] = $item;
+		}
 		
 		$this->addBody("fres", array("results" => $itemList));
 	}
