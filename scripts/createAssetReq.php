@@ -27,6 +27,20 @@ class createAssetReq extends RequestResponse {
 		if (!isset($json["body"]["asset"]["_t"])) return;
 		if (!is_numeric($json["body"]["asset"]["ownerId"])) return;
 	
+		//Validate the user via an IP check.
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);	
+		$ipStatement = $db->prepare("SELECT ipAddress 
+			FROM " . $this->config['table_user']  . 
+			" WHERE `userId`=:userId");
+		$ipStatement->bindValue(':userId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
+		$ipStatement->execute();
+		$row = $ipStatement->fetch();
+
+		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
+			$this->log("Hacking attempt [createAssetReq()]: Attempting to modify another user's data.");
+			return;
+		}
+	
 		//Sanitize filename.
 		//Todo: Set a limit for length of filename
 		$filename = basename($json['body']['asset']['filename']);
@@ -43,10 +57,19 @@ class createAssetReq extends RequestResponse {
 			if (startsWith($filename, 'MapImage_')) $dir = 'maps';
 			else if (startsWith($filename, 'AvatarImage_')) $dir = 'avatars';
 			
+			//Upload file
 			$my_file = $this->config['dir_imgs'] . "/$dir/$filename";
 			$handle = fopen($my_file, 'w') or die("");
 			fwrite($handle, pack("H*", $json['body']['data']));
 			fclose($handle);
+			
+			//Update level data id
+			$statement = $db->prepare("UPDATE " . $this->config['table_user'] . 
+				" SET `screenshotId`=:screenshotId " . 
+				" WHERE `userId`=:userId");
+			$statement->bindValue(':screenshotId', $fileId, PDO::PARAM_INT);
+			$statement->bindValue(':userId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
+			$statement->execute();
 			
 			$this->addBody("asset", array("id" => (integer)$fileId));
 	
@@ -54,27 +77,12 @@ class createAssetReq extends RequestResponse {
 		} else if ($json["body"]["asset"]["_t"] == "asset") {
 			//Validate filename
 			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $filename)) return;
-				
+			
+			//Upload file
 			$my_file = $this->config['dir_maps'] . "/$fileId";
 			$handle = fopen($my_file, 'w') or die("");
 			fwrite($handle, pack("H*", $json['body']['data']));
 			fclose($handle);
-			
-			$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-			
-			//Validate the user via an IP check.
-			$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			$ipStatement = $db->prepare("SELECT ipAddress 
-				FROM " . $this->config['table_user']  . 
-				" WHERE `userId`=:userId");
-			$ipStatement->bindValue(':userId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
-			$ipStatement->execute();
-			$row = $ipStatement->fetch();
-
-			if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
-				$this->log("Hacking attempt [createAssetReq()]: Attempting to alter another user's map data.");
-				return;
-			}
 		
 			//Update level data id
 			$statement = $db->prepare("UPDATE " . $this->config['table_map'] . 

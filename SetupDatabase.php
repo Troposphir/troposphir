@@ -43,7 +43,7 @@ $db->query("CREATE TABLE " . $config['table_user'] . "_temp (
 	designModeTime INT NOT NULL DEFAULT 0,
 	cid INT NOT NULL DEFAULT 0,
 	amt INT NOT NULL DEFAULT 0,
-	ip VARCHAR(252) NOT NULL DEFAULT '' 
+	ipAddress VARCHAR(252) NOT NULL DEFAULT '' 
 )", null);
 $lastError = $db->errorInfo();
 if ($lastError[0] != "00000") {
@@ -58,7 +58,7 @@ $db->query("INSERT INTO " . $config['table_user'] . "_temp (
 	verified, xpp, isClubMember, paidBy, sapo, vehicleInstanceSetId, 
 	activableItemShorcuts, saInstalled, signature, finished, wins,
 	losses, abandons, memberSince, clubMemberSince, levelDesigned, 
-	levelComments, designModeTime, cid, amt, ip
+	levelComments, designModeTime, cid, amt, ipAddress
 ) 
 SELECT *
 FROM " . $config['table_user']
@@ -66,6 +66,7 @@ FROM " . $config['table_user']
 $lastError = $db->errorInfo();
 if ($lastError[0] != "00000") {
 	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
+	$db->query('DROP TABLE ' . $config['table_user'] . '_temp', null);
 	return;
 }
 	
@@ -177,6 +178,7 @@ FROM " . $config['table_map']
 $lastError = $db->errorInfo();
 if ($lastError[0] != "00000") {
 	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
+	$db->query('DROP TABLE ' . $config['table_map'] . '_temp', null);
 	return;
 }
 
@@ -185,6 +187,70 @@ $db->query("DROP TABLE " . $config['table_map'], null);
 	
 //(4) rename the temporary table name to the original
 $db->query("RENAME TABLE `" . $config['table_map'] . "_temp` TO `" . $config['table_map'] . "`", null);
+		
+		
+		
+//===================SETUP ITEM TABLE=================
+//There might be new changes we need to apply to our item table
+//that can only be done column by column, so instead we will:	
+//(1) create a new temporary table (name will have an appended "_temp") with appropriate column definitions
+$statement = $db->query("CREATE TABLE " . $config['table_items'] . "_temp ( 
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	description VARCHAR(255) NOT NULL DEFAULT '',
+	itypeId INT NOT NULL DEFAULT 0,
+	created INT NOT NULL DEFAULT 0,
+	isid INT NOT NULL DEFAULT 0,
+	levels INT NOT NULL DEFAULT 0,
+	shown BOOL NOT NULL DEFAULT 0,
+	vehicleCategory INT NOT NULL DEFAULT 0,
+	isFree BOOL NOT NULL DEFAULT 0,
+	isPro BOOL NOT NULL DEFAULT 0,
+	isGift BOOL NOT NULL DEFAULT 0,
+	isFeatured BOOL NOT NULL DEFAULT 0,
+	duration INT NOT NULL DEFAULT 0,
+	upgradeDescription VARCHAR(255) NOT NULL DEFAULT '',
+	isRCExtra BOOL NOT NULL DEFAULT 0,
+	quickEquipped BOOL NOT NULL DEFAULT 0,
+	gearType INT NOT NULL DEFAULT 0,
+	damagePoints INT NOT NULL DEFAULT 0,
+	damagePluses INT NOT NULL DEFAULT 0,
+	blockFactorPoints INT NOT NULL DEFAULT 0,
+	blockFactorPluses INT NOT NULL DEFAULT 0,
+	impulsePoints INT NOT NULL DEFAULT 0,
+	impulsePluses INT NOT NULL DEFAULT 0,
+	impulseBlockFactorPoints INT NOT NULL DEFAULT 0,
+	impulseBlockFactorPluses INT NOT NULL DEFAULT 0,
+	label VARCHAR(255) NOT NULL DEFAULT '',
+	genders VARCHAR(255) NOT NULL DEFAULT ''
+)", null);
+$lastError = $db->errorInfo();
+if ($lastError[0] != "00000") {
+	echo "SETUP ABORTED. <br> Failed to create a temporary items table for the following reason: <i>$lastError[2]</i>";
+	return;
+}	
+//(2) copy the data over
+$statement = $db->query("INSERT INTO " . $config['table_items'] . "_temp (
+	id, name, description, itypeId, created, isid, levels, shown, vehicleCategory, 
+	isFree, isPro, isGift, isFeatured, duration, upgradeDescription, isRCExtra, 
+	quickEquipped, gearType, damagePoints, damagePluses, blockFactorPoints, 
+	blockFactorPluses, impulsePoints, impulsePluses, impulseBlockFactorPoints, 
+	impulseBlockFactorPluses, label, genders
+) 
+SELECT *
+FROM " . $config['table_items']
+, null);
+$lastError = $db->errorInfo();
+if ($lastError[0] != "00000") {
+	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
+	$db->query('DROP TABLE ' . $config['table_items'] . '_temp', null);
+	return;
+}
+//(3) drop the original
+$db->query("DROP TABLE " . $config['table_map'], null);
+//(4) rename the temporary table name to the original
+$db->query("RENAME TABLE `" . $config['table_map'] . "_temp` TO `" . $config['table_map'] . "`", null);
+		
 		
 echo 'SETUP COMPLETED.';
 ?>
