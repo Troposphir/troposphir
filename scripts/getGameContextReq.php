@@ -32,7 +32,7 @@ class getGameContextReq extends RequestResponse {
 		$this->addBody('unityBundleUrl', "");
 		$this->addBody('staticImagesUrl', $this->config['site'] . $this->config['dir_imgs']);
 		$this->addBody('staticMapUrl', $this->config['site'] . $this->config['dir_maps']);
-		$this->addBody('staticAvatarUrl', $this->config['site'] . $this->config['dir_imgs']);
+		$this->addBody('staticAvatarUrl', $this->config['site'] . $this->config['dir_avatars']);
 	}
 }
 ?>
