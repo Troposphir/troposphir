@@ -16,7 +16,7 @@
   You should have received a copy of the GNU Affero General Public License 
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
-
+	
 //Todo: Added security measures.
 if (!defined("INCLUDE_SCRIPT")) return;
 class createAssetReq extends RequestResponse {
@@ -40,7 +40,7 @@ class createAssetReq extends RequestResponse {
 			$this->log("Hacking attempt [createAssetReq()]: Attempting to modify another user's data.");
 			return;
 		}
-	
+
 		//Sanitize filename.
 		//Todo: Set a limit for length of filename
 		$filename = basename($json['body']['asset']['filename']);
@@ -48,52 +48,86 @@ class createAssetReq extends RequestResponse {
 		$fileId = preg_replace("/[^0-9]/", "", $filename);
 		if ($fileId == null) return;
 		
-		//---UPLOAD .PNG FILE---//
+		/*   UPLOAD IMAGE FILE   */
 		if ($json["body"]["asset"]["_t"] == "imageAsset") {
-			//Validate filename
-			if (!preg_match("/^[a-zA-z]+\_\d+\.png$/", $filename)) return;
+			if (!preg_match("/^[a-zA-z]+\_\d+\.png$/", $filename)) return; //Validate filename
 			
 			$dir = '';
-			if (startsWith($filename, 'MapImage_')) $dir = 'maps';
-			else if (startsWith($filename, 'AvatarImage_')) $dir = 'avatars';
+			if (startsWith($filename, 'MapImage_')) {
+				$dir = $this->config['dir_imgs'];
+			} else if (startsWith($filename, 'AvatarImage_')) {
+				$dir = $this->config['dir_avatars'];
+			}	
+			else return;
 			
-			//Upload file
-			$my_file = $this->config['dir_imgs'] . "/$dir/$filename";
-			$handle = fopen($my_file, 'w') or die("");
-			fwrite($handle, pack("H*", $json['body']['data']));
-			fclose($handle);
+			$assetId = $this->UploadAsset($db, $dir, $filename, ".png", $json['body']['data']);
+			if ($assetId == -1) return;
 			
-			//Update level data id
-			$statement = $db->prepare("UPDATE " . $this->config['table_user'] . 
-				" SET `screenshotId`=:screenshotId " . 
-				" WHERE `userId`=:userId");
-			$statement->bindValue(':screenshotId', $fileId, PDO::PARAM_INT);
-			$statement->bindValue(':userId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
-			$statement->execute();
-			
-			$this->addBody("asset", array("id" => (integer)$fileId));
-	
-		//---UPLOAD .ATMO FILE---//
+			if (startsWith($filename, 'MapImage_')) {
+				$stmt = $db->prepare("UPDATE " . $this->config['table_map'] . " 
+					SET `screenshotId`=:screenshotId 
+					WHERE `ownerId`=:ownerId
+					AND `id`=:id");
+				$stmt->bindValue(':screenshotId', $assetId, PDO::PARAM_INT);
+				$stmt->bindValue(':ownerId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
+				$stmt->bindValue(':id', $fileId, PDO::PARAM_INT);
+				$stmt->execute();
+			} else if (startsWith($filename, 'AvatarImage_')) {
+				$stmt = $db->prepare("UPDATE " . $this->config['table_user'] . " 
+					SET `avaid`=:avaid 
+					WHERE `id`=:id");
+				$stmt->bindValue(':avaid', $assetId, PDO::PARAM_INT);
+				$stmt->bindValue(':id', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
+				$stmt->execute();
+			}	
+			$this->addBody("asset", array("id" => (integer)$assetId));
+
+		/*   UPLOAD ATMO FILE   */
 		} else if ($json["body"]["asset"]["_t"] == "asset") {
-			//Validate filename
-			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $filename)) return;
-			
-			//Upload file
-			$my_file = $this->config['dir_maps'] . "/$fileId";
-			$handle = fopen($my_file, 'w') or die("");
-			fwrite($handle, pack("H*", $json['body']['data']));
-			fclose($handle);
-		
+			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $filename)) return; //Validate filename
+				
+			$assetId = $this->UploadAsset($db, $this->config['dir_maps'], $filename, ".atmo", $json['body']['data']);
+			if ($assetId == -1) return;
+				
 			//Update level data id
-			$statement = $db->prepare("UPDATE " . $this->config['table_map'] . 
-				" SET `dataId`=:dataId " . 
-				" WHERE `id`=:id");
-			$statement->bindValue(':dataId', $fileId, PDO::PARAM_INT);
-			$statement->bindValue(':id', $fileId, PDO::PARAM_INT);
-			$statement->execute();
+			$stmt = $db->prepare("UPDATE " . $this->config['table_map'] . 
+				" SET `dataId`=:dataId 
+				WHERE `ownerId`=:ownerId
+				AND `id`=:id");
+			$stmt->bindValue(':dataId', $assetId, PDO::PARAM_INT);
+			$stmt->bindValue(':ownerId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
+			$stmt->bindValue(':id', $fileId, PDO::PARAM_INT);
+			$stmt->execute();
 			
-			$this->addBody("asset", array("id" => (integer)$fileId));
+			$this->addBody("asset", array("id" => (integer)$assetId));
 		}
+	}
+	
+	public function UploadAsset($db, $dir, $filename, $ext, $data) {
+			//Create unique file name
+			$asset_file = uniqid() . "_" . md5(mt_rand()) . $ext;
+			while (file_exists("./$dir/" . $asset_file)) {
+				$asset_file = uniqid() . "_" . md5(mt_rand()) . $ext;
+			}
+			$asset_size = strlen($data);
+			$created = date('d/m/Y');
+		
+			//Write file
+			$handle = fopen("./$dir/" . $asset_file, 'w');
+			if ($handle == false) return -1;
+			if (!fwrite($handle, pack("H*", $data))) return -1;
+			fclose($handle);
+			
+			//Insert item into asset table
+		    $itemId = 0;
+			$stmt = $db->prepare("INSERT INTO " . $this->config['table_assets'] . " 
+				(uploadedBy, origFilename, fileName, size, created) 
+				VALUES (?, ?, ?, ?, ?)");
+			$stmt->execute(array('', $filename, $asset_file, $asset_size, $created));
+			$itemId = $db->lastInsertId();
+			if ($itemId == 0) return -1;
+			
+			return $itemId;
 	}
 }
 ?>

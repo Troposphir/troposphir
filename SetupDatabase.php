@@ -1,14 +1,39 @@
 <?php
-
 require('configs.php');
 require("./include/CDatabase.php");
-
 $db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
-//=====================SETUP USER TABLE=====================
-// There might be new changes we need to apply to our user table
-//that can only be done column by column, so instead we will:	
-//(1) create a new temporary table (name will have an appended "_temp") with appropriate column definitions
-$db->query("CREATE TABLE " . $config['table_user'] . "_temp ( 
+
+function SetupTable($table_name, $query, $query2) 
+{
+	global $db;
+	//* (1) Create the table if it doesn't exist *//
+	$db->query("CREATE TABLE $table_name " . $query, null);
+	//* (2) Create a temporary table *//
+	$db->query("DROP TABLE " . $table_name . "_temp", null);
+	$db->query("CREATE TABLE " . $table_name . "_temp " . $query, null);
+	$lastError = $db->errorInfo();
+	if ($lastError[0] != "00000" && $lastError[0] != "42S01") {
+		echo "SETUP ABORTED. <br> Failed to create a temporary table for the following reason: <i>$lastError[2]</i>";
+		die();
+	}	
+	//* (3) Fill the temporary table with data from the original *// 
+	$db->query("INSERT INTO " . $table_name . "_temp $query2 
+		SELECT * 
+		FROM $table_name"
+	, null);
+	$lastError = $db->errorInfo();
+	if ($lastError[0] != "00000" && $lastError[0] != "21S01") {
+		echo "SETUP ABORTED. <br> Failed to copy data over to " . $table_name . "_temp for the following reason: <i>$lastError[2]</i>";
+		die();
+	}
+	//* (4) drop the original *//
+	$db->query("DROP TABLE $table_name", null);
+	//* (5) rename the temporary table name to the original *//
+	$db->query("RENAME TABLE `" . $table_name . "_temp` TO `$table_name`", null);
+}
+
+//Create user table
+SetupTable($config['table_user'], "( 
 	userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
@@ -44,50 +69,17 @@ $db->query("CREATE TABLE " . $config['table_user'] . "_temp (
 	cid INT NOT NULL DEFAULT 0,
 	amt INT NOT NULL DEFAULT 0,
 	ipAddress VARCHAR(252) NOT NULL DEFAULT '' 
-)", null);
-$lastError = $db->errorInfo();
-if ($lastError[0] != "00000") {
-	echo "SETUP ABORTED. <br> Failed to create a temporary user table for the following reason: <i>$lastError[2]</i>";
-	return;
-}
-	
-//(2) copy the data over
-$db->query("INSERT INTO " . $config['table_user'] . "_temp (
+)", "(
 	userId, username, password, token, created, avaid, sessionToken, 
 	isDev, isLOTDMaster, isXPMaster, development, external, flags, locale,
 	verified, xpp, isClubMember, paidBy, sapo, vehicleInstanceSetId, 
 	activableItemShorcuts, saInstalled, signature, finished, wins,
 	losses, abandons, memberSince, clubMemberSince, levelDesigned, 
 	levelComments, designModeTime, cid, amt, ipAddress
-) 
-SELECT *
-FROM " . $config['table_user']
-, null);
-$lastError = $db->errorInfo();
-if ($lastError[0] != "00000") {
-	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
-	$db->query('DROP TABLE ' . $config['table_user'] . '_temp', null);
-	return;
-}
-	
-//VARCHAR apparently does not treat blank values as null. 
-//So we replace empty strings with our own values.
-//$db->query("UPDATE " . $config['table_user'] . "_temp SET activableItemShorcuts = '0;0;0;0;0;0;0;0;0;0;'	WHERE activableItemShorcuts = ''", null);
+)" );
 
-//(3) drop the original
-$db->query("DROP TABLE " . $config['table_user'], null);
-	
-//(4) rename the temporary table name to the original
-$db->query("RENAME TABLE `" . $config['table_user'] . "_temp` TO `" . $config['table_user'] . "`", null);
-
-
-
-
-//===================SETUP MAP TABLE=================
-//There might be new changes we need to apply to our user table
-//that can only be done column by column, so instead we will:	
-//(1) create a new temporary table (name will have an appended "_temp") with appropriate column definitions
-$statement = $db->query("CREATE TABLE " . $config['table_map'] . "_temp ( 
+//Create map table
+SetupTable($config['table_map'], "( 
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL UNIQUE,
 	description VARCHAR(255) NOT NULL DEFAULT '',
@@ -155,15 +147,7 @@ $statement = $db->query("CREATE TABLE " . $config['table_map'] . "_temp (
 	dtsc INT NOT NULL DEFAULT 0,
 	dopc INT NOT NULL DEFAULT 0,
 	dpoc INT NOT NULL DEFAULT 0
-)", null);
-$lastError = $db->errorInfo();
-if ($lastError[0] != "00000") {
-	echo "SETUP ABORTED. <br> Failed to create a temporary map table for the following reason: <i>$lastError[2]</i>";
-	return;
-}
-	
-//(2) copy the data over
-$statement = $db->query("INSERT INTO " . $config['table_map'] . "_temp (
+)", "(
 	id, name, description, author, dc, rating, difficulty, 
 	ownerId, downloads, dataId, screenshotId, version, draft, nextLevelId,
 	editable, deleted, gcid, editMode, xisLOTD, isLOTD, xpReward,
@@ -171,30 +155,10 @@ $statement = $db->query("INSERT INTO " . $config['table_map'] . "_temp (
 	gmmp1, gmmp2, gmcp1, gmcp2, gmcdt, gmcff, ast, aal, ghosts, ipad,
 	dcap, dmic, xpLevel, denc, dpuc, dcoc, dtrc, damc, dphc, ddoc, dkec, 
 	dgcc, dmvc, dsbc, dhzc, dmuc, dtmi, ddtm, dttm, dedc, dtsc, dopc, dpoc
-) 
-SELECT *
-FROM " . $config['table_map']
-, null);
-$lastError = $db->errorInfo();
-if ($lastError[0] != "00000") {
-	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
-	$db->query('DROP TABLE ' . $config['table_map'] . '_temp', null);
-	return;
-}
+)");
 
-//(3) drop the original
-$db->query("DROP TABLE " . $config['table_map'], null);
-	
-//(4) rename the temporary table name to the original
-$db->query("RENAME TABLE `" . $config['table_map'] . "_temp` TO `" . $config['table_map'] . "`", null);
-		
-		
-		
-//===================SETUP ITEM TABLE=================
-//There might be new changes we need to apply to our item table
-//that can only be done column by column, so instead we will:	
-//(1) create a new temporary table (name will have an appended "_temp") with appropriate column definitions
-$statement = $db->query("CREATE TABLE " . $config['table_items'] . "_temp ( 
+//Create item table
+SetupTable($config['table_items'], "( 
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL UNIQUE,
 	description VARCHAR(255) NOT NULL DEFAULT '',
@@ -223,34 +187,26 @@ $statement = $db->query("CREATE TABLE " . $config['table_items'] . "_temp (
 	impulseBlockFactorPluses INT NOT NULL DEFAULT 0,
 	label VARCHAR(255) NOT NULL DEFAULT '',
 	genders VARCHAR(255) NOT NULL DEFAULT ''
-)", null);
-$lastError = $db->errorInfo();
-if ($lastError[0] != "00000") {
-	echo "SETUP ABORTED. <br> Failed to create a temporary items table for the following reason: <i>$lastError[2]</i>";
-	return;
-}	
-//(2) copy the data over
-$statement = $db->query("INSERT INTO " . $config['table_items'] . "_temp (
+)" , "(
 	id, name, description, itypeId, created, isid, levels, shown, vehicleCategory, 
 	isFree, isPro, isGift, isFeatured, duration, upgradeDescription, isRCExtra, 
 	quickEquipped, gearType, damagePoints, damagePluses, blockFactorPoints, 
 	blockFactorPluses, impulsePoints, impulsePluses, impulseBlockFactorPoints, 
 	impulseBlockFactorPluses, label, genders
-) 
-SELECT *
-FROM " . $config['table_items']
-, null);
-$lastError = $db->errorInfo();
-if ($lastError[0] != "00000") {
-	echo "SETUP ABORTED. <br> Failed to copy data over for the following reason: <i>$lastError[2]</i>";
-	$db->query('DROP TABLE ' . $config['table_items'] . '_temp', null);
-	return;
-}
-//(3) drop the original
-$db->query("DROP TABLE " . $config['table_map'], null);
-//(4) rename the temporary table name to the original
-$db->query("RENAME TABLE `" . $config['table_map'] . "_temp` TO `" . $config['table_map'] . "`", null);
-		
-		
+)");
+
+SetupTable($config['table_assets'], "(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	uploadedBy VARCHAR(255) NOT NULL DEFAULT '',
+	origFileName VARCHAR(255) NOT NULL DEFAULT '',
+	fileName VARCHAR(255) NOT NULL DEFAULT '',	
+	size INT NOT NULL DEFAULT 0,
+	created INT NOT NULL DEFAULT 0
+)", "(
+	id, uploadedBy, origFileName, fileName, size, created
+)");
+
+
+$db = null;	
 echo 'SETUP COMPLETED.';
 ?>

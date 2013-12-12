@@ -22,40 +22,46 @@ class updateProfReq extends RequestResponse {
 		//Check input
 		if (!isset($json['body']['profId'])) return;
 		if (!isset($json['body']['props']['sessionToken'])) return;
+
 		
-		$fields = array('saInstalled', 'sessionToken', 'sapo', 'avaid', 
-			'activableItemShorcuts', 'vehicleInstanceSetId', 'signature', 'userId'
-		);
-	
-		$query = '';
-		foreach ($json['body']['props'] as $propname => $propvalue) {
+		//Build query
+		$fields = array('sessionToken', 'sapo', 'avaid', 'activableItemShorcuts',
+			'vehicleInstanceSetId', 'signature', 'saInstalled', 'userId');
+		$params = array();
+		$cond = array();
+		$json['body']['props']['saInstalled'] = (strtolower($json['body']['props']['saInstalled']) == 'true') ? 1 : 0;	
+		foreach ($json['body']['props'] as $propname => $propvalue){
 			if (in_array($propname, $fields)) {
-				$query = "$query `$propname`='$propvalue',";
+				$cond[] = "`$propname` = ?";
+				$params[] = $propvalue;
 			}
 		}
-		$query = rtrim($query, ',');
-	
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$db->query("UPDATE `@table` SET @query  WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"query"     => $query,
-			"userId"    => $json['body']['profId']
-		));
-		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
-			"fields"    => $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['profId']
-		));
+		$params[] = $json['body']['profId']; //userId = ?
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+
+		//Update Profile
+		$stmt = $db->prepare("UPDATE " . $this->config['table_user'] . "
+			SET " . implode(' , ', $cond) .
+			"WHERE `userId` = ?");
+		$stmt->execute($params);
+		
+		//Retrieve profile information
+		$stmt = $db->prepare("SELECT userId, created, avaid, signature, sessionToken,
+				isLOTDMaster, isXPMaster, sapo, vehicleInstanceSetId, activableItemShorcuts, saInstalled 
+			FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId");
+		$stmt->bindParam(':userId', $json['body']['profId'], PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
 			$this->error('NOT_FOUND');
 		} else {
-			$row = $statement->fetch();
+			$row = $stmt->fetch();
 			
 			$profile = array();
 			$profile['id']      = (integer)$row['userId'];
-			$profile['created'] = (integer)90908;
-			
+			$profile['created'] = (integer)$row['created'];
 			$props = array();
 			$props['avaid']                 = (string)$row['avaid'];
 			$props['signature']             = (string)$row['signature'];
@@ -65,7 +71,7 @@ class updateProfReq extends RequestResponse {
 			$props['sapo']                  = (string)$row['sapo'];
 			$props['vehicleInstanceSetId']  = (string)$row['vehicleInstanceSetId'];
 			$props['activableItemShorcuts'] = (string)$row['activableItemShorcuts'];
-			$props['saInstalled']           = ((bool)$row['saInstalled']) ? 'true' : 'false';
+			$props['saInstalled']           = ((int)$row['saInstalled'] == 1) ? 'true' : 'false';
 			$profile['props'] = $props;
 		
 			$this->addBody('profile', $profile);
