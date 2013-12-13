@@ -20,7 +20,6 @@
 require('configs.php');
 require('./include/utils.php');
 require("./include/CRequest.php");
-require("./include/CDatabase.php");
 header('X-Powered-By: Troposphir Beta');
 header('Cache-Control: no-cache, must-revalidate');
 header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');

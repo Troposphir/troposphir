@@ -17,22 +17,37 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
-class updateLevelReq extends RequestResponse {
+class a_setLcReq extends RequestResponse {
 	public function work($json) {
-		$fields = array('dataId', 'screenshotId', 'deleted');
+		if (!isset($json['body']['lc']['id'])) return;
+		if (!isset($json['body']['lc']['props'])) return;
+		
+		//Build query
+		$fields = array('gms', 'gmmp1', 'gmmp2', 'gff',
+			'gsv', 'gbs', 'gde', 'gdb', 'gmc', 'gmcp1', 'gmcp2', 'gctf', 'gab', 'gra',
+			'gco', 'gtc', 'gmcdt', 'gmcff', 'ast', 'aal', 'ghosts', 'ipad', 'dcap', 'dmic',
+			'denc', 'dpuc', 'dcoc', 'dtrc', 'damc', 'dphc', 'ddoc', 'dkec', 'dgcc', 'dmvc',
+			'dsbc', 'dhzc', 'dmuc', 'dtmi', 'ddtm', 'dttm', 'dedc', 'dtsc', 'dopc', 'dpoc' 
+		);
 		$params = array();
 		$cond = array();
-		
-		//Build Query
-		foreach ($json['body'] as $propname => $propvalue) {
+		foreach ($json['body']['lc']['props'] as $propname => $propvalue) {
 			if (in_array($propname, $fields)) {
 				$cond[] = "`$propname` = ?";
 				$params[] = $propvalue;
 			}
+			else if ($propname == 'is.lotd') {
+				$cond[] = "`$isLOTD` = ?";
+				$params[] = $propvalue;
+			}
+			else if ($propname == 'xp.reward') {
+				$cond[] = "`xpReward` = ?";
+				$params[] = $propvalue;
+			}
 		}
-		$params[] = $json['body']['levelId'];
-	
-		//Update level data id
+		$params[] = $json['body']['lc']['id'];
+		
+		//Set level config
 		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] . 
 			" SET " . implode(' , ', $cond) .
 			" WHERE `id`=?");

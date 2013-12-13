@@ -28,7 +28,7 @@ class findItemInstanceSetsReq extends RequestResponse {
 		
 		$itemSetOne = array();
 		$itemSetOne['id']     = 142;
-		$itemSetOne['itemis'] = array(132, 131); 
+		$itemSetOne['itemis'] = array(132, 131,133); 
 		$itemSetsList[] = $itemSetOne;
 	
 		$fres = array(

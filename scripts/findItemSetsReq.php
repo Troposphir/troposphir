@@ -27,7 +27,7 @@ class findItemSetsReq extends RequestResponse {
 		$fres = array();
 		
 		$itemSet = array();
-		$itemSet["items"]     = array(10);
+		$itemSet["items"]     = array(1);
 		$itemSet["id"]        = 142;
 		$itemSet["name"]      = "Guest Item Set";
 		$itemSet["created"]   = 12412412;
