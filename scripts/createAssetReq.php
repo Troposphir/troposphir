@@ -27,19 +27,12 @@ class createAssetReq extends RequestResponse {
 		if (!isset($json["body"]["asset"]["_t"])) return;
 		if (!is_numeric($json["body"]["asset"]["ownerId"])) return;
 	
-		//Validate the user via an IP check.
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);	
-		$ipStatement = $db->prepare("SELECT ipAddress 
-			FROM " . $this->config['table_user']  . 
-			" WHERE `userId`=:userId");
-		$ipStatement->bindValue(':userId', $json['body']['asset']['ownerId'], PDO::PARAM_INT);
-		$ipStatement->execute();
-		$row = $ipStatement->fetch();
-
-		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
+		//Verify user operations
+		if (!$this->verifyUserById($json['body']['asset']['ownerId'])) {
 			$this->log("Hacking attempt [createAssetReq()]: Attempting to modify another user's data.");
 			return;
 		}
+		$db = $this->getConnection();
 
 		//Sanitize filename.
 		//Todo: Set a limit for length of filename
@@ -60,7 +53,7 @@ class createAssetReq extends RequestResponse {
 			}	
 			else return;
 			
-			$assetId = $this->UploadAsset($db, $dir, $filename, ".png", $json['body']['data']);
+			$assetId = $this->UploadAsset($dir, $filename, ".png", $json['body']['data']);
 			if ($assetId == -1) return;
 			
 			if (startsWith($filename, 'MapImage_')) {
@@ -86,7 +79,7 @@ class createAssetReq extends RequestResponse {
 		} else if ($json["body"]["asset"]["_t"] == "asset") {
 			if (!preg_match("/^[a-zA-z]+\_\d+\.atmo$/", $filename)) return; //Validate filename
 				
-			$assetId = $this->UploadAsset($db, $this->config['dir_maps'], $filename, ".atmo", $json['body']['data']);
+			$assetId = $this->UploadAsset($this->config['dir_maps'], $filename, ".atmo", $json['body']['data']);
 			if ($assetId == -1) return;
 				
 			//Update level data id
@@ -103,7 +96,7 @@ class createAssetReq extends RequestResponse {
 		}
 	}
 	
-	public function UploadAsset($db, $dir, $filename, $ext, $data) {
+	public function UploadAsset($dir, $filename, $ext, $data) {
 			//Create unique file name
 			$asset_file = uniqid() . "_" . md5(mt_rand()) . $ext;
 			while (file_exists("./$dir/" . $asset_file)) {
@@ -120,11 +113,11 @@ class createAssetReq extends RequestResponse {
 			
 			//Insert item into asset table
 		    $itemId = 0;
-			$stmt = $db->prepare("INSERT INTO " . $this->config['table_assets'] . " 
+			$stmt = $this->getConnection()->prepare("INSERT INTO " . $this->config['table_assets'] . " 
 				(uploadedBy, origFilename, fileName, size, created) 
 				VALUES (?, ?, ?, ?, ?)");
 			$stmt->execute(array('', $filename, $asset_file, $asset_size, $created));
-			$itemId = $db->lastInsertId();
+			$itemId = $this->getConnection()->lastInsertId();
 			if ($itemId == 0) return -1;
 			
 			return $itemId;

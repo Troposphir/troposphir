@@ -25,17 +25,22 @@ class getFirstUserExperienceReq extends RequestResponse {
 			"screenshotId", "draft", "version",
  			"nextLevelId", "editable", "gcid", "editMode"
 		);
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM @table", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_map"]
-		));
+		$json['body']['retDeleted'] = (strtolower($json['body']['retDeleted']) == 'true') ? 1 : 0;
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
+		$db = $this->getConnection();
+		$stmt = $db->prepare("SELECT id, name, description, author, ownerId,
+				downloads, dataId, screenshotId, draft, version, nextLevelId,
+				editable, gcid, editMode	
+			FROM " . $this->config['table_map'] . "
+			WHERE `deleted`=:deleted");
+		$stmt->bindParam(':deleted', $json['body']['retDeleted'], PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
-			for ($count = 0; $row = $statement->fetch(); $count++) {
+			for ($count = 0; $row = $stmt->fetch(); $count++) {
 				$level = array();
 				$level["id"]            = (integer)$row["id"];
 				$level["name"]          = (string)$row["name"];

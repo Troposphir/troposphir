@@ -78,14 +78,20 @@ class findItemisReq extends RequestResponse {
 		$itemList = array();				
 		
 		$itemOne = array();
-		$itemOne["itemId"]  = 4;
+		$itemOne["itemId"]  = 1;
 		$itemOne["id"]      = 132;
 		$itemOne["created"] = 9000;
 		$itemList[] = $itemOne;
 		
 		$itemTwo = array();
-		$itemTwo["itemId"]  = 6;
+		$itemTwo["itemId"]  = 2;
 		$itemTwo["id"]      = 131;
+		$itemTwo["created"] = 9000;
+		$itemList[] = $itemTwo;
+	
+		$itemTwo = array();
+		$itemTwo["itemId"]  = 3;
+		$itemTwo["id"]      = 133;
 		$itemTwo["created"] = 9000;
 		$itemList[] = $itemTwo;
 	

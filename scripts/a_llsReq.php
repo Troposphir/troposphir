@@ -31,7 +31,7 @@ class a_llsReq extends RequestResponse {
 			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic", 
 			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc", 
 			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi", 
-			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc"
+			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted"
 		);
 		
 		//Adjust user's query syntax to conform to appropriate database syntax.
@@ -49,7 +49,9 @@ class a_llsReq extends RequestResponse {
 		$query = str_replace('is.lotd', "`isLOTD`", $query);
 		$query = str_replace('xp.reward', "'xpReward'", $query);
 		$query = str_replace('xp.level', "'xpLevel'", $query);
-		
+		$query = str_replace('deleted=false', 'deleted=0', $query);
+		$query = str_replace('deleted=true', 'deleted=1', $query);
+	
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
 		$statement = $db->query("SELECT * FROM `@table` WHERE @query", array(
 			"table" 	=> $this->config["table_map"],
@@ -76,6 +78,7 @@ class a_llsReq extends RequestResponse {
 				$level['difficulty']   = (string)$row['difficulty'];
 				
 				foreach ($fields as $field) {
+					if ($field == 'deleted') continue;
 					$level[$field] = $row[$field];
 				}
 				$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';

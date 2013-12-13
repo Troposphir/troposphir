@@ -16,10 +16,12 @@
   You should have received a copy of the GNU Affero General Public License 
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
+require("./include/CDatabase.php");
 class RequestResponse {
 	private $body_;
 	private $header_;
 	protected $config;
+	protected $db;
 	protected $errorCodes_ = array(
 			'ACCOUNT_NOT_FOUND' => 0xcc,
 			'ALREADY' => 6,
@@ -71,6 +73,7 @@ class RequestResponse {
 			'USER_PROFANITY' => 0x25b
 	);
 	public function __construct($config) {
+		$this->db = null;
 		$this->config = $config;
 		$this->body_   = array(); 
 		$this->header_ = array("_t" => "mfheader");
@@ -88,7 +91,8 @@ class RequestResponse {
 			$content = str_replace('[]', '{}', $content) ;
 		}	
 		echo $content;
-		$this->log("Sent data: " . $content);
+		
+		$db = null;
 	}
 	public function addBody($key, $value) {
 		$this->body_[$key] = $value;
@@ -109,6 +113,42 @@ class RequestResponse {
 				fwrite($file, "[".date("Y-m-d H:i:s")."] ".get_class($this).": ".$text."\n");
 				fclose($file);
 			}
+		}
+	}
+	
+	/*
+		Purpose: Lazy initiate a connection to the database.
+	*/
+	public function getConnection() {
+		if ($this->db == null) {
+			$this->db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);	
+		}
+		return $this->db;
+	}
+	
+	/* 
+		Purpose: Check if the user permission is allowed for certain operations.
+		Compares it via an IP check.
+	*/
+	public function verifyUserById($id) {
+	
+		//Get user ip address from data table
+		$stmt = $this->getConnection()->prepare("SELECT ipAddress 
+			FROM " . $this->config['table_user']  . 
+			" WHERE `userId`=:userId");
+		$stmt->bindValue(':userId', $id, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		if ($stmt == false) {
+			return false;
+		}
+		
+		$row = $stmt->fetch();
+		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
+			return false;
+		}
+		else {
+			return true;
 		}
 	}
 }
