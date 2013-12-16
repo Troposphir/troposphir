@@ -23,7 +23,7 @@ class setRedCarpetReq extends RequestResponse {
 		if (!isset($json['body']['userId'])) return;
 		
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("UPDATE `@table` SET `finished`='true' WHERE `userId`='@userId'", array(
+		$statement = $db->query("UPDATE `@table` SET `finished`=1 WHERE `userId`='@userId'", array(
 			"table" 	=> $this->config["table_user"],
 			"userId"    => $json['body']['userId']
 		));

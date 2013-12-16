@@ -19,8 +19,8 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class getLoadingTipReq extends RequestResponse {
 	public $tips = array(
-		"This server is hosted by OneMoreBlock. Come visit us at http://onemoreblock.com/!",
-		"This server uses Troposphir server software, freely available at https://github.com/MusicalIdiot/AtmoServer/",
+		"This server is hosted by OneMoreBlock. Come visit us at http://onemoreblock.com !",
+		"You can check out the source code of this server at https://github.com/MusicalIdiot/Troposphir !",
 		"Currently, it isn't possible to login or register for an account. Sorry, we're working on it!"
 	);
 	public function work($json) {
