@@ -19,6 +19,10 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class getFirstUserExperienceReq extends RequestResponse {
 	public function work($json) {
+		if (!isset($json["body"]["freq"]["start"])) return;
+		if (!is_numeric($json["body"]["freq"]["start"])) return;
+		if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
+		
 		$fields = array( 
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
@@ -41,6 +45,9 @@ class getFirstUserExperienceReq extends RequestResponse {
 		} else {
 			$levelList = array();
 			for ($count = 0; $row = $stmt->fetch(); $count++) {
+				if ($count >= ($json['body']['freq']['start'] + $json['body']['freq']['blockSize'])) continue;
+				if ($count < $json['body']['freq']['start']) continue;
+				
 				$level = array();
 				$level["id"]            = (integer)$row["id"];
 				$level["name"]          = (string)$row["name"];

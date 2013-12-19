@@ -24,6 +24,7 @@ class registerUserReq extends RequestResponse {
 		//Check input
 		if (!isset($json['body']['username'])) return;
 		if (!isset($json['body']['password'])) return;
+		if (!isset($json['body']['email'])) return;
 	
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
 		//Check if username already exists
@@ -34,10 +35,11 @@ class registerUserReq extends RequestResponse {
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			//Insert new account into table
-			$statement = $db->query("INSERT INTO `@table` (username, password, userId, token, ipAddress) VALUES('@username','@password', null," . rand(100000000, 999999999) . ", '@ipAddress')", array(
+			$statement = $db->query("INSERT INTO `@table` (username, password, email, userId, token, ipAddress) VALUES('@username','@password', '@email', null," . rand(100000000, 999999999) . ", '@ipAddress')", array(
 				"table" 	=> $this->config["table_user"],
 				"username" 	=> $json['body']['username'],
 				"password"  => md5($json['body']['password']),
+				"email"     => $json['body']['email'],
 				"ipAddress" => $_SERVER['REMOTE_ADDR']
  			));		
 			
