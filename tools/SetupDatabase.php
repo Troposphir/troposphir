@@ -1,6 +1,6 @@
 <?php
-require('configs.php');
-require("./include/CDatabase.php");
+require('./../configs.php');
+require('./../include/CDatabase.php');
 $db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
 
 function SetupTable($table_name, $query, $query2) 
@@ -37,6 +37,7 @@ SetupTable($config['table_user'], "(
 	userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
+	email VARCHAR(255) NOT NULL,
 	token INT NOT NULL DEFAULT 0,
 	created INT NOT NULL DEFAULT 0,
 	avaid INT NOT NULL DEFAULT 0,
@@ -70,7 +71,7 @@ SetupTable($config['table_user'], "(
 	amt INT NOT NULL DEFAULT 0,
 	ipAddress VARCHAR(252) NOT NULL DEFAULT '' 
 )", "(
-	userId, username, password, token, created, avaid, sessionToken, 
+	userId, username, password, email, token, created, avaid, sessionToken, 
 	isDev, isLOTDMaster, isXPMaster, development, external, flags, locale,
 	verified, xpp, isClubMember, paidBy, sapo, vehicleInstanceSetId, 
 	activableItemShorcuts, saInstalled, signature, finished, wins,

@@ -23,6 +23,7 @@ class a_llsReq extends RequestResponse {
 		if (!isset($json["body"]["query"])) return;
 		if (!isset($json["body"]["freq"]["start"])) return;
 		if (!is_numeric($json["body"]["freq"]["start"])) return;
+		if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
 		
 		$fields = array( 
 			"isLOTD", "xpReward", "xgms", "gms", "gmm", "gff", 
@@ -53,16 +54,19 @@ class a_llsReq extends RequestResponse {
 		$query = str_replace('deleted=true', 'deleted=1', $query);
 	
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM `@table` WHERE @query", array(
+		$stmt = $db->query("SELECT * FROM `@table` WHERE `deleted`=0", array(
 			"table" 	=> $this->config["table_map"],
 			"query" 	=> $query
 		));
 		
-		if ($statement == false || $db->getRowCount($statement) <= 0) {
+		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
-			for ($count = 0; $row = $statement->fetch(); $count++) {
+			for ($count = 0; $row = $stmt->fetch(); $count++) {
+				if ($count >= ($json['body']['freq']['start'] + $json['body']['freq']['blockSize'])) continue;
+				if ($count < $json['body']['freq']['start']) continue;
+				
 				$level = array();
 				$level["id"]           = (string)$row["id"];
 				$level["name"]         = (string)$row["name"];
