@@ -1,10 +1,8 @@
-1. Complete the following functions
----------------------------------------
-- [] findItemisReq
-- [] findItemsReq
-- [] createAssetReq
-- [] updateItemiSetReq
-- [] getFriendsByIdReq
-- [] findItemInstanceSetsReq
-- [] updatePresenceReq
-- [] updateLevelReq
+Priority: 1-5 (5 = Highest Priority)
+
+5. Leaderboards
+4. Comments
+3. Improved Level Searching
+3. Ratings/Difficulty
+3. LOTD/XP
+2. Weapons/Clothes
