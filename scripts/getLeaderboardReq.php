@@ -18,7 +18,7 @@
 ==============================================================================*/
 
 if (!defined("INCLUDE_SCRIPT")) return;
-class getLevelByIdReq extends RequestResponse {
+class getLeaderboardReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json["body"]["cid"]) || 
 			!is_numeric($json["body"]["cid"]) ||
