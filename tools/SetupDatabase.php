@@ -208,7 +208,7 @@ SetupTable($config['table_assets'], "(
 )");
 
 SetupTable($config['table_scores'], "(
-	contentId INT NOT NULL PRIMARY KEY,
+	levelId INT NOT NULL PRIMARY KEY,
 	userId INT NOT NULL,
 	score INT NOT NULL
 )", "(contentId, userId, score)");

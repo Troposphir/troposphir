@@ -30,7 +30,7 @@ class setGameScoreReq extends RequestResponse {
 			"table" => $config["table_score"],
 			"fields" => $db->arrayToSQLGroup(
 				array(
-					"contentId", 
+					"levelId", 
 					"userId", 
 					"score"
 				), 
