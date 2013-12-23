@@ -207,6 +207,12 @@ SetupTable($config['table_assets'], "(
 	id, uploadedBy, origFileName, fileName, size, created
 )");
 
+SetupTable($config['table_scores'], "(
+	contentId INT NOT NULL PRIMARY KEY,
+	userId INT NOT NULL,
+	score INT NOT NULL
+)", "(contentId, userId, score)");
+
 
 $db = null;	
 echo 'SETUP COMPLETED.';
