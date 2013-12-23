@@ -34,6 +34,7 @@ $config = array(
 	'table_map'		=> 'maps',
 	'table_user'	=> 'users',
 	'table_items'   => 'items',
+	'table_score' 	=> 'scores',
 	//Directory Setup
 	'dir_imgs'		=> 'image',
 	'dir_maps'		=> 'map',
