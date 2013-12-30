@@ -211,7 +211,7 @@ SetupTable($config['table_scores'], "(
 	levelId INT NOT NULL PRIMARY KEY,
 	userId INT NOT NULL,
 	score INT NOT NULL
-)", "(contentId, userId, score)");
+)", "(levelId, userId, score)");
 
 
 $db = null;	
