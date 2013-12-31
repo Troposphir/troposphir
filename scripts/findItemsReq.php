@@ -1,16 +1,4 @@
-<?php
-/*==============================================================================
-  Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Affero General Public License as
-  published by the Free Software Foundation, either version 3 of the
-  License, or (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
   You should have received a copy of the GNU Affero General Public License 
@@ -40,32 +28,31 @@ class findItemsReq extends RequestResponse {
 			$item['isid']     = 0;
 			$item['levels']   = 0;
 			
-			/*
 			$itemProps = array();
-			$itemProps['shown']               = ((bool)$row['shown']) ? 'true' : 'false';
+			$itemProps['shown']               = ($row['shown'] == 1) ? 'true' : 'false';
 			$itemProps['vehicleCategory']     = (string)$row['vehicleCategory'];
-			$itemProps['is.free']             = ((bool)$row['isFree']) ? 'true' : 'false';
-			$itemProps['is.pro']              = ((bool)$row['isPro']) ? 'true' : 'false';
-			$itemProps['is.gift']             = ((bool)$row['isGift']) ? 'true' : 'false';
-			$itemProps['is.featured']         = ((bool)$row['isFeatured']) ? 'true' : 'false';
+			$itemProps['is.free']             = ($row['isFree'] == 1) ? 'true' : 'false';
+			$itemProps['is.pro']              = ($row['isPro'] == 1) ? 'true' : 'false';
+			$itemProps['is.gift']             = ($row['isGift'] == 1) ? 'true' : 'false';
+			$itemProps['is.featured']         = ($row['isFeatured'] == 1) ? 'true' : 'false';
 			$itemProps['duration']            = (string)$row['duration'];
 			$itemProps['description']         = (string)$row['description'];
-			$itemProps['upgrade.description'] = (string)$row['upgradeDescription'];
-			$itemProps['is.rcextra']          = ((bool)$row['isRCExtra']) ? 'true' : 'false';
-			$itemProps['quickEquipped']       = ((bool)$row['quickEquipped']) ? 'true' : 'false';
+			//$itemProps['upgrade.description'] = (string)$row['upgradeDescription'];
+			$itemProps['is.rcextra']          = ($row['isRCExtra'] == 1) ? 'true' : 'false';
+			$itemProps['quickEquipped']       = ($row['quickEquipped'] == 1) ? 'true' : 'false';
 			$itemProps['gearType']            = (string)$row['gearType'];
-			$itemProps['damagePoints']        = (string)$row['damagePoints'];
-			$itemProps['damagePluses']        = (string)$row['damagePluses'];
-			$itemProps['blockFactorPoints']   = (string)$row['blockFactorPoints'];
-			$itemProps['blockFactorPluses']   = (string)$row['blockFactorPluses'];
-			$itemProps['impulsePoints']       = (string)$row['impulsePoints'];
-			$itemProps['impulsePluses']       = (string)$row['impulsePluses'];
-			$itemProps['impulseBlockFactorPoints'] = (string)$row['impulseBlockFactorPoints'];
-			$itemProps['impulseBlockFactorPluses'] = (string)$row['impulseBlockFactorPluses'];
-			$itemProps['label']               = (string)$row['label'];
+			//$itemProps['damagePoints']        = (string)$row['damagePoints'];
+			//$itemProps['damagePluses']        = (string)$row['damagePluses'];
+			//$itemProps['blockFactorPoints']   = (string)$row['blockFactorPoints'];
+			//$itemProps['blockFactorPluses']   = (string)$row['blockFactorPluses'];
+			//$itemProps['impulsePoints']       = (string)$row['impulsePoints'];
+			//$itemProps['impulsePluses']       = (string)$row['impulsePluses'];
+			//$itemProps['impulseBlockFactorPoints'] = (string)$row['impulseBlockFactorPoints'];
+			//$itemProps['impulseBlockFactorPluses'] = (string)$row['impulseBlockFactorPluses'];
+			//$itemProps['label']               = (string)$row['label'];
 			$itemProps['genders']             = (string)$row['genders'];
+			
 			$item['props'] = $itemProps;
-			*/
 			
 			$itemList[] = $item;
 		}
