@@ -37,7 +37,8 @@ $config = array(
 	'table_scores' 	=> 'scores',
 	'table_assets'  => 'asset',
 	//Directory Setup
-	'dir_imgs'		=> 'image',
+	'dir_imgs'		=> 'image/maps',
+	'dir_avatars'   => 'image/avatars',
 	'dir_maps'		=> 'map',
 	'dir_assets'	=> 'asset'
 );
