@@ -79,6 +79,7 @@ SetupTable($config['table_user'], "(
 	levelComments, designModeTime, cid, amt, ipAddress
 )" );
 
+
 //Create map table
 SetupTable($config['table_map'], "( 
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -207,12 +208,17 @@ SetupTable($config['table_assets'], "(
 	id, uploadedBy, origFileName, fileName, size, created
 )");
 
-SetupTable($config['table_scores'], "(
-	levelId INT NOT NULL PRIMARY KEY,
-	userId INT NOT NULL,
-	score INT NOT NULL
-)", "(levelId, userId, score)");
-
+//Create Minimal Table Entries
+$db->exec("INSERT INTO " . $config['table_user'] . " (userId, username, password)
+         VALUES (1, 'OkaySamurai', 'NotARealAccount')");
+$db->exec("INSERT INTO " . $config['table_assets'] . " (id, origFileName, fileName, size)
+         VALUES (1, 'Cosa Plains 1-1', 
+		         '52aa6f023fae4_30d14851cc000fc3060b1af0e3915b07.atmo',
+		         66510)");
+$db->exec("INSERT INTO " . $config['table_map'] . " (id, name, description, author, ownerId, dataId)
+ VALUES (1, 'Cosa Plains 1-1', 
+		 'Start your adventures with the first in the series of the official Atmosphir tutorial.',
+		 'OkaySamurai', 1, 1)");
 
 $db = null;	
 echo 'SETUP COMPLETED.';
