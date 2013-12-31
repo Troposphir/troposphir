@@ -208,6 +208,12 @@ SetupTable($config['table_assets'], "(
 	id, uploadedBy, origFileName, fileName, size, created
 )");
 
+SetupTable($config['table_scores'], "(
+  levelId INT NOT NULL PRIMARY KEY,
+  userId INT NOT NULL,
+  score INT NOT NULL
+  )", "(levelId, userId, score)");
+
 //Create Minimal Table Entries
 $db->exec("INSERT INTO " . $config['table_user'] . " (userId, username, password)
          VALUES (1, 'OkaySamurai', 'NotARealAccount')");
