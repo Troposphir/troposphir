@@ -77,23 +77,35 @@ class findItemisReq extends RequestResponse {
 		
 		$itemList = array();				
 		
-		$itemOne = array();
-		$itemOne["itemId"]  = 1;
-		$itemOne["id"]      = 132;
-		$itemOne["created"] = 9000;
-		$itemList[] = $itemOne;
+		$item = array();
+		$item["itemId"]  = 1;
+		$item["id"]      = 132;
+		$item["created"] = 9000;
+		$itemList[] = $item;
 		
-		$itemTwo = array();
-		$itemTwo["itemId"]  = 2;
-		$itemTwo["id"]      = 131;
-		$itemTwo["created"] = 9000;
-		$itemList[] = $itemTwo;
+		$item = array();
+		$item["itemId"]  = 2;
+		$item["id"]      = 131;
+		$item["created"] = 9000;
+		$itemList[] = $item;
 	
-		$itemTwo = array();
-		$itemTwo["itemId"]  = 3;
-		$itemTwo["id"]      = 133;
-		$itemTwo["created"] = 9000;
-		$itemList[] = $itemTwo;
+		$item = array();
+		$item["itemId"]  = 3;
+		$item["id"]      = 133;
+		$item["created"] = 9000;
+		$itemList[] = $item;
+	
+		$item = array();
+		$item["itemId"]  = 4;
+		$item["id"]      = 134;
+		$item["created"] = 9000;
+		$itemList[] = $item;
+	
+		$item = array();
+		$item["itemId"]  = 5;
+		$item["id"]      = 135;
+		$item["created"] = 9000;
+		$itemList[] = $item;
 	
 		$this->addBody("fres", array(results => $itemList));
 	}
