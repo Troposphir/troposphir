@@ -42,11 +42,11 @@ class getUserByIdReq extends RequestResponse {
 			
 			//Setup user:{prop:{ array
 			$props = array();
-			$props['development'] = ((bool)$row['development']) ? 'true' : 'false';;
-			$props['external']    = ((bool)$row['external']) ? 'true' : 'false';
+			$props['development'] = ($row['development'] == 1) ? 'true' : 'false';;
+			$props['external']    = ($row['external'] == 1) ? 'true' : 'false';
 			$user['props'] = $props;
 			
-			$this->addBody("verified", (string)"true"); //Modified by DLL
+			$this->addBody("verified", true); //Modified by DLL
 			$this->addBody("xpp", (integer)$row['xpp']);
 			$this->addBody('isClubMember', ((bool)$row['isClubMember']) ? true : false);
 			$this->addBody('paidBy', (string)$row['paidBy']);
