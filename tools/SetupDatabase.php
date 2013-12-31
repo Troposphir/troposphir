@@ -221,10 +221,10 @@ $db->exec("INSERT INTO " . $config['table_assets'] . " (id, origFileName, fileNa
          VALUES (1, 'Cosa Plains 1-1', 
 		         '52aa6f023fae4_30d14851cc000fc3060b1af0e3915b07.atmo',
 		         66510)");
-$db->exec("INSERT INTO " . $config['table_map'] . " (id, name, description, author, ownerId, dataId)
+$db->exec("INSERT INTO " . $config['table_map'] . " (id, name, description, author, ownerId, dataId, gms, xgms)
  VALUES (1, 'Cosa Plains 1-1', 
 		 'Start your adventures with the first in the series of the official Atmosphir tutorial.',
-		 'OkaySamurai', 1, 1)");
+		 'OkaySamurai', 1, 1, 1, 1)");
 
 $db = null;	
 echo 'SETUP COMPLETED.';
