@@ -30,7 +30,8 @@ class getLevelsByAuthorReq extends RequestResponse {
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version",
- 			"nextLevelId", "editable", "gcid"
+ 			"nextLevelId", "editable", "gcid",
+			"rating", "difficulty", "editMode"
 		);
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
 		$statement = $db->query("SELECT @fields FROM @table WHERE `ownerId` = '@ownerId' LIMIT @start,9999999999", array(
@@ -49,7 +50,8 @@ class getLevelsByAuthorReq extends RequestResponse {
 			$this->addBody("fres", $fres);
 		} else {
 			$levelList = array();
-			for ($count = 0; $row = $all[$count]; $count++) {
+			for ($count = 0; $count < count($all); $count++) {
+				$row = $all[$count];
 				$level = array();
 				
 				$level["id"]          = (integer)$row["id"];
