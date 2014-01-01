@@ -107,7 +107,7 @@ class findItemisReq extends RequestResponse {
 		$item["created"] = 9000;
 		$itemList[] = $item;
 	
-		$this->addBody("fres", array(results => $itemList));
+		$this->addBody("fres", array("results => $itemList));
 	}
 }
 ?>
