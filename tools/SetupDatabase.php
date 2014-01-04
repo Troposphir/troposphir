@@ -209,7 +209,7 @@ SetupTable($config['table_assets'], "(
 )");
 
 SetupTable($config['table_scores'], "(
-  levelId INT NOT NULL PRIMARY KEY,
+  levelId INT NOT NULL,
   userId INT NOT NULL,
   score INT NOT NULL
   )", "(levelId, userId, score)");
