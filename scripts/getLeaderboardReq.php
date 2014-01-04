@@ -40,8 +40,8 @@ class getLeaderboardReq extends RequestResponse {
 			$count = 0; 
 			for (; $row = $statement->fetch(); $count++) {
 				$scores[] = array(
-					"uid" 	=> $row["levelId"],
-					"s1" => $row["score"]
+					"uid" 	=> intval($row["levelId"], 10),
+					"s1" 	=> intval($row["score"], 10)
 				);
 			}
 			$this->addBody("fres", array(
