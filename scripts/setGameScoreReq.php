@@ -27,7 +27,7 @@ class setGameScoreReq extends RequestResponse {
 		}
 		$db = $this->getConnection();
 		$db->query("INSERT INTO @table @fields VALUES @values", array(
-			"table" => $config["table_score"],
+			"table" => $this->config["table_scores"],
 			"fields" => $db->arrayToSQLGroup(
 				array(
 					"levelId", 
@@ -42,11 +42,11 @@ class setGameScoreReq extends RequestResponse {
 					$json["body"]["gameScore"]["uid"],
 					$json["body"]["gameScore"]["s1"]
 				), 
-				array("(", ")", "`")
+				array("(", ")", "")
 			)
 		));
 		
-		$this->addBody("fres", array("results" => $itemList));
+		//$this->addBody("fres", array("results" => $itemList));
 	}
 }
 ?>
