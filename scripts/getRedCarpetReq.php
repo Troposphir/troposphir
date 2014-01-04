@@ -21,7 +21,10 @@ class getRedCarpetReq extends RequestResponse {
 	public function work($json) {
 		//Check input
 		if (!isset($json['body']['userId'])) return;
-		
+		if ($json['body']['userId'] == '1') {
+			$this->addBody('finished', 'false');
+			return;
+		}
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
 		$statement = $db->query("SELECT `finished` FROM `@table` WHERE `userId`='@userId'", array(
 			"table" 	=> $this->config["table_user"],
