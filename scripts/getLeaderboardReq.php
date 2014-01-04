@@ -37,14 +37,16 @@ class getLeaderboardReq extends RequestResponse {
 		} else {
 			$scores = array();
 			$row = null;
-			for ($count = 0; $row = $statement->fetch(); $count++) {
+			$count = 0; 
+			for (; $row = $statement->fetch(); $count++) {
 				$scores[] = array(
 					"uid" 	=> $row["levelId"],
-					"score" => $row["s1"]
+					"s1" => $row["score"]
 				);
 			}
 			$this->addBody("fres", array(
-				"results" => $scores
+				"results" 	=> $scores,
+				"total" 	=> $count
 			));
 		}
 	}
