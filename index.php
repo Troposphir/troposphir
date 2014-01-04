@@ -17,15 +17,15 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 //error_reporting(0);
-require('configs.php');
-require('./include/utils.php');
-require("./include/CRequest.php");
-header('X-Powered-By: Troposphir Beta');
-header('Cache-Control: no-cache, must-revalidate');
-header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
-header('Content-type: application/json');
-			
 if(isset($_REQUEST["json"])) {
+	require('configs.php');
+	require('./include/utils.php');
+	require("./include/CRequest.php");
+	header('X-Powered-By: Troposphir Beta');
+	header('Cache-Control: no-cache, must-revalidate');
+	header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
+	header('Content-type: application/json');
+			
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
 	if (!isset($json['header'])) return;
 	if (!isset($json['body'])) return;
@@ -41,5 +41,18 @@ if(isset($_REQUEST["json"])) {
 		$request->work($json);
 		$request->send();
 	}
+} else {
+	?>
+	<DOCTYPE html>
+	<html>
+		<head>
+			<title>666 - Sanity not found</title>
+		</head>
+		<body>
+			You shouldn't have come here... <br />
+			Now the crows will shit bomb eggs on your head!
+		</body>
+	</html>
+	<?php
 }
 ?>

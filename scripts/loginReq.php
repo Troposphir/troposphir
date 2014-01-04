@@ -34,7 +34,6 @@ class loginReq extends RequestResponse {
 					"username" => $json["body"]["username"],
 					"password" => md5($json["body"]["password"])
 		));
-		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("USER_NOT_FOUND");
 		} else {
