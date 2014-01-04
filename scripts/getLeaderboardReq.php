@@ -40,7 +40,7 @@ class getLeaderboardReq extends RequestResponse {
 			$count = 0; 
 			for (; $row = $statement->fetch(); $count++) {
 				$scores[] = array(
-					"uid" 	=> intval($row["levelId"], 10),
+					"uid" 	=> intval($row["userId"], 10),
 					"s1" 	=> intval($row["score"], 10)
 				);
 			}
