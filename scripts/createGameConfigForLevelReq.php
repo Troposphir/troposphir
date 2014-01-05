@@ -17,6 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 
+//Todo: Implement actual game config table
 if (!defined("INCLUDE_SCRIPT")) return;
 class createGameConfigForLevelReq extends RequestResponse {
 	public function work($json) {
@@ -24,7 +25,15 @@ class createGameConfigForLevelReq extends RequestResponse {
 			return;
 		}
 		
-		$this->addBody("gameConfig", array("id" => $json["body"]["levelId"]));
+		//Set level config
+		//Right now, it only sets it to 1. The client only sends this packet
+		//when gcid == 0. gcid is originally meant to be linked to a game config id table.
+		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] . 
+			" SET gcid=1 
+			  WHERE `id`=?");
+		$stmt->execute($json["body"]["levelId"]);
+		
+		$this->addBody("gameConfig", array("id" => 1));
 	}
 }
 ?>
