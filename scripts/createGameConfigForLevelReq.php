@@ -28,15 +28,15 @@ class createGameConfigForLevelReq extends RequestResponse {
 		//Set level config
 		//The client only sends this (createGameConfigForLevelReq) packet
 		//when gcid == 0. 
-		//Right now, it only sets gcid to 1. gcid is originally meant to be linked to a game config id table
+		//Right now, it only sets gcid to the level's levelId. gcid is originally meant to be linked to a game config id table
 		//that is meant to be created here..
 		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] . 
-			" SET `gcid`=1 
+			" SET `gcid`=`levelId` 
 			  WHERE `id`=:id");
 		$stmt->bindParam(':id', $json["body"]["levelId"],PDO::PARAM_INT);
 		$stmt->execute();
 		
-		$this->addBody("gameConfig", array("id" => 1));
+		$this->addBody("gameConfig", array("id" => $json["body"]["levelId"]));
 	}
 }
 ?>
