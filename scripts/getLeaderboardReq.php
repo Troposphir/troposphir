@@ -26,12 +26,15 @@ class getLeaderboardReq extends RequestResponse {
 			return;
 		}
 		$db = $this->getConnection();
-		$statement = $db->query("SELECT * FROM @table WHERE `levelId`=@levelId ORDER BY `score` LIMIT @start,@size", array(
-				"table" 	=> $this->config["table_scores"],
-				"levelId" 	=> $json['body']['cid'],
-				"start" 	=> $json['body']['freq']['start'],
-				"size" 		=> $json['body']['freq']['blockSize']
-		));
+		$statement = $db->prepare("SELECT * FROM " . $this->config["table_scores"] . " 
+			WHERE `levelId`=:levelId 
+			ORDER BY `score` 
+			LIMIT :start,:size");
+		$statement->bindParam(':levelId', $json['body']['cid'], PDO::PARAM_INT);
+		$statement->bindParam(':start', $json['body']['freq']['start'], PDO::PARAM_INT);
+		$statement->bindParam(':size', $json['body']['freq']['blockSize'], PDO::PARAM_INT);
+		$statement->execute();
+
 		if ($statement == null || $statement == false) {
 			$this->error("NOT_FOUND");
 		} else {
@@ -40,10 +43,10 @@ class getLeaderboardReq extends RequestResponse {
 			$count = 0; 
 			for (; $row = $statement->fetch(); $count++) {
 				$scores[] = array(
-					"uid" 	=> intval($row["userId"], 10),
-					"s1" 	=> intval($row["score"], 10)
+					"uid"         => intval($row["userId"], 10),
+					"s1"         => intval($row["score"], 10)
 				);
-			}
+            }
 			$this->addBody("fres", array(
 				"results" 	=> $scores,
 				"total" 	=> $count
