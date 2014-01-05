@@ -25,26 +25,46 @@ class setGameScoreReq extends RequestResponse {
 			!isset($json["body"]["gameScore"]["configId"])) {
 			return;
 		}
+		
+		//Verify user operations
+		if (!$this->verifyUserById($json['body']['gameScore']['uid'])) {
+			$this->log("Hacking attempt [createAssetReq()]: Attempting to modify another user's data.");
+			return;
+		}
+		
 		$db = $this->getConnection();
-		$db->query("INSERT INTO @table @fields VALUES @values", array(
-			"table" => $this->config["table_scores"],
-			"fields" => $db->arrayToSQLGroup(
-				array(
-					"levelId", 
-					"userId", 
-					"score"
-				), 
-				array("(", ")", "`")
-			),
-			"values" => $db->arrayToSQLGroup(
-				array(
-					$json["body"]["gameScore"]["configId"],
-					$json["body"]["gameScore"]["uid"],
-					$json["body"]["gameScore"]["s1"]
-				), 
-				array("(", ")", "")
-			)
-		));
+		$stmt = $db->prepare("SELECT * FROM " . $this->config["table_scores"] . " 
+			WHERE levelId=:levelId
+			AND userId=:userId");
+		$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
+		$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
+		$stmt->execute();
+		$found = $stmt->fetch();
+		
+		if ($found == false || $found == null) 
+		{
+		
+			//User entry for leaderboard score does not exist, so insert.
+			$stmt = $db->prepare("INSERT INTO " . $this->config["table_scores"] . " 
+				(levelId, userId, score) 
+				VALUES (:levelId, :userId, :score)");
+			$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
+			$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
+			$stmt->bindParam(':score', $json['body']['gameScore']['s1'], PDO::PARAM_INT);
+			$stmt->execute();
+		}
+		else
+		{
+			//User entry for leaderboard score already exists, so update it instead.
+			$stmt = $db->prepare("UPDATE " . $this->config["table_scores"] . " 
+				SET score=:score 
+				WHERE userId=:userId
+				AND levelId=:levelId");
+			$stmt->bindParam(':score', $json['body']['gameScore']['s1'], PDO::PARAM_INT);
+			$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
+			$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
+			$stmt->execute();
+		}
 		
 		//$this->addBody("fres", array("results" => $itemList));
 	}
