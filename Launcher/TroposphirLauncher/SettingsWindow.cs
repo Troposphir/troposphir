@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Linq;
 using System.IO;
@@ -8,22 +9,22 @@ namespace TroposphirLauncher {
 	public partial class SettingsWindow : Gtk.Window {
 		public static readonly FileInfo CONFIG_PATH = new FileInfo(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Troposphir", "Launcher", "settings.txt"));
 
-		[SerializableSetting]
+		[SerializableSetting("")]
 		public string AtmosphirExecutableFolder {
 			get { return atmoPathTextBox.Text; }
 			set { atmoPathTextBox.Text = value; }
 		}
-		[SerializableSetting]
+		[SerializableSetting("http://onemoreblock.com/Atmosphir/")]
 		public string TroposphirServerPath {
 			get { return serverUrlTextBox.Text; }
 			set { serverUrlTextBox.Text = value; }
 		}
-		[SerializableSetting]
+		[SerializableSetting(true)]
 		public bool OnlineMode {
 			get { return onlineCheckbox.Active; }
 			set { onlineCheckbox.Active = value; }
 		}
-		[SerializableSetting]
+		[SerializableSetting(true)]
 		public bool AutoUpdate {
 			get { return autoUpdateCheckbox.Active; }
 			set { autoUpdateCheckbox.Active = value; }
@@ -60,18 +61,32 @@ namespace TroposphirLauncher {
 
 			IEnumerable<PropertyInfo> propertiesToLoad = GetSerializableProperties();
 			propertiesToLoad.All(property => {
-				if (settings.ContainsKey(property.Name)) {
-					if (property.PropertyType == typeof(string)) {
+				if (property.PropertyType == typeof(string)) {
+					if (settings.ContainsKey(property.Name)) {
 						property.SetValue(this, settings[property.Name]);
-					} else if (property.PropertyType == typeof(bool)) {
+					} else {
+						property.SetValue(this, (string)property.GetCustomAttribute<SerializableSettingAttribute>(true).value);
+					}
+				} else if (property.PropertyType == typeof(bool)) {
+					if (settings.ContainsKey(property.Name)) {
 						property.SetValue(this, settings[property.Name].ToLower() == "true");
-					} else if (property.PropertyType == typeof(int)) {
+					} else {
+						property.SetValue(this, (bool)property.GetCustomAttribute<SerializableSettingAttribute>(true).value);
+					}
+				} else if (property.PropertyType == typeof(int)) {
+					if (settings.ContainsKey(property.Name)) {
 						property.SetValue(this, int.Parse(settings[property.Name]));
-					} else if (property.PropertyType == typeof(float)) {
+					} else {
+						property.SetValue(this, (int)property.GetCustomAttribute<SerializableSettingAttribute>(true).value);
+					}
+				} else if (property.PropertyType == typeof(float)) {
+					if (settings.ContainsKey(property.Name)) {
 						property.SetValue(this, float.Parse(settings[property.Name]));
 					} else {
-						System.Diagnostics.Debug.Write(string.Format("Setting {0} isn't of a supported type.", property.Name));
+						property.SetValue(this, (float)property.GetCustomAttribute<SerializableSettingAttribute>(true).value);
 					}
+				} else {
+					Debug.WriteLine(string.Format("Setting {0} isn't of a supported type.", property.Name));
 				}
 				return true;
 			});
@@ -87,10 +102,8 @@ namespace TroposphirLauncher {
 		}
 
 		private IEnumerable<PropertyInfo> GetSerializableProperties() {
-			return this.GetType().GetProperties().Where((prop, index) => {
-				return prop.CustomAttributes.Any(data => {
-					return data.AttributeType == typeof(SerializableSetting);
-				});
+			return this.GetType().GetProperties().Where((prop) => {
+				return prop.IsDefined(typeof(SerializableSettingAttribute), true);
 			});
 		}
 
@@ -101,6 +114,11 @@ namespace TroposphirLauncher {
 	}
 
 	[AttributeUsage(AttributeTargets.Property)]
-	public class SerializableSetting : System.Attribute {}
+	public class SerializableSettingAttribute : System.Attribute {
+		public object value;
+		public SerializableSettingAttribute(object value) {
+			this.value = value;
+		}
+	}
 }
 

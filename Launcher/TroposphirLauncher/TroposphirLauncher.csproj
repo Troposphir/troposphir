@@ -79,6 +79,8 @@
     <Compile Include="gtk-gui\TroposphirLauncher.MainWindow.cs" />
     <Compile Include="SettingsWindow.cs" />
     <Compile Include="gtk-gui\TroposphirLauncher.SettingsWindow.cs" />
+    <Compile Include="AlertWindow.cs" />
+    <Compile Include="gtk-gui\TroposphirLauncher.AlertWindow.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

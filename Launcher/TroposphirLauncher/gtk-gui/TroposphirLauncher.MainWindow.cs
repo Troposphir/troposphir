@@ -27,7 +27,6 @@ namespace TroposphirLauncher
 			this.DefaultHeight = 200;
 			// Container child TroposphirLauncher.MainWindow.Gtk.Container+ContainerChild
 			this.table2 = new global::Gtk.Table (((uint)(4)), ((uint)(4)), false);
-			this.table2.Name = "table2";
 			this.table2.RowSpacing = ((uint)(3));
 			this.table2.ColumnSpacing = ((uint)(3));
 			this.table2.BorderWidth = ((uint)(3));
