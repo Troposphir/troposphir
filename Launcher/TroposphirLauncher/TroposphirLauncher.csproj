@@ -73,7 +73,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="gtk-gui\generated.cs" />
-    <Compile Include="MainWindow.cs" />
+    <Compile Include="MainWindow.cs">
+      <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="gtk-gui\TroposphirLauncher.MainWindow.cs" />
@@ -81,6 +83,7 @@
     <Compile Include="gtk-gui\TroposphirLauncher.SettingsWindow.cs" />
     <Compile Include="AlertWindow.cs" />
     <Compile Include="gtk-gui\TroposphirLauncher.AlertWindow.cs" />
+    <Compile Include="Glob.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
