@@ -1,5 +1,0 @@
-Version 0.5:
- * Leaderboards beta
- * Launcher compatiility beta
-^Version 0.4: 
- * Secret stuff
