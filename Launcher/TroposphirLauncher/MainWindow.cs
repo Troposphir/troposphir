@@ -80,10 +80,10 @@ namespace TroposphirLauncher {
 						progressBar.Fraction = index / (float)(length-1);
 					}
 				}
-//				//Computer-Specific dump of the game hashes for internal server testing
+				//Computer-Specific dump of the game hashes for internal server testing
 //				string ss = "";
 //				foreach (string key in fileHashes.Keys) {
-//					string uri = Uri.UnescapeDataString(new Uri(new Uri(settingsWindow.AtmosphirExecutableFolder), new Uri(key)).AbsolutePath);
+//					string uri = Uri.UnescapeDataString(new Uri(settingsWindow.AtmosphirExecutableFolder).MakeRelativeUri(new Uri(key)).ToString());
 //					ss += uri + "===" + fileHashes[key] + "\r\n";
 //				}
 //				File.WriteAllText("C:/xampp/htdocs/Troposphir/Server/clientHashList.txt", ss);
@@ -93,19 +93,20 @@ namespace TroposphirLauncher {
 			progressBar.Fraction = 0f;
 			try {
 				result = ServerRequest("clientHashList.txt");
-				List<string> mustUpdate = new List<string>();
+				List<UpdateItem> mustUpdate = new List<UpdateItem>();
 				string[] lines = result.Split("\n".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 				for (int index = 0, length = lines.Length; index < length; index++) {
 					string[] parts = lines[index].Split("===".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 					if (parts.Length == 2) {
-						string key = System.IO.Path.Combine(settingsWindow.AtmosphirExecutableFolder, parts[0]);
+						string key = System.IO.Path.Combine(new DirectoryInfo(settingsWindow.AtmosphirExecutableFolder).Parent.FullName, parts[0])
+							.Replace("\\", "/");
 						if (fileHashes[key] != parts[1]) {
-							mustUpdate.Add(parts[0]);
+							Debug.WriteLine(key);
+							mustUpdate.Add(new UpdateItem(key, parts[0]));
 						}
 					}
 					progressBar.Fraction = index / (float)(length-1);
 				}
-				foreach (string item in mustUpdate) Debug.WriteLine(item);
 			} catch (Exception e) {
 				Debug.WriteLine("Could not connect to update server: "+e.Message);
 				progressBar.Text = "Could not connect";

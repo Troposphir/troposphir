@@ -84,6 +84,7 @@
     <Compile Include="AlertWindow.cs" />
     <Compile Include="gtk-gui\TroposphirLauncher.AlertWindow.cs" />
     <Compile Include="Glob.cs" />
+    <Compile Include="UpdateItem.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
