@@ -33,21 +33,22 @@ namespace TroposphirLauncher {
 			atmosphirProcess.Start();
 		}
 
-		async void LoadNews() {
-			Task task = new Task(async () => {
-				updateTextView.Buffer.Clear();
-				updateTextView.Buffer.InsertAtCursor(await LoadNewsAsync());
-			});
-			task.Start();
-			await task;
-		}
-		async Task<String> LoadNewsAsync() {
+		void LoadNews() {
 			string path = System.IO.Path.Combine(settingsWindow.TroposphirServerPath, "updateNews.php");
 			WebRequest request = WebRequest.Create(path);
-			Stream data = request.GetResponse().GetResponseStream();
-			using (StreamReader reader = new StreamReader(data)) {
-				return await reader.ReadToEndAsync();
+			string result = string.Empty;
+			try {
+				Stream data = request.GetResponse().GetResponseStream();
+				data.ReadTimeout = 3000;
+				using (StreamReader reader = new StreamReader(data)) {
+					result = reader.ReadToEnd();
+				}
+			} catch {
+				System.Diagnostics.Debug.WriteLine("Could not connect to update news");
+				result = "Could not load update list";
 			}
+			updateTextView.Buffer.Clear();
+			updateTextView.Buffer.InsertAtCursor(result);
 		}
 	}
 }
