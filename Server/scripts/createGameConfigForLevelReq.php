@@ -31,8 +31,9 @@ class createGameConfigForLevelReq extends RequestResponse {
 		//Right now, it only sets gcid to the level's levelId. gcid is originally meant to be linked to a game config id table
 		//that is meant to be created here..
 		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] . 
-			" SET `gcid`=`levelId` 
+			" SET `gcid`=:levelId 
 			  WHERE `id`=:id");
+		$stmt->bindParam(':levelId', $json["body"]["levelId"], PDO::PARAM_INT);
 		$stmt->bindParam(':id', $json["body"]["levelId"],PDO::PARAM_INT);
 		$stmt->execute();
 		
