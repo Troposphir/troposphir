@@ -54,7 +54,6 @@ class deleteLevelCommentReq extends RequestResponse {
 		
         
 		if ($stmt->execute() == false) {
-            print_r($db->errorInfo());
 			$this->error("NOT_FOUND");
 		} else {
             // success
