@@ -36,7 +36,7 @@ $config = array(
 	'table_items'   => 'items',
 	'table_scores' 	=> 'scores',
 	'table_assets'  => 'asset',
-	'table_comments'  => 'comments',
+	'table_comments'=> 'comments',
 	//Directory Setup
 	'dir_imgs'		=> 'image/maps',
 	'dir_avatars'   => 'image/avatars',
