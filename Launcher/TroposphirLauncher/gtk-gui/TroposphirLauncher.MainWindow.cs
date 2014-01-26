@@ -16,15 +16,15 @@ namespace TroposphirLauncher
 		{
 			global::Stetic.Gui.Initialize (this);
 			// Widget TroposphirLauncher.MainWindow
-			this.WidthRequest = 300;
-			this.HeightRequest = 200;
+			this.WidthRequest = 400;
+			this.HeightRequest = 300;
 			this.Name = "TroposphirLauncher.MainWindow";
 			this.Title = "Troposphir Launcher";
 			this.WindowPosition = ((global::Gtk.WindowPosition)(4));
 			this.Resizable = false;
 			this.AllowGrow = false;
-			this.DefaultWidth = 300;
-			this.DefaultHeight = 200;
+			this.DefaultWidth = 400;
+			this.DefaultHeight = 300;
 			// Container child TroposphirLauncher.MainWindow.Gtk.Container+ContainerChild
 			this.table2 = new global::Gtk.Table (((uint)(4)), ((uint)(4)), false);
 			this.table2.Name = "table2";

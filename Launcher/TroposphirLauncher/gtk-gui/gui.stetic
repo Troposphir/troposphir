@@ -7,16 +7,16 @@
     <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
     <widget-library name="../bin/Debug/TroposphirLauncher.exe" internal="true" />
   </import>
-  <widget class="Gtk.Window" id="TroposphirLauncher.MainWindow" design-size="300 200">
+  <widget class="Gtk.Window" id="TroposphirLauncher.MainWindow" design-size="400 300">
     <property name="MemberName" />
-    <property name="WidthRequest">300</property>
-    <property name="HeightRequest">200</property>
+    <property name="WidthRequest">400</property>
+    <property name="HeightRequest">300</property>
     <property name="Title">Troposphir Launcher</property>
     <property name="WindowPosition">CenterOnParent</property>
     <property name="Resizable">False</property>
     <property name="AllowGrow">False</property>
-    <property name="DefaultWidth">300</property>
-    <property name="DefaultHeight">200</property>
+    <property name="DefaultWidth">400</property>
+    <property name="DefaultHeight">300</property>
     <signal name="DeleteEvent" handler="OnDeleteEvent" />
     <child>
       <widget class="Gtk.Table" id="table2">
@@ -206,6 +206,7 @@
             <property name="CanFocus">True</property>
             <property name="IsEditable">True</property>
             <property name="InvisibleChar">●</property>
+            <signal name="Changed" handler="UpdateExecutablePath" />
           </widget>
           <packing>
             <property name="LeftAttach">1</property>
@@ -230,6 +231,7 @@
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
+            <signal name="Toggled" handler="UpdateAutoUpdate" />
           </widget>
           <packing>
             <property name="TopAttach">2</property>
@@ -343,6 +345,7 @@ https://github.com/MusicalIdiot/Troposphir</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>
+            <signal name="Toggled" handler="UpdateOnlineMode" />
           </widget>
           <packing>
             <property name="TopAttach">2</property>
@@ -366,6 +369,7 @@ https://github.com/MusicalIdiot/Troposphir</property>
             <property name="CanFocus">True</property>
             <property name="IsEditable">True</property>
             <property name="InvisibleChar">●</property>
+            <signal name="Changed" handler="UpdateServerAddress" />
           </widget>
           <packing>
             <property name="TopAttach">1</property>
