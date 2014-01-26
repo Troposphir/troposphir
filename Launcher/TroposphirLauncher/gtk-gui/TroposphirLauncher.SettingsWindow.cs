@@ -160,7 +160,10 @@ namespace TroposphirLauncher
 			}
 			this.Show ();
 			this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDelete);
-			this.button2.Clicked += new global::System.EventHandler (this.SaveSettings);
+			this.serverUrlTextBox.Changed += new global::System.EventHandler (this.UpdateServerAddress);
+			this.onlineCheckbox.Toggled += new global::System.EventHandler (this.UpdateOnlineMode);
+			this.autoUpdateCheckbox.Toggled += new global::System.EventHandler (this.UpdateAutoUpdate);
+			this.atmoPathTextBox.Changed += new global::System.EventHandler (this.UpdateExecutablePath);
 			this.atmoPathSelect.Clicked += new global::System.EventHandler (this.OpenAtmoPathSelector);
 		}
 	}

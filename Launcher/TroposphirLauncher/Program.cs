@@ -1,15 +1,19 @@
 using Microsoft.Win32;
 using System;
 using Gtk;
+using System.Diagnostics;
 
 namespace TroposphirLauncher {
-	class MainClass {
+	public class MainClass {
+		public static readonly bool DebugMode = true;
+
 		public static void Main (string[] args) {
+			TroposphirLauncher.Settings.Load();
 			RegisterURI();
-			Application.Init ();
-			MainWindow win = new MainWindow ();
-			win.Show ();
-			Application.Run ();
+			Application.Init();
+			MainWindow win = new MainWindow();
+			win.Show();
+			Application.Run();
 		}
 		public static void RegisterURI() {
 			#region Windows
