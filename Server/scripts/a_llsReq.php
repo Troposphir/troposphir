@@ -54,7 +54,7 @@ class a_llsReq extends RequestResponse {
 		$query = str_replace('deleted=true', 'deleted=1', $query);
 	
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$stmt = $db->query("SELECT * FROM `@table` WHERE `deleted`=0", array(
+		$stmt = $db->query("SELECT * FROM `@table` WHERE `deleted`=0  ORDER BY id DESC", array(
 			"table" 	=> $this->config["table_map"],
 			"query" 	=> $query
 		));
