@@ -213,6 +213,13 @@ SetupTable($config['table_scores'], "(
   userId INT NOT NULL,
   score INT NOT NULL
   )", "(levelId, userId, score)");
+  
+SetupTable($config['table_comments'], "(
+  commentId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  userId INT NOT NULL DEFAULT 0,
+  levelId INT NOT NULL DEFAULT 0,
+  body VARCHAR(2048) NOT NULL DEFAULT ''
+  )", "(commentId, userId, body)");
 
 //Create Minimal Table Entries
 $db->exec("INSERT INTO " . $config['table_user'] . " (userId, username, password)
