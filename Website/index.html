@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+	<head>
+		<title>OneMoreBlock + Troposphir</title>
+		<meta charset="utf8">
+		<script src="//underscorejs.org/underscore-min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.5/angular.min.js"></script>
+		<script src="//code.angularjs.org/1.2.16/angular-route.min.js"></script>
+		<link rel="stylesheet" href="styles.css" />
+		<script src="js/controllers.js"></script>
+	</head>
+	<body ng-app="troposphir" ng-controller="navigation">
+		<header class="gigantic">
+			<img src="http://onemoreblock.com/1Oy.png" />
+		</header>
+		<menu class="gigantic">
+			<button ng-click="changePage('browser')">Level Browser</button>
+			<button ng-click="changePage('http://onemoreblock.com/forum/')">Community</button>
+		</menu>
+		<section id="content">
+			<div ng-controller="levelBrowser" ng-show="page=='browser'">
+				<aside id="filters">
+					<section>
+						Search <input type="search" ng-model="search" ng-change="doSearch()">
+					</section>
+				</aside>
+				<section id="levelList">
+					<article ng-repeat="level in levels | filter:search" ng-class="level.expanded && 'tall'" ng-click="changePage('level/'+level.id)">
+						<div class="thumbnail" style="background-image: url({{level.screenshot}})">
+							<div class="levelInfo">
+								<h1>{{level.name}}</h1> <h2>by {{level.author}}</h2> <h3>{{level.playCount}} plays</h3><br>
+								<div class="rating small">
+									<div class="rating-fill small" style="width: {{level.ratingPercent}}%;"></div>
+								</div>
+								<div class="difficulty small">
+									<div class="difficulty-fill small"style=" width: {{level.difficultyPercent}}%;"></div>
+								</div>
+							</div>
+						</div>
+					</article>
+				</section>
+			</div>
+			<div ng-controller="levelCard" ng-show="page == 'level'">
+				<img class="levelImage" ng-src="{{level.screenshot}}" />
+			</div>
+		</section>
+	</body>
+</html>

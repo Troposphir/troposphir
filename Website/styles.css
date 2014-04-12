@@ -1,0 +1,179 @@
+/*
+General styling
+*/
+* {
+	box-sizing: border-box;
+}
+
+html, body {
+	min-width: 960px;
+	width: 100%;
+	height: 100%;
+	margin: 0 0;
+	padding: 0 0;
+	border: 0px none;
+	background: #102447;
+	font-family: Roboto, Calibri, sans-serif;
+}
+
+header.gigantic {
+	height: 100px;
+	width: 100%;
+	padding-left: 6px;
+	background: linear-gradient(to bottom, rgba(24,39,54,1) 0%,rgba(4,28,57,1) 100%);
+}
+menu.gigantic {
+	margin: 0 0;
+	height: 30px;
+	width: 100%;
+	padding: 0 0;
+	background: url(http://onemoreblock.com/forum/styles/resurgent/xenforo/navigation/navigation-tab.png) #1B3D84;
+	vertical-align: middle;
+	overflow: visible;
+	color: #80C0EA;
+}
+menu button {
+	background: url(http://onemoreblock.com/forum/styles/resurgent/xenforo/navigation/navigation-tab-active.png) #000;
+	border: 0px none;
+	height: 110%;
+	width: 120px;
+	color: inherit;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+menu button:hover {
+	 background-color: #666;
+	 cursor: pointer;
+}
+#content {
+	margin: 15px auto;
+	width: 960px;
+	border: 1px solid #142F68;
+	broder-radius: 5px;
+	background: #142749;
+	padding: 10px;
+	color: #A5CAE4;
+}
+#content aside {
+	float: right;
+	width: 250px;
+	background: url(http://onemoreblock.com/forum/styles/resurgent/xenforo/gradients/breadcrumb-custom.png);
+	border: 5px solid #142F68;
+	border-radius: 5px;
+	padding: 5px;
+}
+#content:before, #content:after {
+	content: "";
+	display: table;
+}
+#content:after {
+	clear: both;
+}
+
+/*
+Level browser styling
+*/
+#levelList {
+	float: left;
+	width: 650px;
+	zoom: 1;
+}
+#levelList article {
+	float: left;
+	margin: 10px;
+	border: 5px solid #142F68;
+	border-radius: 5px;
+	width: 276px;
+	height: 194px;
+	background-size: 276px 194px;
+	background-color: #142F68;
+	background-repeat: no-repeat;
+	transition: height linear 200ms;
+	overflow: hidden;
+	cursor: pointer;
+}
+#levelList article .thumbnail {
+	width: 100%;
+	height: 100%;
+	background-size: 276px 194px;
+	background-color: #142F68;
+	background-repeat: no-repeat;
+}
+#levelList article .thumbnail .levelInfo {
+	position: relative;
+	bottom: -100%;
+	height: 0px;
+	background: rgba(20,47,104, 0.9);
+	overflow: hidden;
+	transition: height linear 200ms, bottom linear 200ms;
+}
+#levelList article:hover .thumbnail .levelInfo {
+	bottom: calc(-100% + 50px);
+	height: 50px;
+}
+#levelList article .thumbnail .levelInfo h1 {
+	display: inline;
+	font-weight: bolder;
+	font-size: 14pt;
+	line-height: 1em;
+	margin: 0 0;
+	padding: 0 0;
+	border: 0px none;
+}
+#levelList article .thumbnail .levelInfo h2 {
+	display: inline;
+	font-weight: normal;
+	font-size: 12pt;
+	line-height: 1em;
+	margin: 0 0;
+	padding: 0 0;
+	border: 0px none;
+}
+#levelList article .thumbnail .levelInfo h3 {
+	float: right;
+	display: inline;
+	font-weight: lighter;
+	font-size: 10pt;
+	line-height: 1em;
+	margin: 5px 5px;
+	padding: 0 0;
+	border: 0px none;
+}
+.rating {
+	background-image: url(img/star-blank.png);
+}
+.rating-fill {
+	background-image: url(img/star-filled.png);
+}
+.difficulty {
+	background-image: url(img/rectangle-blank.png);
+}
+.difficulty-fill {
+	background-image: url(img/rectangle-filled.png);
+}
+.rating, .difficulty, .rating-fill, .difficulty-fill {
+	margin: 5px;
+	display: inline-block;
+	background-size: 32px 32px;
+	background-repeat: repeat-x;
+	width: 160px;
+	height: 32px;
+}
+.rating-fill, .difficulty-fill {
+	margin: 0 0;
+}
+.rating.small, .difficulty.small, .rating-fill.small, .difficulty-fill.small {
+	background-size: 16px 16px;
+	width: 80px;
+	height: 16px;
+}
+/*
+Level details styling
+*/
+.levelImage {
+	width: 400;
+	height: 280;
+	border: 5px solid #142F68;
+}
