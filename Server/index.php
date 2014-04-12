@@ -51,7 +51,6 @@ if(isset($_REQUEST["json"])) {
 		</head>
 		<body>
 			You shouldn't have come here... <br />
-			Now the crows will shit bomb eggs on your head!
 		</body>
 	</html>
 	<?php
