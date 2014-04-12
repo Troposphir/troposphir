@@ -17,6 +17,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 //error_reporting(0);
+
 if(isset($_REQUEST["json"])) {
 	require('configs.php');
 	require('./include/utils.php');
@@ -39,12 +40,12 @@ if(isset($_REQUEST["json"])) {
 	if (class_exists($reqtype)) {
 		$request = new $reqtype($config);
 		$request->work($json);
-		$request->addBody("requestSource", var_dump($_REQUEST));
+		//$request->addBody("requestSource", var_dump($_REQUEST));
 		$request->send();
 	}
 } else {
 	?>
-	<DOCTYPE html>
+	<!DOCTYPE html>
 	<html>
 		<head>
 			<title>666 - Sanity not found</title>
