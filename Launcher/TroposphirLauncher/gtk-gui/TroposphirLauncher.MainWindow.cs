@@ -76,6 +76,7 @@ namespace TroposphirLauncher
 			this.updateTextView.Name = "updateTextView";
 			this.updateTextView.Editable = false;
 			this.updateTextView.CursorVisible = false;
+			this.updateTextView.WrapMode = ((global::Gtk.WrapMode)(2));
 			this.GtkScrolledWindow.Add (this.updateTextView);
 			this.table2.Add (this.GtkScrolledWindow);
 			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table2 [this.GtkScrolledWindow]));

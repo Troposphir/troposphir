@@ -24,7 +24,7 @@ if(isset($_REQUEST["json"])) {
 	header('X-Powered-By: Troposphir Beta');
 	header('Cache-Control: no-cache, must-revalidate');
 	header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
-	header('Content-type: application/json');
+	header('Content-Type: application/json');
 			
 	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
 	if (!isset($json['header'])) return;
@@ -39,6 +39,7 @@ if(isset($_REQUEST["json"])) {
 	if (class_exists($reqtype)) {
 		$request = new $reqtype($config);
 		$request->work($json);
+		$request->addBody("requestSource", var_dump($_REQUEST));
 		$request->send();
 	}
 } else {
@@ -54,5 +55,6 @@ if(isset($_REQUEST["json"])) {
 		</body>
 	</html>
 	<?php
+	echo file_get_contents("php://input");
 }
 ?>

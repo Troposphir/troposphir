@@ -74,7 +74,7 @@ namespace TroposphirLauncher {
 		}
 
 		protected void OnDeleteEvent(object sender, DeleteEventArgs a) {
-			Application.Quit();
+			Exit();
 			a.RetVal = true;
 		}
 
@@ -101,12 +101,13 @@ namespace TroposphirLauncher {
 				Debug.WriteLine("Atmosphir path not set");
 				new AlertWindow("Atmosphir path not set!\nPlease select it in the\nsettings panel");
 			}
+			Exit();
 		}
 
 		void LoadNews() {
 			string result = string.Empty;
 			try {
-				result = server.Request("updateNews.php");
+				result = server.Request("updater.php?news");
 			} catch (Exception e) {
 				Debug.WriteLine("Could not connect to update news: "+e.Message);
 				result = "Could not load update list";
@@ -126,6 +127,10 @@ namespace TroposphirLauncher {
 			} else {
 				Title = TITLE_FORMAT.Replace("%", "");
 			}
+		}
+
+		void Exit() {
+			Application.Quit();
 		}
 	}
 }

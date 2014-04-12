@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Diagnostics;
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace TroposphirLauncher {
 	/// <summary>
@@ -92,6 +94,10 @@ namespace TroposphirLauncher {
 		/// The cancellation state of this updater. If it is marked as cancelled, it will not continue to the next step.
 		/// </summary>
 		bool cancelled = false;
+		/// <summary>
+		/// The update items that must be downloaded.
+		/// </summary>
+		List<UpdateItem> mustUpdate;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="TroposphirLauncher.Updater"/> class using the configurations provided by the specified <see cref="Config"/>.
@@ -119,19 +125,13 @@ namespace TroposphirLauncher {
 		public void Update() {
 			fileHashes = new Dictionary<string, string>();
 			bool stepSuccessful = true;
-			stepCallback.Invoke(Status);
 			if (stepSuccessful && !cancelled) stepSuccessful = TryUpdateStep(GetServerUpdateEndpoint, UpdateStatus.STARTING);
-			stepCallback.Invoke(Status);
 			if (stepSuccessful && !cancelled) stepSuccessful = TryUpdateStep(CheckFiles, UpdateStatus.CHECKING);
-			stepCallback.Invoke(Status);
 			if (stepSuccessful && MainClass.DebugMode && !cancelled) stepSuccessful = TryUpdateStep(DumpHashes, UpdateStatus.CHECKING);
-			stepCallback.Invoke(Status);
 			if (stepSuccessful && !cancelled) stepSuccessful = TryUpdateStep(LoadUpdates, UpdateStatus.COMPARING);
-			stepCallback.Invoke(Status);
 			if (stepSuccessful && !cancelled) stepSuccessful = TryUpdateStep(DownloadFiles, UpdateStatus.DOWNLOADING);
-			stepCallback.Invoke(Status);
 			if (stepSuccessful && !cancelled) stepSuccessful = TryUpdateStep(ApplyPatches, UpdateStatus.APPLYING);
-			Status = UpdateStatus.DONE;
+			Status = UpdateStatus.DONE; stepCallback(Status);
 		}
 
 		/// <summary>
@@ -152,10 +152,11 @@ namespace TroposphirLauncher {
 		bool TryUpdateStep(Action<Action<float>> task, UpdateStatus targetState) {
 			try {
 				Status = targetState;
-				task.Invoke(progressCallback);
+				stepCallback(Status);
+				task(progressCallback);
 				return true;
 			} catch (Exception e) {
-				Console.WriteLine(string.Format("Failed completing update step: {0} with error \"{1}\"", task.Method.Name, e.Message));
+				Console.WriteLine(string.Format("Failed completing update step {0} with error \"{1}\": \n{2}", task.Method.Name, e.Message, e.StackTrace));
 				Status = UpdateStatus.FAILED;
 				return false;
 			}
@@ -166,7 +167,9 @@ namespace TroposphirLauncher {
 		/// </summary>
 		/// <param name="progress">Progress.</param>
 		void GetServerUpdateEndpoint(Action<float> progress) {
-			progress.Invoke(0);
+			progress(0);
+			string response = server.Request("updater.php?starting");
+			progress(1);
 		}
 
 		/// <summary>
@@ -177,8 +180,8 @@ namespace TroposphirLauncher {
 			using (MD5 md5 = MD5.Create()) {
 				List<string> files = Glob.ListAllFiles(patchFolder);
 				for (int index = 0, length = files.Count; index < length; index++) {
-					progress.Invoke(index / (float)(length - 1));
-					string entry = System.IO.Path.Combine(patchFolder, files[index]);
+					progress(index / (float)(length - 1));
+					string entry = Path.Combine(patchFolder, files[index]);
 					using (FileStream stream = File.OpenRead(entry)) {
 						fileHashes.Add(entry.Replace("\\", "/"), BitConverter.ToString(md5.ComputeHash(stream)));
 					}
@@ -194,7 +197,7 @@ namespace TroposphirLauncher {
 			List<string> lines = new List<string>();
 			int index = 0;
 			foreach (string key in fileHashes.Keys) {
-				progress.Invoke(index / (float)(fileHashes.Count - 1));
+				progress(index / (float)(fileHashes.Count - 1));
 				string uri = Uri.UnescapeDataString(new Uri(patchFolder).MakeRelativeUri(new Uri(key)).ToString());
 				lines.Add(uri.Replace("Atmosphir Dev/", "") + "===" + fileHashes[key]);
 				index++;
@@ -207,18 +210,24 @@ namespace TroposphirLauncher {
 		/// </summary>
 		/// <param name="progress">Progress.</param>
 		void LoadUpdates(Action<float> progress) {
-			string result = server.Request("clientHashList.txt");
-			List<UpdateItem> mustUpdate = new List<UpdateItem>();
-			string[] lines = result.Split('\n');
+			string response = server.Request("updater.php?hashes&os="+GetOS());
+			mustUpdate = new List<UpdateItem>();
+			Debug.WriteLine(response);
+			string[] lines = response.Split('\n');
 			for (int index = 0, length = lines.Length; index < length; index++) {
 				string[] parts = lines[index].Split("===".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
 				if (parts.Length == 2) {
-					string key = Path.Combine(new DirectoryInfo(patchFolder).FullName, parts[0]).Replace("\\", "/");
-					if (fileHashes[key] != parts[1]) {
-						mustUpdate.Add(new UpdateItem(key, parts[0]));
+					string localPath = Path.Combine(new DirectoryInfo(patchFolder).FullName, parts[0]).Replace("\\", "/");
+					FileInfo info = new FileInfo(localPath);
+					string localHash = null;
+					fileHashes.TryGetValue(localPath, out localHash);
+					string remoteHash = parts[1].Replace("\r", "").Replace("\n","");
+					if ((localHash == null || !localHash.Equals(remoteHash)) && info.Extension.ToLowerInvariant() != ".txt") {
+						Debug.WriteLine("Must Update: "+localPath);
+						mustUpdate.Add(new UpdateItem(localPath, parts[0]));
 					}
 				}
-				progress.Invoke(index / (float)(length - 1));
+				progress(index / (float)(length - 1));
 			}
 		}
 
@@ -227,7 +236,22 @@ namespace TroposphirLauncher {
 		/// </summary>
 		/// <param name="progress">Progress.</param>
 		void DownloadFiles(Action<float> progress) {
-			progress.Invoke(0);
+			progress(0);
+			if (mustUpdate != null && mustUpdate.Count > 0) {
+				foreach (UpdateItem item in mustUpdate) {
+					Debug.WriteLine(server.Request("updater.php?file="+item.RemotePath));
+					using (StreamReader reader = server.RawRequest("updater.php?file=" + item.RemotePath + "&os=" + GetOS(), "", "")) {
+						FileInfo tempFile = new FileInfo(Path.Combine(Settings.TEMP_PATH.FullName, item.GetHashCode().ToString()));
+						using (StreamWriter writer = new StreamWriter(tempFile.Open(FileMode.Create))) {
+							int i = reader.Read();
+							Console.Write("Int "+i);
+							writer.Write(i);
+						}
+						tempFile.Delete();
+					}
+				}
+			}
+			progress(1);
 		}
 
 		/// <summary>
@@ -235,8 +259,27 @@ namespace TroposphirLauncher {
 		/// </summary>
 		/// <param name="progress">Progress.</param>
 		void ApplyPatches(Action<float> progress) {
-			progress.Invoke(0);
+			progress(0);
 		}
+
+		/// <summary>
+		/// Returns the normalized operating system name.
+		/// </summary>
+		/// <returns>The OS's name</returns>
+		public static string GetOS() {
+			switch (Environment.OSVersion.Platform) {
+				case PlatformID.Win32NT:
+				case PlatformID.Win32S:
+				case PlatformID.Win32Windows:
+				case PlatformID.WinCE:
+					return "windows";
+				case PlatformID.MacOSX:
+					return "mac";
+				default:
+					return "windows";
+			}
+		}
+
 	}
 }
 

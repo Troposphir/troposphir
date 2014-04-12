@@ -21,6 +21,8 @@ namespace TroposphirLauncher {
 		/// Where to save and load the launcher's configurations.
 		/// </summary>
 		public static readonly FileInfo CONFIG_PATH = new FileInfo(Path.Combine(DATA_PATH.FullName, "settings.txt"));
+
+		public static readonly DirectoryInfo TEMP_PATH = new DirectoryInfo(Path.Combine(DATA_PATH.FullName, "Temp"));
 		
 		[SerializableSetting("")]
 		static string atmosphirExecutableFolder;
@@ -67,7 +69,7 @@ namespace TroposphirLauncher {
 		}
 		public static event OnSettingChanged OnOnlineModeChanged;
 
-		[SerializableSetting(true)]
+		[SerializableSetting(false)]
 		static bool autoUpdate;
 		/// <summary>
 		/// Gets or sets a value indicating whether this launcher will update the game when it starts.
@@ -88,13 +90,9 @@ namespace TroposphirLauncher {
 		public static void Load() {
 			Dictionary<string, string> settings = new Dictionary<string,string>();
 			if (!CONFIG_PATH.Exists) CONFIG_PATH.Create().Close();
+			if (!TEMP_PATH.Exists) TEMP_PATH.Create();
 			string[] configLines = File.ReadAllLines(CONFIG_PATH.ToString());
-			foreach (string line in configLines) {
-				string[] parts = line.Split("===".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-				if (parts.Length >= 2) {
-					settings.Add(parts[0], parts[1]);
-				}
-			}
+			ReadConfigLines(configLines, (k, v) => settings.Add(k, v));
 
 			IEnumerable<FieldInfo> fieldsToLoad = SerializableSettingAttribute.GetSerializableFields(typeof(Settings));
 			fieldsToLoad.All(field => {
@@ -141,6 +139,16 @@ namespace TroposphirLauncher {
 			});
 			File.WriteAllLines(CONFIG_PATH.ToString(), lines);
 		}
+
+		public static void ReadConfigLines(string[] configLines, Action<string, string> callback) {
+			foreach (string line in configLines) {
+				string[] parts = line.Split("===".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+				if (parts.Length >= 2) {
+					callback(parts[0], parts[1]);
+				}
+			}
+		}
+
 	}
 
 	/// <summary>
