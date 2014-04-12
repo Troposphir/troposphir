@@ -93,6 +93,7 @@
                 <property name="Editable">False</property>
                 <property name="CursorVisible">False</property>
                 <property name="Text" />
+                <property name="WrapMode">Word</property>
               </widget>
             </child>
           </widget>
@@ -227,7 +228,6 @@
             <property name="MemberName" />
             <property name="CanFocus">True</property>
             <property name="Label">Check for Updates</property>
-            <property name="Active">True</property>
             <property name="DrawIndicator">True</property>
             <property name="HasLabel">True</property>
             <property name="UseUnderline">True</property>

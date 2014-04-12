@@ -11,7 +11,7 @@
     <AssemblyName>TroposphirLauncher</AssemblyName>
     <StartupObject>TroposphirLauncher.MainClass</StartupObject>
     <ApplicationIcon>troposphir_launcher_icon.ico</ApplicationIcon>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +61,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\Users\Leonardo\Documents\_DEV\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="gtk-gui\gui.stetic">

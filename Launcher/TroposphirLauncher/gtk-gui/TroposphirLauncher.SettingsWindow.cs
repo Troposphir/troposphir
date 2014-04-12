@@ -68,7 +68,6 @@ namespace TroposphirLauncher
 			this.autoUpdateCheckbox.CanFocus = true;
 			this.autoUpdateCheckbox.Name = "autoUpdateCheckbox";
 			this.autoUpdateCheckbox.Label = "Check for Updates";
-			this.autoUpdateCheckbox.Active = true;
 			this.autoUpdateCheckbox.DrawIndicator = true;
 			this.autoUpdateCheckbox.UseUnderline = true;
 			this.layoutRoot.Add (this.autoUpdateCheckbox);
@@ -162,6 +161,7 @@ namespace TroposphirLauncher
 			this.DeleteEvent += new global::Gtk.DeleteEventHandler (this.OnDelete);
 			this.serverUrlTextBox.Changed += new global::System.EventHandler (this.UpdateServerAddress);
 			this.onlineCheckbox.Toggled += new global::System.EventHandler (this.UpdateOnlineMode);
+			this.button2.Clicked += new global::System.EventHandler (this.SaveSettings);
 			this.autoUpdateCheckbox.Toggled += new global::System.EventHandler (this.UpdateAutoUpdate);
 			this.atmoPathTextBox.Changed += new global::System.EventHandler (this.UpdateExecutablePath);
 			this.atmoPathSelect.Clicked += new global::System.EventHandler (this.OpenAtmoPathSelector);
