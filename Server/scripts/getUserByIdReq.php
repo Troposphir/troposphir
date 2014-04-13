@@ -44,7 +44,7 @@ class getUserByIdReq extends RequestResponse {
 			$props = array();
 			$props['development'] = ($row['development'] == 1) ? 'true' : 'false';;
 			$props['external']    = ($row['external'] == 1) ? 'true' : 'false';
-			$user['props'] = $props;
+			$user['props'] 		  = $props;
 			
 			$this->addBody("verified", true); //Modified by DLL
 			$this->addBody("xpp", (integer)$row['xpp']);

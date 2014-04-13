@@ -23,7 +23,8 @@ class getLevelByIdReq extends RequestResponse {
 			"id", "name", "description", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version", 
-			"nextLevelId", "editable", "gcid", "editMode"
+			"nextLevelId", "editable", "gcid", 
+			"editMode", "rating", "difficulty"
 		);
 		if (!isset($json["body"]["levelId"]) || 
 			!is_numeric($json["body"]["levelId"])){
@@ -54,6 +55,8 @@ class getLevelByIdReq extends RequestResponse {
 			$level["version"]     = (integer)$row["version"];
 			$level["nextLevelId"] = (integer)$row["nextLevelId"];
 			$level["editable"]    = ((bool)$row['editable']) ? true : false;
+			$level["rating"]	  = (integer)$row["rating"];
+			$level["difficulty"]  = (integer)$row["difficulty"];
 			
 			$props = array();
 			$props["gcid"]     = (string)$row["gcid"];
