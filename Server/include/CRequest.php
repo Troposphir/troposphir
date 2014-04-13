@@ -131,17 +131,12 @@ class RequestResponse {
 		Compares it via an IP check.
 	*/
 	public function verifyUserById($id) {
-	
 		//Get user ip address from data table
 		$stmt = $this->getConnection()->prepare("SELECT ipAddress 
 			FROM " . $this->config['table_user']  . 
 			" WHERE `userId`=:userId");
 		$stmt->bindValue(':userId', $id, PDO::PARAM_INT);
 		$stmt->execute();
-		
-		if ($stmt == false) {
-			return false;
-		}
 		
 		$row = $stmt->fetch();
 		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
