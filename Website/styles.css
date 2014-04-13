@@ -15,7 +15,13 @@ html, body {
 	background: #102447;
 	font-family: Roboto, Calibri, sans-serif;
 }
-
+h1, h2, h3, h4, h5, h6, p {
+	display: inline;
+	line-height: 1em;
+	margin: 0 0;
+	padding: 0 0;
+	border: 0px none;
+}
 header.gigantic {
 	height: 100px;
 	width: 100%;
@@ -56,7 +62,7 @@ menu button:hover {
 	padding: 10px;
 	color: #A5CAE4;
 }
-#content aside {
+aside {
 	float: right;
 	width: 250px;
 	background: url(http://onemoreblock.com/forum/styles/resurgent/xenforo/gradients/breadcrumb-custom.png);
@@ -64,11 +70,18 @@ menu button:hover {
 	border-radius: 5px;
 	padding: 5px;
 }
-#content:before, #content:after {
+aside h1 {
+	font-size: 16pt;
+	border-bottom: 1px solid #176093;
+	margin-bottom: 10px;
+	width: 100%;
+	display: block;
+}
+.clearfix:before, .clearfix:after {
 	content: "";
 	display: table;
 }
-#content:after {
+.clearfix:after {
 	clear: both;
 }
 
@@ -79,6 +92,9 @@ Level browser styling
 	float: left;
 	width: 650px;
 	zoom: 1;
+}
+#filters input {
+	width: 100%;
 }
 #levelList article {
 	float: left;
@@ -114,32 +130,17 @@ Level browser styling
 	height: 50px;
 }
 #levelList article .thumbnail .levelInfo h1 {
-	display: inline;
 	font-weight: bolder;
 	font-size: 14pt;
-	line-height: 1em;
-	margin: 0 0;
-	padding: 0 0;
-	border: 0px none;
 }
 #levelList article .thumbnail .levelInfo h2 {
-	display: inline;
 	font-weight: normal;
 	font-size: 12pt;
-	line-height: 1em;
-	margin: 0 0;
-	padding: 0 0;
-	border: 0px none;
 }
 #levelList article .thumbnail .levelInfo h3 {
 	float: right;
-	display: inline;
 	font-weight: lighter;
 	font-size: 10pt;
-	line-height: 1em;
-	margin: 5px 5px;
-	padding: 0 0;
-	border: 0px none;
 }
 .rating {
 	background-image: url(img/star-blank.png);
@@ -172,8 +173,47 @@ Level browser styling
 /*
 Level details styling
 */
-.levelImage {
-	width: 400;
-	height: 280;
+#levelCard .info h1 {
+	font-size: 20pt;
+	font-weight: bolder;
+}
+#levelCard .info h2 {
+	font-size: 16pt;
+	font-weight: normal;
+}
+#levelCard .info h3 {
+	font-size: 16pt;
+	font-weight: normal;
+}
+#levelCard .info .levelImage {
+	float: left;
+	width: 400px;
+	height: 280px;
 	border: 5px solid #142F68;
+	border-radius: 5px;
+	margin: 5px;
+}
+#levelCard .community {
+	width: 100%;
+}
+#levelCard .community .comments {
+	float: left;
+	width: 600px;
+}
+.comment {
+	width: 100%;
+	margin: 5px;
+	padding: 5px;
+	background: #142F68;
+	border-radius: 5px;
+	overflow-x: hidden;
+}
+.comment h1 {
+	display: block;
+	width: 110%;
+	margin: -5px;
+	margin-bottom: 0px;
+	padding: 5px;
+	background: url(http://onemoreblock.com/forum/styles/resurgent/xenforo/navigation/navigation-tab.png) #1B3D84;
+	background-size: 100% 100%;
 }
