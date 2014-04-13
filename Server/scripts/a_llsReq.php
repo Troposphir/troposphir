@@ -85,7 +85,8 @@ class a_llsReq extends RequestResponse {
 					if ($field == 'deleted') continue;
 					$level[$field] = $row[$field];
 				}
-				$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';
+				$level["xis.lotd"]   = $level['isLOTD'];
+				//$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';
 				$level["is.lotd"]   = $level['isLOTD']; unset($level['isLOTD']);
 				$level["xp.reward"] = $level['xpReward']; unset($level['xpReward']);
 	
