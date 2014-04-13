@@ -5,6 +5,11 @@ $db = new Database($config['driver'], $config['host'], $config['dbname'], $confi
 
 function SetupTable($table_name, $query, $query2) 
 {
+	if ($table_name == "") {
+		echo "SETUP ABORTED. <br> Table name can not be empty. </br>";
+		die();
+	}
+	
 	global $db;
 	//* (1) Create the table if it doesn't exist *//
 	$db->query("CREATE TABLE $table_name " . $query, null);
@@ -88,7 +93,9 @@ SetupTable($config['table_map'], "(
 	author VARCHAR(255) NOT NULL,
 	dc INT NOT NULL DEFAULT 0,
 	rating INT NOT NULL DEFAULT 0,
-	difficulty FLOAT NOT NULL DEFAULT 0,
+	ratingCount INT NOT NULL DEFAULT 0,
+	difficulty INT NOT NULL DEFAULT 0,
+	difficultyCount INT NOT NULL DEFAULT 0,
 	ownerId INT NOT NULL DEFAULT 0,
 	downloads INT NOT NULL DEFAULT 0,
 	dataId INT NOT NULL DEFAULT 0,
@@ -208,19 +215,15 @@ SetupTable($config['table_assets'], "(
 	id, uploadedBy, origFileName, fileName, size, created
 )");
 
-SetupTable($config['table_scores'], "(
-  levelId INT NOT NULL,
-  userId INT NOT NULL,
-  score INT NOT NULL
-  )", "(levelId, userId, score)");
+SetupTable($config['table_playRecord'], "(
+ levelId INT NOT NULL,
+ userId INT NOT NULL,
+ rating FLOAT NOT NULL DEFAULT 0,
+ difficulty FLOAT NOT NULL DEFAULT 0,
+ score INT NOT NULL DEFAULT 0,
+ UNIQUE KEY(`levelId`, `userId`)
+ )", "(levelId, userId, rating, difficulty, score)");
   
-SetupTable($config['table_comments'], "(
-  commentId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  userId INT NOT NULL DEFAULT 0,
-  levelId INT NOT NULL DEFAULT 0,
-  body VARCHAR(2048) NOT NULL DEFAULT ''
-  )", "(commentId, userId, body)");
-
 //Create Minimal Table Entries
 $db->exec("INSERT INTO " . $config['table_user'] . " (userId, username, password)
          VALUES (1, 'OkaySamurai', 'NotARealAccount')");

@@ -17,11 +17,11 @@
 			<button ng-click="changePage('browser')">Level Browser</button>
 			<button ng-click="changePage('http://onemoreblock.com/forum/')">Community</button>
 		</menu>
-		<section id="content">
+		<section id="content" class="clearfix">
 			<div ng-controller="levelBrowser" ng-show="page=='browser'">
 				<aside id="filters">
 					<section>
-						Search <input type="search" ng-model="search" ng-change="doSearch()">
+						<h1>Search</h1> <input type="search" ng-model="search" ng-change="doSearch()">
 					</section>
 				</aside>
 				<section id="levelList">
@@ -40,8 +40,34 @@
 					</article>
 				</section>
 			</div>
-			<div ng-controller="levelCard" ng-show="page == 'level'">
-				<img class="levelImage" ng-src="{{level.screenshot}}" />
+			<div id="levelCard" ng-controller="levelCard" ng-show="page == 'level'">
+				<div class="info clearfix">
+					<img class="levelImage" ng-src="{{level.screenshot}}" />
+					<h1>{{level.name}}</h1> <h2>by {{level.author}}</h2> <br>
+					<h3>{{level.playCount}} plays</h3> <br>
+					<div class="rating">
+						<div class="rating-fill" style="width: {{level.ratingPercent}}%;"></div>
+					</div><br>
+					<div class="difficulty">
+						<div class="difficulty-fill"style=" width: {{level.difficultyPercent}}%;"></div>
+					</div><br>
+					{{level.description}}
+				</div>
+				<div class="community clearfix">
+					<div class="comments">
+						<article class="comment" ng-repeat="comment in comments">
+							<h1>{{comment.user}}</h1>
+							<p>{{comment.body}}</p>
+						</article>
+						<span ng-if="!comments.length">No comments</span>
+					</div>
+					<aside class="leaderboards">
+						<h1>Leaderboard</h1>
+						<div class="score-entry" ng-repeat="score in scores">
+							{{score.place}}. {{score.user}}
+						</div>
+					</aside>
+				</div>
 			</div>
 		</section>
 	</body>
