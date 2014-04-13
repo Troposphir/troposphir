@@ -37,7 +37,7 @@ class a_setLcReq extends RequestResponse {
 				$params[] = $propvalue;
 			}
 			else if ($propname == 'is.lotd') {
-				$cond[] = "`$isLOTD` = ?";
+				$cond[] = "`isLOTD` = ?";
 				$params[] = $propvalue;
 			}
 			else if ($propname == 'xp.reward') {
