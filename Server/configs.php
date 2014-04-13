@@ -37,6 +37,7 @@ $config = array(
 	'table_scores' 	=> 'scores',
 	'table_assets'  => 'asset',
 	'table_comments'=> 'comments',
+	'table_playRecord' => 'playRecord',
 	//Directory Setup
 	'dir_imgs'		=> 'image/maps',
 	'dir_avatars'   => 'image/avatars',
