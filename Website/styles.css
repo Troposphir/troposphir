@@ -22,6 +22,13 @@ h1, h2, h3, h4, h5, h6, p {
 	padding: 0 0;
 	border: 0px none;
 }
+h1.sectionHeader {
+	color: white;
+	font-size: 18pt;
+	border-bottom: 1px solid #176093;
+	display: block;
+	margin-bottom: 10px;
+}
 header.gigantic {
 	height: 100px;
 	width: 100%;
@@ -200,7 +207,7 @@ Level details styling
 	float: left;
 	width: 600px;
 }
-.comment {
+.comment, .post {
 	width: 100%;
 	margin: 5px;
 	padding: 5px;
@@ -208,7 +215,7 @@ Level details styling
 	border-radius: 5px;
 	overflow-x: hidden;
 }
-.comment h1 {
+.comment h1, .post h1 {
 	display: block;
 	width: 110%;
 	margin: -5px;

@@ -1,7 +1,6 @@
 var SERVER_PATH = "/Troposphir/Server/";
 angular.module("troposphir", [])
 .controller("navigation", function($scope, $location) {
-	$scope.page = "browser";
 	$scope.args = [];
 	$scope.changePage = function(destination) {
 		if (destination.match(/^https?:/)) {
@@ -14,9 +13,13 @@ angular.module("troposphir", [])
 		}
 	};
 	var hash = window.location.hash.substring(2);
-	$scope.changePage(hash);
+	if (hash.length) {
+		$scope.changePage(hash);
+	} else {
+		$scope.page = "browser";
+	}
 })
-.controller("levelBrowser", function LevelListCtrl($scope, $http) {
+.controller("levelBrowser", function($scope, $http) {
 	var getPage = function(page, size) {
 		return $http({
 			method: "POST",
@@ -168,7 +171,7 @@ angular.module("troposphir", [])
 						_t: "mfheader"
 					},
 					body: {
-						_t: "getLevelCommentsReq",
+						_t: "getLeaderboardReq",
 						cid: id,
 						freq: {
 							start: start,
@@ -178,8 +181,6 @@ angular.module("troposphir", [])
 				}
 			}
 		}).then(function(response) {
-			console.log(response.config);
-			console.log(response.data);
 			var scores = response.data.body.fres.results;
 			if (scores.length > 0) {
 				var promises = [];
@@ -190,8 +191,9 @@ angular.module("troposphir", [])
 					var scrs = [];
 					for (var i = users.length-1; i >= 0; i-=1) {
 						scrs.push({
+							ranking: i+1,
 							user: users[i].name,
-							body: scores[i].s1
+							score: scores[i].s1
 						});
 					}
 					return scrs;
