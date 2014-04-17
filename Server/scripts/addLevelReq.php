@@ -57,13 +57,22 @@ class addLevelReq extends RequestResponse {
 		$stmt->bindParam(':version', $json['body']['level']['version'], PDO::PARAM_INT);
 		$stmt->execute();
 		
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
+		//Retrieve inserted level id
+		$insertId = $db->lastInsertId();
+		if ($insertId <= 0) {
 			$this->error("NOT_FOUND");
-		} else {
-			$itemId = $db->lastInsertId();
-			if ($itemId == 0) return;
-			$this->addBody("levelId", (integer)$itemId);
+			return;
 		}
+		
+		//Set gcid equal to level id
+		$stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "`
+			SET `gcid`=:lastInsertId
+			WHERE `id`=:lastInsertId");
+		$stmt->bindParam(':lastInsertId', $insertId, PDO::PARAM_INT);
+		$stmt->execute();
+		
+		//Build response
+		$this->addBody("levelId", (integer)$insertId);
 	}
 }
 ?>
