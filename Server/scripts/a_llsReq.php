@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Tropopshir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur, Adam Gaskins
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -35,7 +35,7 @@ class a_llsReq extends RequestResponse {
 			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted"
 		);
 		
-		//Adjust user's query syntax to conform to appropriate database syntax.
+/*		//Adjust user's query syntax to conform to appropriate database syntax.
 		$query = $json["body"]["query"];
 		$begpos = strpos($query, "AND ct:[");
 		if ($begpos !== false) {
@@ -51,15 +51,57 @@ class a_llsReq extends RequestResponse {
 		$query = str_replace('xp.reward', "'xpReward'", $query);
 		$query = str_replace('xp.level', "'xpLevel'", $query);
 		$query = str_replace('deleted=false', 'deleted=0', $query);
-		$query = str_replace('deleted=true', 'deleted=1', $query);
+		$query = str_replace('deleted=true', 'deleted=1', $query); */
 	
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$stmt = $db->query("SELECT * FROM `@table` WHERE `deleted`=0  ORDER BY id DESC", array(
-			"table" 	=> $this->config["table_map"],
-			"query" 	=> $query
-		));
-		
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
+	 // super cheap hack to get basic level searching working
+         $lQuery = $json["body"]["query"];
+         $query = "";
+         
+         $pattern = '/([a-zA-Z]+)\:"([^"]*[^\\\\])"/'; // matches    name:"hi dude"
+         preg_match_all($pattern, $lQuery, $quoteMatches);
+ 
+         $pattern = '/([a-zA-Z]+)\:([^" )]+)/'; // matches    name:hi
+         preg_match_all($pattern, $lQuery, $noquoteMatches);
+         
+         $matches = array(
+             array_merge($quoteMatches[0], $noquoteMatches[0]),
+             array_merge($quoteMatches[1], $noquoteMatches[1]),
+             array_merge($quoteMatches[2], $noquoteMatches[2]),
+             );
+                
+                //print_r($matches);
+                
+         $ignoreFields = array("draft", "ct", "xgms", "version", "deleted");
+         
+         if(count($matches) >= 3 && count($matches[0]) >= 2)
+         {
+             for($i = 0; $i < count($matches[0]); $i++)
+             {
+                 $field = $matches[1][$i];
+                 $value = $matches[2][$i];
+                 //echo "$field:$value";
+                 if(!in_array(strtolower($field), $ignoreFields))
+                 {
+                     if(strlen($query) > 0) $query .= " OR ";
+                     $query .= "`" . $field . "` LIKE '%" . $value . "%'";
+                 }
+             }
+         }
+         
+         if(strlen($query) > 0)
+         {
+             $query = "AND (".$query.")";
+         }
+                 
+         //echo $query;
+                 
+  		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+ 		$stmt = $db->query("SELECT * FROM `@table` WHERE `deleted`=0 @query ORDER BY ct DESC", array(
+  			"table" 	=> $this->config["table_map"],
+  			"query" 	=> $query
+  		));
+
+		if ($stmt == false ) {
 			$this->error("NOT_FOUND");
 		} else {
 			$levelList = array();
@@ -85,8 +127,8 @@ class a_llsReq extends RequestResponse {
 					if ($field == 'deleted') continue;
 					$level[$field] = $row[$field];
 				}
-				$level["xis.lotd"]   = $level['isLOTD'];
 				//$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';
+				$level["xis.lotd"]  = $level['isLOTD'];
 				$level["is.lotd"]   = $level['isLOTD']; unset($level['isLOTD']);
 				$level["xp.reward"] = $level['xpReward']; unset($level['xpReward']);
 	

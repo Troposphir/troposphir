@@ -90,6 +90,7 @@ SetupTable($config['table_map'], "(
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL UNIQUE,
 	description VARCHAR(255) NOT NULL DEFAULT '',
+	ct INT NOT NULL DEFAULT 0,
 	author VARCHAR(255) NOT NULL,
 	dc INT NOT NULL DEFAULT 0,
 	rating INT NOT NULL DEFAULT 0,
@@ -157,7 +158,7 @@ SetupTable($config['table_map'], "(
 	dopc INT NOT NULL DEFAULT 0,
 	dpoc INT NOT NULL DEFAULT 0
 )", "(
-	id, name, description, author, dc, rating, difficulty, 
+	id, name, description, ct, author, dc, rating, difficulty, 
 	ownerId, downloads, dataId, screenshotId, version, draft, nextLevelId,
 	editable, deleted, gcid, editMode, xisLOTD, isLOTD, xpReward,
 	xgms, gms, gmm, gff, gsv, gbs, gde, gdb, gctf, gab, gra, gco, gtc,

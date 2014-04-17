@@ -26,8 +26,10 @@ class getLeaderboardReq extends RequestResponse {
 			return;
 		}
 		$db = $this->getConnection();
-		$statement = $db->prepare("SELECT * FROM " . $this->config["table_scores"] . " 
+		//Retrieve leaderboard scores.
+		$statement = $db->prepare("SELECT levelId, score, userId FROM " . $this->config["table_playRecord"] . " 
 			WHERE `levelId`=:levelId 
+			AND `score` <> 0
 			ORDER BY `score` 
 			LIMIT :start,:size");
 		$statement->bindParam(':levelId', $json['body']['cid'], PDO::PARAM_INT);

@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur, Adam Gaskins
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -25,32 +25,33 @@ class addLevelReq extends RequestResponse {
 		if (!isset($json['body']['level']['editable'])) return;
 		if (!isset($json['body']['level']['version'])) return;
 	
-		//Validate the user via an IP check.
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);	
-		$stmt = $db->prepare("SELECT ipAddress 
-			FROM " . $this->config['table_user']  . 
-			" WHERE `userId`=:userId");
-		$stmt->bindValue(':userId', $json['body']['level']['ownerId'], PDO::PARAM_INT);
-		$stmt->execute();
-
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
-			$this->error("NOT_FOUND");
+		//Verify user operations
+		if (!$this->verifyUserById($json['body']['level']['ownerId'])) {
+			$this->log("[addLevelReq()]: Attempting to modify another user's data.");
 			return;
 		}
-		
-		$row = $stmt->fetch();
-		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
-			$this->log("Hacking attempt [addLevelReq()]: Attempting to modify another user's data.");
-			return;
+	
+		$db = $this->getConnection();
+		//Get user
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+ 		$stmt = $db->query("SELECT * FROM `@table` WHERE `userId`=@id LIMIT 1", array(
+ 			"table" 	=> $this->config["table_user"],
+             "id"        => $json['body']['level']['ownerId'],
+ 		));        
+        $user = $stmt->fetch();
+		if ($user == false) {
+				$this->error("NOT_FOUND");
 		}
 		
 		//Insert level data
 		$stmt = $db->prepare("INSERT INTO " . $this->config['table_map'] . "
-			(ownerId, name, description, editable, version)
-			VALUES (:ownerId, :name, :description, :editable, :version)");
+			(ownerId, name, author, description, ct, editable, version)
+			VALUES (:ownerId, :name, :author, :description, :ct, :editable, :version)");
 		$stmt->bindParam(':ownerId', $json['body']['level']['ownerId'], PDO::PARAM_INT);
+		$stmt->bindParam(':author', $user["username"]);
 		$stmt->bindParam(':name', $json['body']['level']['name'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $json['body']['level']['description'], PDO::PARAM_STR);
+		$stmt->bindParam(':ct', time(), PDO::PARAM_STR); //created time
 		$json['body']['level']['editable'] = ($json['body']['level']['editable'] == true) ? 1 : 0;
 		$stmt->bindParam(':editable', $json['body']['level']['editable'], PDO::PARAM_INT);
 		$stmt->bindParam(':version', $json['body']['level']['version'], PDO::PARAM_INT);
