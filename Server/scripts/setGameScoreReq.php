@@ -25,6 +25,8 @@ class setGameScoreReq extends RequestResponse {
 			!isset($json["body"]["gameScore"]["configId"])) {
 			return;
 		}
+		//Make sure level score is not negative.
+		if (!is_numeric($json['body']['gameScore']['s1'])) return;
 		
 		//Verify user operations
 		if (!$this->verifyUserById($json['body']['gameScore']['uid'])) {
@@ -33,39 +35,38 @@ class setGameScoreReq extends RequestResponse {
 		}
 		
 		$db = $this->getConnection();
-		$stmt = $db->prepare("SELECT * FROM " . $this->config["table_scores"] . " 
-			WHERE levelId=:levelId
-			AND userId=:userId");
+		$stmt = $db->prepare("SELECT levelId, score FROM " . $this->config["table_playRecord"] . " 
+			WHERE `levelId`=:levelId
+			AND `userId`=:userId");
 		$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
 		$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
 		$stmt->execute();
-		$found = $stmt->fetch();
 		
-		if ($found == false || $found == null) 
+		$result = $stmt->fetch();		
+		if ($result == false || $result == null) 
 		{
-		
-			//User entry for leaderboard score does not exist, so insert.
-			$stmt = $db->prepare("INSERT INTO " . $this->config["table_scores"] . " 
-				(levelId, userId, score) 
+			//User entry for play record does not exist, so insert.
+			$stmt = $db->prepare("INSERT INTO " . $this->config["table_playRecord"] . " 
+				(`levelId`, `userId`, `score`) 
 				VALUES (:levelId, :userId, :score)");
 			$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
 			$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
 			$stmt->bindParam(':score', $json['body']['gameScore']['s1'], PDO::PARAM_INT);
 			$stmt->execute();
+		} else {
+			//User entry for play record already exists,
+			//so update the score if necessary.
+			if ($json['body']['gameScore']['s1'] > $result['score']) {
+				$stmt = $db->prepare("UPDATE " . $this->config["table_playRecord"] . " 
+					SET `score`=:score 
+					WHERE `userId`=:userId
+					AND `levelId`=:levelId");
+				$stmt->bindParam(':score', $json['body']['gameScore']['s1'], PDO::PARAM_INT);
+				$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
+				$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
+				$stmt->execute();
+			}
 		}
-		else
-		{
-			//User entry for leaderboard score already exists, so update it instead.
-			$stmt = $db->prepare("UPDATE " . $this->config["table_scores"] . " 
-				SET score=:score 
-				WHERE userId=:userId
-				AND levelId=:levelId");
-			$stmt->bindParam(':score', $json['body']['gameScore']['s1'], PDO::PARAM_INT);
-			$stmt->bindParam(':userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
-			$stmt->bindParam(':levelId', $json['body']['gameScore']['configId'], PDO::PARAM_INT);
-			$stmt->execute();
-		}
-		
 		//$this->addBody("fres", array("results" => $itemList));
 	}
 }
