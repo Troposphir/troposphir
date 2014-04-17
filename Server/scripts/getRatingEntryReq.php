@@ -56,8 +56,8 @@ class getRatingEntryReq extends RequestResponse {
 
 		//Code
         $field = "";
-		if($json['body']['thingKey']['type'] == $type_star) {
-            $field = "rating";
+		if($json['body']['ratingKey']['thingKey']['type'] == $type_star) {
+			$field = "rating";
         } else {
             $field = "difficulty";
         }        
