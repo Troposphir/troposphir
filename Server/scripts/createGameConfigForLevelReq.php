@@ -24,19 +24,20 @@ class createGameConfigForLevelReq extends RequestResponse {
 		if (!isset($json["body"]["levelId"])) {
 			return;
 		}
-		
-		//Set level config
+
 		//The client only sends this (createGameConfigForLevelReq) packet
 		//when gcid == 0. 
 		//Right now, it only sets gcid to the level's levelId. gcid is originally meant to be linked to a game config id table
 		//that is meant to be created here..
+		//Gcid is currently set to the level's id upon addLevelReq()
+		/*
 		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] . 
 			" SET `gcid`=:levelId 
 			  WHERE `id`=:id");
 		$stmt->bindParam(':levelId', $json["body"]["levelId"], PDO::PARAM_INT);
 		$stmt->bindParam(':id', $json["body"]["levelId"],PDO::PARAM_INT);
 		$stmt->execute();
-		
+		*/
 		$this->addBody("gameConfig", array("id" => $json["body"]["levelId"]));
 	}
 }
