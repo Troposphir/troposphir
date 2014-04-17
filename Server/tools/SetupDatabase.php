@@ -224,6 +224,14 @@ SetupTable($config['table_playRecord'], "(
  score INT NOT NULL DEFAULT 0,
  UNIQUE KEY(`levelId`, `userId`)
  )", "(levelId, userId, rating, difficulty, score)");
+ 
+ 
+SetupTable($config['table_comments'], "(
+ commentId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ userId INT NOT NULL DEFAULT 0,
+ levelId INT NOT NULL DEFAULT 0,
+ body VARCHAR(2048) NOT NULL DEFAULT ''
+ )", "(commentId, userId, levelId, body)");
   
 //Create Minimal Table Entries
 $db->exec("INSERT INTO " . $config['table_user'] . " (userId, username, password)
