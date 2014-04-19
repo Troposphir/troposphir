@@ -66,8 +66,8 @@
 					</div>
 					<aside class="leaderboards">
 						<h1>Leaderboard</h1>
-						<div class="score-entry" ng-repeat="score in scores">
-							{{score.ranking}}. {{score.user}}
+						<div class="score-entry" ng-repeat="score in scores | reverse">
+							<span class="score-ranking">{{score.ranking}}</span>. {{score.user}} <span class="score-value">{{score.value}}</span>
 						</div>
 					</aside>
 				</div>
