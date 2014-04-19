@@ -224,3 +224,9 @@ Level details styling
 	background: url(http://onemoreblock.com/forum/styles/resurgent/xenforo/navigation/navigation-tab.png) #1B3D84;
 	background-size: 100% 100%;
 }
+.score-entry .score-ranking {
+	font-weight: bold;
+}
+.score-entry .score-value {
+	float: right;
+}
