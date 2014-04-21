@@ -36,7 +36,8 @@ class getFirstUserExperienceReq extends RequestResponse {
 				downloads, dataId, screenshotId, draft, version, nextLevelId,
 				editable, gcid, editMode	
 			FROM " . $this->config['table_map'] . "
-			WHERE `deleted`=:deleted");
+			WHERE `deleted`=:deleted
+			ORDER BY ct DESC");
 		$stmt->bindParam(':deleted', $json['body']['retDeleted'], PDO::PARAM_INT);
 		$stmt->execute();
 		
