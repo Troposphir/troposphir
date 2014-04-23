@@ -23,7 +23,7 @@ class a_getLcReq extends RequestResponse {
 			is_numeric($json["body"]["lid"])) return;
 		
 		$fields = array( 
-			"isLOTD", "xpReward", "xgms", "gms", "gmm", "gff", 
+			"isLOTD", "xpLevel", "xpReward", "xgms", "gms", "gmm", "gff", 
 			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco", 
 			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt", 
 			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic", 
@@ -48,8 +48,10 @@ class a_getLcReq extends RequestResponse {
 			foreach ($fields as $field) {
 				$props[$field] = (string)$row[$field];
 			}
+            $props["xgms"] = $props["gms"];
 			$props["is.lotd"] = $props['isLOTD']; unset($props['isLOTD']);
 			$props["xp.reward"] = $props['xpReward']; unset($props['xpReward']);
+            $props["xp.level"] = $props['xpLevel'];
 			
 			$this->addBody("lc", array("props" => $props));
 		}

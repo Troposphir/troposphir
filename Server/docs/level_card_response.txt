@@ -19,6 +19,8 @@ gmcdt:  default comp time
 gmcff:  friendly fire enabled
 ast:    abilities state
 aal:    allowed abilities
+ghosts: 
+ipad:   level works on ipad
 dcap:   capacity points
 dmic:   map items count
 denc:   enemies count
@@ -30,4 +32,14 @@ dphc:   physic items count
 ddoc:   doors count
 dkec:   keys count
 dgcc:   gravity changers count
-.....
+dmvc:   moving platforms count
+dsbc:   skyboxes count
+dhzc:   hazards count
+dmuc:   music tems count
+dtmi:   top map item
+ddtm:   design time
+dttm:   test time
+dedc:   edit count
+dtsc:   test count
+dopc:   operation count
+dpoc:   paste operation count
