@@ -26,7 +26,7 @@ class a_llsReq extends RequestResponse {
 		if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
 		
 		$fields = array( 
-			"isLOTD", "xpReward", "xgms", "gms", "gmm", "gff", 
+			"isLOTD", "xpReward", "gms", "gmm", "gff", 
 			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco", 
 			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt", 
 			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic", 
@@ -57,10 +57,10 @@ class a_llsReq extends RequestResponse {
          $lQuery = $json["body"]["query"];
          $query = "";
          
-         $pattern = '/([a-zA-Z]+)\:"([^"]*[^\\\\])"/'; // matches    name:"hi dude"
+         $pattern = '/([a-zA-Z\.]+)\:"([^"]*[^\\\\])"/'; // matches    name:"hi dude"
          preg_match_all($pattern, $lQuery, $quoteMatches);
  
-         $pattern = '/([a-zA-Z]+)\:([^" )]+)/'; // matches    name:hi
+         $pattern = '/([a-zA-Z\.]+)\:([^" )]+)/'; // matches    name:hi
          preg_match_all($pattern, $lQuery, $noquoteMatches);
          
          $matches = array(
@@ -79,6 +79,15 @@ class a_llsReq extends RequestResponse {
              {
                  $field = $matches[1][$i];
                  $value = $matches[2][$i];
+                 if($field === "xp.level" || $field === "is.lotd")
+                    $value = ($value === "true") ? 1 : 0;
+                    //$value = ($value == 0) ? "false" : "true";
+
+                 if($field === "xp.level") $field = "xpLevel";
+                 if($field === "is.lotd") $field = "isLOTD";
+                 if($field === "xis.lotd") $field = "isLOTD";
+                 if($field === "xp.reward") $field = "xpReward";
+                                  
                  //echo "$field:$value";
                  if(!in_array(strtolower($field), $ignoreFields))
                  {
@@ -122,15 +131,20 @@ class a_llsReq extends RequestResponse {
 				$level['screenshotId'] = (string)$row['screenshotId'];
 				$level['rating']       = (string)$row['rating'];
 				$level['difficulty']   = (string)$row['difficulty'];
-				
+				$level['xgms']         = (string)$row['gms']; // fixes solo play bug
+                
 				foreach ($fields as $field) {
 					if ($field == 'deleted') continue;
 					$level[$field] = $row[$field];
 				}
 				//$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';
 				$level["xis.lotd"]  = $level['isLOTD'];
-				$level["is.lotd"]   = $level['isLOTD']; unset($level['isLOTD']);
-				$level["xp.reward"] = $level['xpReward']; unset($level['xpReward']);
+				$level["is.lotd"]   = $level['isLOTD'];
+                unset($level['isLOTD']);
+                $level["xp.level"]  = "true";
+				$level["xp.reward"] = $level['xpReward'];
+                unset($level['xpReward']);
+                unset($level['xpLevel']);
 	
 				
 				$props = array();
