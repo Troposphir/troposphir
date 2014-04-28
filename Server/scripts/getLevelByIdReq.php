@@ -20,11 +20,11 @@ if (!defined("INCLUDE_SCRIPT")) return;
 class getLevelByIdReq extends RequestResponse {
 	public function work($json) {
 		$fields = array( //We don't need the myriad of properties stored in the maps table, so we'll query only the columns we need.
-			"id", "name", "description", "author", 
+			"id", "name", "dc", "author", 
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version", 
 			"nextLevelId", "editable", "gcid", 
-			"editMode", "rating", "difficulty"
+			"editMode"
 		);
 		if (!isset($json["body"]["levelId"]) || 
 			!is_numeric($json["body"]["levelId"])){
@@ -48,15 +48,13 @@ class getLevelByIdReq extends RequestResponse {
 			$level["description"] = (string)$row["description"];
 			$level["author"]      = (string)$row["author"];
 			$level["ownerId"]     = (integer)$row["ownerId"];
-			$level["downloads"]   = (integer)$row["downloads"];
+			$level["downloads"]   = (integer)$row["dc"];
 			$level["dataId"]      = (integer)$row["dataId"];
 			$level["screenshotId"]= (integer)$row["screenshotId"];
 			$level["draft"]       = ((bool)$row['draft']) ? true : false;
 			$level["version"]     = (integer)$row["version"];
 			$level["nextLevelId"] = (integer)$row["nextLevelId"];
 			$level["editable"]    = ((bool)$row['editable']) ? true : false;
-			$level["rating"]	  = (integer)$row["rating"];
-			$level["difficulty"]  = (integer)$row["difficulty"];
 			
 			$props = array();
 			$props["gcid"]     = (string)$row["gcid"];
