@@ -47,7 +47,7 @@ class getLevelCommentsReq extends RequestResponse {
         if($begin < 0) $begin = 0;
         
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM @table WHERE `levelId` = '@levelId' ORDER BY commentId ASC LIMIT 0, 9999999", array(
+		$statement = $db->query("SELECT @fields FROM @table WHERE `levelId` = '@levelId' ORDER BY commentId DESC LIMIT 0, 9999999", array(
 			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
 			"table" 	=> $this->config["table_comments"],
 			"levelId" 	=> $json["body"]["levelId"],
