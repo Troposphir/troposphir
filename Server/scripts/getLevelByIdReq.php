@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -20,8 +20,8 @@ if (!defined("INCLUDE_SCRIPT")) return;
 class getLevelByIdReq extends RequestResponse {
 	public function work($json) {
 		$fields = array( //We don't need the myriad of properties stored in the maps table, so we'll query only the columns we need.
-			"id", "name", "dc", "author", 
-			"ownerId", "downloads", "dataId", 
+			"id", "name", "description", "ownerId", 
+			"dc", "author", "downloads", "dataId", 
 			"screenshotId", "draft", "version", 
 			"nextLevelId", "editable", "gcid", 
 			"editMode"
@@ -30,7 +30,7 @@ class getLevelByIdReq extends RequestResponse {
 			!is_numeric($json["body"]["levelId"])){
 			return;
 		}
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+		$db = $this->getConnection();
 		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) .
 		" FROM " . $this->config["table_map"] .
 		" WHERE `id`=:levelId");

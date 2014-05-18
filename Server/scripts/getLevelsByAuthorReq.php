@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -33,13 +33,14 @@ class getLevelsByAuthorReq extends RequestResponse {
  			"nextLevelId", "editable", "gcid",
 			"rating", "difficulty", "editMode"
 		);
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM @table WHERE `ownerId` = '@ownerId' LIMIT @start,9999999999", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_map"],
-			"ownerId" 	=> $json["body"]["authorId"],
-			"start" 	=> $json["body"]["freq"]["start"]
-		));
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) . 
+			" FROM `" . $this->config['table_map'] . "`
+			WHERE `ownerId` = :ownerId
+			LIMIT :start,9999999999");
+		$statement->bindParam(':ownerId', $json['body']['authorId'], PDO::PARAM_INT);
+		$statement->bindParam(':start', $json['body']['freq']['start'], PDO::PARAM_INT);
+		$statement->execute();
 		
 		$all = $statement->fetchAll();
 		if ($all == false || count($all) <= 0) {
@@ -75,7 +76,6 @@ class getLevelsByAuthorReq extends RequestResponse {
 			
 				$lc = array("props" => array());
 				$level["lc"] = $lc;
-				
 				$levelList[] = $level;
 			}
 			$fres = array(

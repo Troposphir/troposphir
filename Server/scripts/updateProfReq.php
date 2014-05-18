@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Troposphir - Part of the Troposphir Project
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -23,6 +23,9 @@ class updateProfReq extends RequestResponse {
 		if (!isset($json['body']['profId'])) return;
 		if (!isset($json['body']['props']['sessionToken'])) return;
 
+		//Constants
+		$db = $this->getConnection();
+
 		
 		//Build query
 		$fields = array('sessionToken', 'sapo', 'avaid', 'activableItemShorcuts',
@@ -38,8 +41,6 @@ class updateProfReq extends RequestResponse {
 		}
 		$params[] = $json['body']['profId']; //userId = ?
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-
 		//Update Profile
 		$stmt = $db->prepare("UPDATE " . $this->config['table_user'] . "
 			SET " . implode(' , ', $cond) .
@@ -73,11 +74,8 @@ class updateProfReq extends RequestResponse {
 			$props['activableItemShorcuts'] = (string)$row['activableItemShorcuts'];
 			$props['saInstalled']           = ((int)$row['saInstalled'] == 1) ? 'true' : 'false';
 			$profile['props'] = $props;
-		
 			$this->addBody('profile', $profile);
 		}
-		
-		$db = null;
 	}
 }
 ?>
