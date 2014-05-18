@@ -1,6 +1,6 @@
 <?php
 /*==============================================================================
-   Troposphir - Part of the Troposphir Project
+  Troposphir - Part of the Troposphir Project
   Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
