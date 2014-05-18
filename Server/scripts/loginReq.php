@@ -22,10 +22,6 @@ class loginReq extends RequestResponse {
 		if (!isset($json["body"]["password"])) return;
 		if (!isset($json["body"]["username"])) return;
 		
-		$fields = array ( 
-			"token", "userId"
-		);
-		
 		$db = $this->getConnection();
 		$statement = $db->prepare("SELECT `token`, `userId` 
 			FROM `" . $this->config['table_user'] . "` 

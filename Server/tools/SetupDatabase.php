@@ -88,7 +88,7 @@ SetupTable($config['table_user'], "(
 //Create map table
 SetupTable($config['table_map'], "( 
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	name VARCHAR(255) NOT NULL UNIQUE,
+	name VARCHAR(255) NOT NULL,
 	description VARCHAR(255) NOT NULL DEFAULT '',
 	ct INT NOT NULL DEFAULT 0,
 	author VARCHAR(255) NOT NULL,

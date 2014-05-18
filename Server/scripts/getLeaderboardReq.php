@@ -30,7 +30,7 @@ class getLeaderboardReq extends RequestResponse {
 		$statement = $db->prepare("SELECT levelId, score, userId FROM " . $this->config["table_playRecord"] . " 
 			WHERE `levelId`=:levelId 
 			AND `score` <> 0
-			ORDER BY `score` 
+			ORDER BY `score` DESC
 			LIMIT :start,:size");
 		$statement->bindParam(':levelId', $json['body']['cid'], PDO::PARAM_INT);
 		$statement->bindParam(':start', $json['body']['freq']['start'], PDO::PARAM_INT);
