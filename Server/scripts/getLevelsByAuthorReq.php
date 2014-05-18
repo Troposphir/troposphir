@@ -27,7 +27,7 @@ class getLevelsByAuthorReq extends RequestResponse {
 			return;
 		}
 		$fields = array( 
-			"id", "name", "description", "author", 
+			"id", "name", "description", "author", "deleted",  
 			"ownerId", "downloads", "dataId", 
 			"screenshotId", "draft", "version",
  			"nextLevelId", "editable", "gcid",
@@ -37,8 +37,12 @@ class getLevelsByAuthorReq extends RequestResponse {
 		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) . 
 			" FROM `" . $this->config['table_map'] . "`
 			WHERE `ownerId` = :ownerId
+			AND `deleted` = :deleted
+			AND `draft` = :draft
 			LIMIT :start,9999999999");
 		$statement->bindParam(':ownerId', $json['body']['authorId'], PDO::PARAM_INT);
+		$statement->bindValue(':deleted', ($json['body']['retDeleted'] == true) ? 1 : 0, PDO::PARAM_INT);
+		$statement->bindValue(':draft', ($json['body']['retDrafts'] == true) ? 1 : 0, PDO::PARAM_INT);
 		$statement->bindParam(':start', $json['body']['freq']['start'], PDO::PARAM_INT);
 		$statement->execute();
 		
