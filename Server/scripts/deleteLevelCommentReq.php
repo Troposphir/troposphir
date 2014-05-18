@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -28,19 +28,7 @@ class deleteLevelCommentReq extends RequestResponse {
 		if (!isset($json['body']['userId'])) return;
 	
 		//Validate the user via an IP check.
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);	
-		$stmt = $db->prepare("SELECT ipAddress FROM ".$this->config['table_user']." WHERE `userId`=:userId");
-		$stmt->bindValue(':userId', $json['body']['userId'], PDO::PARAM_INT);
-		$stmt->execute();
-
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
-			$this->error("NOT_FOUND");
-			return;
-		}
-		
-		$row = $stmt->fetch();
-		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR'])
-        {
+		if (!$this->verifyUserById($json['body']['userId'])) {
 			$this->log("Hacking attempt [deleteLevelCommentReq()]: Attempting to modify another user's data.");
             $this->error("AUTH_NOT_PERMITTED");
 			return;
@@ -51,15 +39,11 @@ class deleteLevelCommentReq extends RequestResponse {
 			" WHERE `commentId`=:commentId AND `userId`=:userId");
 		$stmt->bindParam(':commentId', $json['body']['messageId'], PDO::PARAM_INT);
 		$stmt->bindParam(':userId', $json['body']['userId'], PDO::PARAM_INT);
-		
         
 		if ($stmt->execute() == false) {
 			$this->error("NOT_FOUND");
 		} else {
             // success
-/*			$itemId = $db->lastInsertId();
-			if ($itemId == 0) return;
-			$this->addBody("commentId", (integer)$itemId);*/
 		}
 	}
 }

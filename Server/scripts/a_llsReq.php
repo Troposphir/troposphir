@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur, Adam Gaskins
+  Troposphir - Part of the Troposphir Project
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -102,11 +102,11 @@ class a_llsReq extends RequestResponse {
              $query = "AND (".$query.")";
          }
                  
-         //echo $query;
-                 
-  		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
- 		$stmt = $db->query("SELECT * FROM `@table` WHERE `deleted`=0 @query ORDER BY ct DESC", array(
-  			"table" 	=> $this->config["table_map"],
+        //echo $query;
+  		$db = $this->getConnection();
+ 		$stmt = $db->query("SELECT * FROM `" . $this->config['table_map'] . "` 
+			WHERE `deleted`=0 AND `draft`='false' @query 
+			ORDER BY ct DESC", array(
   			"query" 	=> $query
   		));
 

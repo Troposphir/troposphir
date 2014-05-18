@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -20,7 +20,6 @@
 /*
 body:{"comment":"New C test", "_t":"addLevelCommentReq", "levelId":6, "userId":2}
 */
-
 if (!defined("INCLUDE_SCRIPT")) return;
 class addLevelCommentReq extends RequestResponse {
 	public function work($json) {
@@ -29,37 +28,25 @@ class addLevelCommentReq extends RequestResponse {
 		if (!isset($json['body']['comment'])) return;
 	
 		//Validate the user via an IP check.
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);	
-		$stmt = $db->prepare("SELECT ipAddress FROM ".$this->config['table_user']." WHERE `userId`=:userId");
-		$stmt->bindValue(':userId', $json['body']['userId'], PDO::PARAM_INT);
-		$stmt->execute();
-
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
-			$this->error("NOT_FOUND");
-			return;
-		}
-		
-		$row = $stmt->fetch();
-		if ($row['ipAddress'] != $_SERVER['REMOTE_ADDR']) {
-			$this->log("Hacking attempt [addLevelCommentReq()]: Attempting to modify another user's data.");
+		if (!$this->verifyUserById($json['body']['userId'])) {
+			$this->log("Hacking attempt[addLevelCommentReq()]: Attempting to add a comment under another user's name");
 			return;
 		}
 		
 		//Insert level data
+		$db = $this->getConnection();
 		$stmt = $db->prepare("INSERT INTO " . $this->config['table_comments'] . "
 			(userId, levelId, body)
 			VALUES (:userId, :levelId, :body)");
 		$stmt->bindParam(':userId', $json['body']['userId'], PDO::PARAM_INT);
 		$stmt->bindParam(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
 		$stmt->bindParam(':body', $json['body']['comment'], PDO::PARAM_STR);
-		$stmt->execute();
 		
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
-			$this->error("NOT_FOUND");
+		if ($stmt->execute()) {
+			//Success
 		} else {
-/*			$itemId = $db->lastInsertId();
-			if ($itemId == 0) return;
-			$this->addBody("commentId", (integer)$itemId);*/
+			$this->error("INTERNAL");
+			return;
 		}
 	}
 }

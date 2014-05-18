@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -20,22 +20,14 @@ if (!defined("INCLUDE_SCRIPT")) return;
 class a_getUserBadgesReq extends RequestResponse {
 	public function work($json) {
 		if(!isset($json['body']['uid'])) return;
-		$fields = array("wins", "losses", "abandons");
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['uid']
-		));
-		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) .  
-		" FROM " . $this->config["table_map"] .
-		" WHERE `userId`=:userId");
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT `wins`, `losses`, `abandons` 
+			FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId");
 		$statement->bindValue(':userId', $json['body']['uid'], PDO::PARAM_INT);
-		$statement->execute();		
-		
+		$statement->execute();
+	
 		$row = $statement->fetch();
 		if ($row == false || count($row) <= 0) {
 			$this->error("NOT_FOUND");
