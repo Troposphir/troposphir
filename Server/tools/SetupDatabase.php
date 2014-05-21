@@ -177,7 +177,7 @@ SetupTable($config['table_items'], "(
 	isid INT NOT NULL DEFAULT 0,
 	levels INT NOT NULL DEFAULT 0,
 	shown BOOL NOT NULL DEFAULT 0,
-	vehicleCategory INT NOT NULL DEFAULT 0,
+	vehicleCategory INT DEFAULT NULL,
 	isFree BOOL NOT NULL DEFAULT 0,
 	isPro BOOL NOT NULL DEFAULT 0,
 	isGift BOOL NOT NULL DEFAULT 0,
