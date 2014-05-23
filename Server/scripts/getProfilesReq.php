@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -22,15 +22,17 @@ class getProfilesReq extends RequestResponse {
 		//Check input
 		if (!isset($json['body']['uid'])) return;
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM `@table` WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"userId" 	=> $json['body']['uid']
-		));
+		//Retrieve user profile
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT * FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId");
+		$statement->bindParam(':userId', $json['body']['uid'], PDO::PARAM_INT);
+		$statement->execute();
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
+			//Return user profile information
 			$profileList = array();
 			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$profile = array();
@@ -49,7 +51,6 @@ class getProfilesReq extends RequestResponse {
 				$props["activableItemShorcuts"] = (string)$row["activableItemShorcuts"];
 				$props["saInstalled"]           = ((bool)$row['saInstalled']) ? 'true' : 'false';
 				$profile["props"] = $props;
-				
 				$profileList[] = $profile;
 			}
 			$fres = array(
@@ -58,8 +59,6 @@ class getProfilesReq extends RequestResponse {
 			);
 			$this->addBody("fres", $fres);
 		}
-		
-		$db = null;
 	}
 }
 ?>

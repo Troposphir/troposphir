@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Troposphir - Part of the Troposphir Project
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -25,11 +25,12 @@ class getRedCarpetReq extends RequestResponse {
 			$this->addBody('finished', 'false');
 			return;
 		}
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT `finished` FROM `@table` WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['userId']
-		));
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT `finished` 
+			FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId");
+		$statement->bindParam(':userId', $json['body']['userId'], PDO::PARAM_INT);
+		$statement->execute();
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error('NOT_FOUND');

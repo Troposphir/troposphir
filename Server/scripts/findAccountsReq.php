@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -25,20 +25,18 @@ class findAccountsReq extends RequestResponse {
 		//Check input
 		if (!isset($json['body']['oid'])) return;
 		
-		$fields = array(
-			'userId', 'username', 'cid', 'amt'
-		);
-		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
-			"fields"    => $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_user"],
-			"userId" 	=> $json['body']['oid']
-		));
+		//Get user account
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT `userId`, `username`, `cid`, `amt` 
+			FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId");
+		$statement->bindValue(':userId', $json['body']['oid'], PDO::PARAM_INT);
+		$statement->execute();
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
+			//Return account information
 			$accountList = array();
 			for ($count = 0; $row = $statement->fetch(); $count++) {
 				$account = array();
@@ -53,7 +51,6 @@ class findAccountsReq extends RequestResponse {
 			}	
 			$this->addBody("fres", array("results" => $accountList));
 		}
-		$db = null;
 	}
 }
 ?>

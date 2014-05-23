@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Troposphir - Part of the Troposphir Project
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -37,6 +37,7 @@ class getFirstUserExperienceReq extends RequestResponse {
 				editable, gcid, editMode	
 			FROM " . $this->config['table_map'] . "
 			WHERE `deleted`=:deleted
+			AND `draft`='false'
 			ORDER BY ct DESC");
 		$stmt->bindParam(':deleted', $json['body']['retDeleted'], PDO::PARAM_INT);
 		$stmt->execute();

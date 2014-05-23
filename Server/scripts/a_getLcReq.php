@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Tropopshir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Troposphir - Part of the Troposphir Project
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -32,10 +32,10 @@ class a_getLcReq extends RequestResponse {
 			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc"
 		);
 
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) .  
-		" FROM " . $this->config["table_map"] .
-		" WHERE `id`=:lid");
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT *" . 
+		    " FROM " . $this->config["table_map"] .
+			" WHERE `id`=:lid");
 		$statement->bindValue(':lid', $json['body']['lid'], PDO::PARAM_INT);
 		$statement->execute();		
 		
