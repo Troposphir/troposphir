@@ -14,24 +14,24 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>True</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x86</PlatformTarget>
-    <ConsolePause>false</ConsolePause>
+    <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -53,7 +53,6 @@
     <Reference Include="atk-sharp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756" />
     <Reference Include="Mono.Posix, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
       <Private>False</Private>
     </Reference>
@@ -62,7 +61,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\..\..\..\Users\Leonardo\Documents\_DEV\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\Unity\MonoDevelop\Newtonsoft.Json\Net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

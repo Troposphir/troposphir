@@ -7,7 +7,7 @@ namespace TroposphirLauncher
 		private global::Gtk.Table table1;
 		private global::Gtk.Label alertText;
 		private global::Gtk.Button okButton;
-
+		
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
