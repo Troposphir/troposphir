@@ -14,7 +14,7 @@ namespace TroposphirLauncher
 		private global::Gtk.Label label4;
 		private global::Gtk.CheckButton onlineCheckbox;
 		private global::Gtk.Entry serverUrlTextBox;
-
+		
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
@@ -114,8 +114,8 @@ namespace TroposphirLauncher
 			this.label4 = new global::Gtk.Label ();
 			this.label4.Name = "label4";
 			this.label4.LabelProp = "Launcher and server software created by\nKevin Sonoda and Leonardo Scur\nwith great" +
-			" support from the OneMoreBlock community.\nLicensed under the GNU Affero General " +
-			"Public License\n\nhttps://github.com/MusicalIdiot/Troposphir";
+				" support from the OneMoreBlock community.\nLicensed under the GNU Affero General " +
+				"Public License\n\nhttps://github.com/MusicalIdiot/Troposphir";
 			this.label4.Justify = ((global::Gtk.Justification)(2));
 			this.layoutRoot.Add (this.label4);
 			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.layoutRoot [this.label4]));

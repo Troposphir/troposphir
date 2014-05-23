@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<stetic-interface>
+  <configuration>
+    <images-root-path>..</images-root-path>
+  </configuration>
+  <import>
+    <widget-library name="glade-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f" />
+    <widget-library name="../bin/Debug/SimpleLauncher.exe" internal="true" />
+  </import>
+  <widget class="Gtk.Window" id="SimpleLauncher.MainWindow" design-size="496 300">
+    <property name="MemberName" />
+    <property name="WidthRequest">480</property>
+    <property name="HeightRequest">180</property>
+    <property name="Title" translatable="yes">Atmosphir Launcher</property>
+    <property name="Icon">resource:SimpleLauncher.troposphir_launcher_icon.ico</property>
+    <property name="WindowPosition">Center</property>
+    <property name="Resizable">False</property>
+    <property name="AllowGrow">False</property>
+    <property name="DefaultWidth">483</property>
+    <property name="DefaultHeight">180</property>
+    <child>
+      <widget class="Gtk.Fixed" id="fixed2">
+        <property name="MemberName" />
+        <property name="HasWindow">False</property>
+        <child>
+          <widget class="Gtk.Image" id="image5">
+            <property name="MemberName" />
+            <property name="Pixbuf">resource:SimpleLauncher.bg.png</property>
+          </widget>
+        </child>
+        <child>
+          <widget class="Gtk.Image" id="image6">
+            <property name="MemberName" />
+            <property name="Pixbuf">resource:SimpleLauncher.gear.png</property>
+          </widget>
+          <packing>
+            <property name="X">186</property>
+            <property name="Y">18</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Image" id="image7">
+            <property name="MemberName" />
+            <property name="Pixbuf">resource:SimpleLauncher.nogear.png</property>
+          </widget>
+          <packing>
+            <property name="X">186</property>
+            <property name="Y">18</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.ProgressBar" id="progressbar1">
+            <property name="MemberName">progressbar</property>
+            <property name="WidthRequest">378</property>
+            <property name="Text" translatable="yes">0%</property>
+          </widget>
+          <packing>
+            <property name="X">56</property>
+            <property name="Y">136</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="labelStatus">
+            <property name="MemberName" />
+            <property name="LabelProp" translatable="yes">Checking for updates...</property>
+          </widget>
+          <packing>
+            <property name="X">60</property>
+            <property name="Y">116</property>
+          </packing>
+        </child>
+        <child>
+          <widget class="Gtk.Label" id="labelVersion">
+            <property name="MemberName" />
+            <property name="Visible">False</property>
+            <property name="LabelProp" translatable="yes">label1</property>
+          </widget>
+          <packing>
+            <property name="X">48</property>
+            <property name="Y">161</property>
+          </packing>
+        </child>
+      </widget>
+    </child>
+  </widget>
+</stetic-interface>

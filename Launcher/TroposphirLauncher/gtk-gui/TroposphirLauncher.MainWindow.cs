@@ -11,7 +11,7 @@ namespace TroposphirLauncher
 		private global::Gtk.TextView updateTextView;
 		private global::Gtk.Label label2;
 		private global::Gtk.ProgressBar progressBar;
-
+		
 		protected virtual void Build ()
 		{
 			global::Stetic.Gui.Initialize (this);
@@ -55,17 +55,28 @@ namespace TroposphirLauncher
 			this.btnSettings.CanFocus = true;
 			this.btnSettings.Name = "btnSettings";
 			this.btnSettings.UseUnderline = true;
-			global::Gtk.Image w3 = new global::Gtk.Image ();
-			w3.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-preferences", global::Gtk.IconSize.Menu);
-			this.btnSettings.Image = w3;
+			// Container child btnSettings.Gtk.Container+ContainerChild
+			global::Gtk.Alignment w3 = new global::Gtk.Alignment (0.5F, 0.5F, 0F, 0F);
+			// Container child GtkAlignment.Gtk.Container+ContainerChild
+			global::Gtk.HBox w4 = new global::Gtk.HBox ();
+			w4.Spacing = 2;
+			// Container child GtkHBox.Gtk.Container+ContainerChild
+			global::Gtk.Image w5 = new global::Gtk.Image ();
+			w5.Pixbuf = global::Stetic.IconLoader.LoadIcon (this, "gtk-preferences", global::Gtk.IconSize.Menu);
+			w4.Add (w5);
+			// Container child GtkHBox.Gtk.Container+ContainerChild
+			global::Gtk.Label w7 = new global::Gtk.Label ();
+			w4.Add (w7);
+			w3.Add (w4);
+			this.btnSettings.Add (w3);
 			this.table2.Add (this.btnSettings);
-			global::Gtk.Table.TableChild w4 = ((global::Gtk.Table.TableChild)(this.table2 [this.btnSettings]));
-			w4.TopAttach = ((uint)(3));
-			w4.BottomAttach = ((uint)(4));
-			w4.LeftAttach = ((uint)(3));
-			w4.RightAttach = ((uint)(4));
-			w4.XOptions = ((global::Gtk.AttachOptions)(4));
-			w4.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w11 = ((global::Gtk.Table.TableChild)(this.table2 [this.btnSettings]));
+			w11.TopAttach = ((uint)(3));
+			w11.BottomAttach = ((uint)(4));
+			w11.LeftAttach = ((uint)(3));
+			w11.RightAttach = ((uint)(4));
+			w11.XOptions = ((global::Gtk.AttachOptions)(4));
+			w11.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.GtkScrolledWindow = new global::Gtk.ScrolledWindow ();
 			this.GtkScrolledWindow.Name = "GtkScrolledWindow";
@@ -79,19 +90,19 @@ namespace TroposphirLauncher
 			this.updateTextView.WrapMode = ((global::Gtk.WrapMode)(2));
 			this.GtkScrolledWindow.Add (this.updateTextView);
 			this.table2.Add (this.GtkScrolledWindow);
-			global::Gtk.Table.TableChild w6 = ((global::Gtk.Table.TableChild)(this.table2 [this.GtkScrolledWindow]));
-			w6.TopAttach = ((uint)(1));
-			w6.BottomAttach = ((uint)(3));
-			w6.RightAttach = ((uint)(4));
+			global::Gtk.Table.TableChild w13 = ((global::Gtk.Table.TableChild)(this.table2 [this.GtkScrolledWindow]));
+			w13.TopAttach = ((uint)(1));
+			w13.BottomAttach = ((uint)(3));
+			w13.RightAttach = ((uint)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.label2 = new global::Gtk.Label ();
 			this.label2.Name = "label2";
 			this.label2.LabelProp = "Update news:";
 			this.table2.Add (this.label2);
-			global::Gtk.Table.TableChild w7 = ((global::Gtk.Table.TableChild)(this.table2 [this.label2]));
-			w7.RightAttach = ((uint)(4));
-			w7.XOptions = ((global::Gtk.AttachOptions)(4));
-			w7.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w14 = ((global::Gtk.Table.TableChild)(this.table2 [this.label2]));
+			w14.RightAttach = ((uint)(4));
+			w14.XOptions = ((global::Gtk.AttachOptions)(4));
+			w14.YOptions = ((global::Gtk.AttachOptions)(4));
 			// Container child table2.Gtk.Table+TableChild
 			this.progressBar = new global::Gtk.ProgressBar ();
 			w1.SetTip (this.progressBar, "Update progress", "Update progress");
@@ -100,12 +111,12 @@ namespace TroposphirLauncher
 			this.progressBar.Text = "";
 			this.progressBar.PulseStep = 1D;
 			this.table2.Add (this.progressBar);
-			global::Gtk.Table.TableChild w8 = ((global::Gtk.Table.TableChild)(this.table2 [this.progressBar]));
-			w8.TopAttach = ((uint)(3));
-			w8.BottomAttach = ((uint)(4));
-			w8.LeftAttach = ((uint)(1));
-			w8.RightAttach = ((uint)(3));
-			w8.YOptions = ((global::Gtk.AttachOptions)(4));
+			global::Gtk.Table.TableChild w15 = ((global::Gtk.Table.TableChild)(this.table2 [this.progressBar]));
+			w15.TopAttach = ((uint)(3));
+			w15.BottomAttach = ((uint)(4));
+			w15.LeftAttach = ((uint)(1));
+			w15.RightAttach = ((uint)(3));
+			w15.YOptions = ((global::Gtk.AttachOptions)(4));
 			this.Add (this.table2);
 			if ((this.Child != null)) {
 				this.Child.ShowAll ();
