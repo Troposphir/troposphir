@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -27,12 +27,13 @@ class getQuickStatsReq extends RequestResponse {
 			'levelDesigned', 'levelComments', 'designModeTime'
 		);
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM `@table` WHERE `userId`='@userId'", array(
-			"fields"    => $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_user"],
-			"userId" 	=> $json['body']['userId']
-		));
+		//Get user 
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT " . $db->arrayToSQLGroup($fields, array("", "", "`")) . " 
+			FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId"); 
+		$statement->bindParam(':userId', $json['body']['userId'], PDO::PARAM_INT);
+		$statement->execute();
 		
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
@@ -49,7 +50,6 @@ class getQuickStatsReq extends RequestResponse {
 			$this->addBody("levelComments", (string)$row['levelComments']);	
 			$this->addBody("designModeTime", (string)$row['designModeTime']);	
 		}
-		$db = null;
 	}
 }
 ?>

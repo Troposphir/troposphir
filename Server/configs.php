@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -39,7 +39,7 @@ $config = array(
 	'table_comments'=> 'comments',
 	'table_playRecord' => 'playRecord',
 	//Directory Setup
-	'dir_imgs'		=> 'image/maps',
+	'dir_imgs'		=> 'image',
 	'dir_avatars'   => 'image/avatars',
 	'dir_maps'		=> 'map',
 	'dir_assets'	=> 'asset'

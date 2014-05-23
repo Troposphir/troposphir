@@ -16,14 +16,23 @@
   You should have received a copy of the GNU Affero General Public License 
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
-// Get the launcher's hash list path relative to server root.
+/*
+REQUEST
+{"header":{"_t":"mfheader", "auth":"0", "debug":"true"}, 
+ "_t":"mfmessage", 
+ "body":{
+		 "assetId":16, 
+		 "_t":"updateAssetReq", 
+		 "replacedBy":38
+		}
+}
+
+*/
+
 if (!defined("INCLUDE_SCRIPT")) return;
-class findItemInstanceSetsReq extends RequestResponse {
+class updateAssetReq extends RequestResponse {
 	public function work($json) {
-		if (!isset($json['header']['origin'])
-			&& $json['header']['origin'] != "troposphir-launcher") return;
-	
-		$this->addBody("endpoint", "/clientHashList.txt");
+		
 	}
 }
 ?>

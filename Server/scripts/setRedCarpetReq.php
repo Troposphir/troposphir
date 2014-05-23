@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -22,11 +22,12 @@ class setRedCarpetReq extends RequestResponse {
 		//Check input
 		if (!isset($json['body']['userId'])) return;
 		
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("UPDATE `@table` SET `finished`=1 WHERE `userId`='@userId'", array(
-			"table" 	=> $this->config["table_user"],
-			"userId"    => $json['body']['userId']
-		));
+		$db = $this->getConnection();
+		$statement = $db->prepare("UPDATE `" . $this->config['table_user'] . "` 
+			SET `finished`=1 
+			WHERE `userId`=:userId");
+		$statement->bindParam(':userId', $json['body']['userId'], PDO::PARAM_INT);
+		$statement->execute();
 	}
 }
 ?>

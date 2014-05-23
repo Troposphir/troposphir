@@ -154,7 +154,7 @@ angular.module("troposphir", [])
 	$scope.$on("$locationChangeSuccess", function(event, data) {
 		updatePage();
 	});
-	updatePage();
+	$scope.changePage("browser");
 })
 .controller("levelBrowser", function($scope, $http) {
 	var request = requests($http);

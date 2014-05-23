@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
   Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur, Adam Gaskins
+  Copyright (C) 2013  Troposphir Development Team
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -27,17 +27,19 @@ class addLevelReq extends RequestResponse {
 	
 		//Verify user operations
 		if (!$this->verifyUserById($json['body']['level']['ownerId'])) {
-			$this->log("[addLevelReq()]: Attempting to modify another user's data.");
+			$this->log("[addLevelReq()]: Attempting to add a level under another user's id.");
 			return;
 		}
 	
+		//Get User
 		$db = $this->getConnection();
-		//Get user
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
- 		$stmt = $db->query("SELECT * FROM `@table` WHERE `userId`=@id LIMIT 1", array(
- 			"table" 	=> $this->config["table_user"],
-             "id"        => $json['body']['level']['ownerId'],
- 		));        
+		$stmt = $db->prepare("SELECT * 
+			FROM `" . $this->config['table_user'] . "` 
+			WHERE `userId`=:userId 
+			LIMIT 1");
+		$stmt->bindValue(':userId', $json['body']['level']['ownerId'], PDO::PARAM_INT);
+		$stmt->execute();
+		
         $user = $stmt->fetch();
 		if ($user == false) {
 				$this->error("NOT_FOUND");
@@ -48,19 +50,22 @@ class addLevelReq extends RequestResponse {
 			(ownerId, name, author, description, ct, editable, version)
 			VALUES (:ownerId, :name, :author, :description, :ct, :editable, :version)");
 		$stmt->bindParam(':ownerId', $json['body']['level']['ownerId'], PDO::PARAM_INT);
-		$stmt->bindParam(':author', $user["username"]);
+		$stmt->bindParam(':author', $user["username"], PDO::PARAM_STR);
 		$stmt->bindParam(':name', $json['body']['level']['name'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $json['body']['level']['description'], PDO::PARAM_STR);
-		$stmt->bindParam(':ct', time(), PDO::PARAM_STR); //created time
+		$stmt->bindValue(':ct', time(), PDO::PARAM_STR); //created time
 		$json['body']['level']['editable'] = ($json['body']['level']['editable'] == true) ? 1 : 0;
 		$stmt->bindParam(':editable', $json['body']['level']['editable'], PDO::PARAM_INT);
 		$stmt->bindParam(':version', $json['body']['level']['version'], PDO::PARAM_INT);
-		$stmt->execute();
+		if (!$stmt->execute()) { 
+			$this->error("INTERNAL"); 
+			return;
+		}
 		
 		//Retrieve inserted level id
 		$insertId = $db->lastInsertId();
 		if ($insertId <= 0) {
-			$this->error("NOT_FOUND");
+			$this->error("INTERNAL");
 			return;
 		}
 		

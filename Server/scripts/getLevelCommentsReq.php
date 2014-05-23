@@ -46,21 +46,26 @@ class getLevelCommentsReq extends RequestResponse {
         $length = $json["body"]["freq"]["blockSize"];
         if($begin < 0) $begin = 0;
         
-		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT @fields FROM @table WHERE `levelId` = '@levelId' ORDER BY commentId DESC LIMIT 0, 9999999", array(
-			"fields" 	=> $db->arrayToSQLGroup($fields, array("", "", "`")),
-			"table" 	=> $this->config["table_comments"],
-			"levelId" 	=> $json["body"]["levelId"],
-		));
+		//Retrieve level comments
+		$db = $this->getConnection();
+		$statement = $db->prepare("SELECT `commentId`, `userId`, `body` 
+			FROM `" . $this->config['table_comments'] . "` 
+			WHERE `levelId` = :levelId 
+			ORDER BY commentId DESC 
+			LIMIT 0, 9999999");
+		$statement->bindParam(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
+		$statement->execute();
         		
 		$all = $statement->fetchAll();
 		if ($all == false || count($all) <= 0) {
+			//Return an empty result
 			$fres = array(
 				"total"     => 0,
 				"results" 	=> array()
 			);
 			$this->addBody("fres", $fres);
 		} else {
+			//Return comments
 			$commentList = array();
 			for ($i = $begin; $i < $begin + $length && $i < count($all); $i++) {
 				$row = $all[$i];
@@ -68,8 +73,7 @@ class getLevelCommentsReq extends RequestResponse {
 				
 				$comment["id"]      = (integer)$row["commentId"];
 				$comment["uid"]     = (integer)$row["userId"];
-				$comment["body"]    = (string)$row["body"];
-				
+				$comment["body"]    = (string)$row["body"];		
 				$commentList[] = $comment;
 			}
 			$fres = array(
