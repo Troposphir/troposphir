@@ -47,7 +47,7 @@ class createAssetReq extends RequestResponse {
 			
 			$dir = '';
 			if (startsWith($filename, 'MapImage_')) {
-				$dir = $this->config['dir_imgs'];
+				$dir = $this->config['dir_imgs'] . "/maps";
 			} else if (startsWith($filename, 'AvatarImage_')) {
 				$dir = $this->config['dir_avatars'];
 			}	
