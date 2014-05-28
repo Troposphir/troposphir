@@ -1,0 +1,60 @@
+=====================
+Terminology
+=====================
+[\t]             - tab symbol 
+[\r]             - carriage return (aka. new line)
+[...]            - symbolic way of saying "so on and so forth"
+[Troposphir]     - the main directory of the game client
+
+hash files       - /launcher/updatelistLauncherWindows.txt
+	           /launcher/updatelistLauncherOSXIntel.txt
+	           /standalone/updatelistStandaloneWindows.txt
+	           /standalone/updatelistStandaloneOSXIntel.txt
+launcher files   - [Troposphir]/Troposphir_Data/sharedassets0.assets
+                   [Troposphir]/Troposphir_Data/mainData
+                   [Troposphir]/Troposphir_Data/Managed/[...]
+                   [Troposphir]/Tropopshir_Data/Mono/[...]
+                   [Troposphir]/Troposphir_Data/Resources/[...]
+standalone files - [Troposphir]/Troposphir_Data/Troposphir.exe
+                   [Troposphir]/Troposphir_Data/Troposphir_Data/[...]
+
+======================
+Readme
+======================
+1) HASH FILES
+Hash files contain a list of all the binaries that make up the game.
+The content of the files are formatted like the following:
+
+directoryPath1[\t]fileName[\t]md5FileHash[\t]fileSize[\r]
+directoryPath2[\t]fileName2[\t]md5FileHash2[\t]fileSize2[\r]
+[...]
+
+
+The directory paths in updatelistStandaloneWindows.txt are relative to [Troposphir]\Troposphir_Data\. The following is an example of what you might see in /launcher/updatelistStandaloneWindows.txt:
+
+	Troposphir.exe	L9RIJMSS4VsGWaT6dC57Rg==	6817801
+Troposphir_Data\	mainData	ahEnDWT0T3lh5SjYf3SHvQ==	50484
+Troposphir_Data\	resources.assets	SV63EN8Mx0iyTnE+YVQuLw==	2474187
+
+The relativity of the directory paths in updatelistLauncherWindows.txt are currently unknown.
+
+2) LAUNCHER FILES
+Launcher files are the same across operating systems. There is no need to differentiate windows or macos launcher files like in /standalone/. 
+
+Also, the launcher executable (in [Troposphir]/Troposphir.exe) is unupdateable. In other words, there should never be a /launcher/Troposphir.exe on the server or in the launcher hash files. There is a reason that "[Troposphir]/Troposphir.exe" is not listed as part of the launcher files.
+
+3) /STANDALONE/MANIFEST.xml
+In order for the launcher to know if it should update, it reads a value (e.g. "1.0.5") from [Troposphir]/Troposphir_Data/version.txt and compares it with the serverVersion value in /standalone/manifest.xml. The following possibilities occur:
+>If the serverVersion value is higher than the client version, the launcher updates the launcher files. 
+>If the serverVersion value is equal to the client version, it then compares the client version to the serverBinaryVersion. If the serverBinary is higher than the client version, the launcher updates the standalone files.
+
+==========================
+How To Make Launcher Work 
+==========================
+1) Generate a hash file of all the launcher files. 
+2) Upload this hash file onto the server as /launcher/updatelistLauncherWindows.txt or /launcher/updatelistLauncherOSXIntel.txt, depending on the intended operating system.
+3) Upload the launcher files into the server /launcher/ directory (e.g. /launcher/sharedassets0.assets). 
+
+4) Generate a hash file of all the standalone files.
+5) Upload this hash file onto the server as /standalone/updatelistStandaloneWindows.txt or /standalone/updatelistStandaloneOSXIntel.txt (depending on the intended operating system).
+6) Upload the standalone files into the server /standalone/windows/ directory or /standalone/macos/ directory (e.g. /standalone/windows/Troposphir.exe), depending on the intended operating system. 

@@ -1,0 +1,9 @@
+<!-- 
+	 (MajorNumber.MinorNumber.BuildNumber.RevisionNumber
+	If client version is > serverVersion,  
+
+-->
+<root>
+	<version serverVersion="1.0.5"></version>
+	<binary serverBinaryVersion="1.0.6"></binary>
+</root>
