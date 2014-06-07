@@ -23,11 +23,15 @@
 				<h1 class="sectionHeader">Level Browser</h1>
 				<aside id="filters">
 					<section>
-						<h1>Search</h1> <input type="search" ng-model="search" ng-change="doSearch()">
+						<h1>Search</h1>
+						<search-filter type="text" name="search.query" update="doSearch()"></search-filter>
+						<p class="note">To mark a attribute as irrelevant, right-click it.</p>
+						<search-filter type="checkbox" name="search.xp" update="doSearch()">XP Levels</search-filter>
+						<search-filter type="checkbox" name="search.lotd" update="doSearch()">LOTDs</search-filter>
 					</section>
 				</aside>
 				<section id="levelList">
-					<article ng-repeat="level in levels | filter:search" ng-class="level.expanded && 'tall'" ng-click="changePage('level/'+level.id)">
+					<article ng-repeat="level in levels | filter:search.query" ng-class="level.expanded && 'tall'" ng-click="changePage('level/'+level.id)">
 						<div class="thumbnail" style="background-image: url({{level.screenshot}})">
 							<div class="levelInfo">
 								<h1>{{level.name}}</h1> <h2>by {{level.author}}</h2> <h3>{{level.playCount}} plays</h3><br>

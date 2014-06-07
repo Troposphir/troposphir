@@ -100,8 +100,25 @@ Level browser styling
 	width: 650px;
 	zoom: 1;
 }
-#filters input {
+.note {
+	display: block;
 	width: 100%;
+	margin: 5px auto;
+	font-size: 9pt;
+	text-align: center;
+}
+#filters .filter[type=text], #filters .filter[type=text] input {
+	width: 100%;
+}
+#filters .filter {
+	width: 49%;
+	display: inline-block;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 #levelList article {
 	float: left;
