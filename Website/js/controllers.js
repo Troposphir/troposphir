@@ -171,7 +171,6 @@ angular.module("troposphir", [])
 				break;
 			}
 			return function postLink($scope, element, attributes) {
-				console.log(attributes);
 				function onChange(newValue) {
 					$scope.$eval(attributes.name+" = "+JSON.stringify(newValue));
 					return $scope.$eval(attributes.update);
@@ -230,7 +229,6 @@ angular.module("troposphir", [])
 	});
 	$scope.doSearch = _.debounce(function() {
 		//TODO: do search
-		console.log($scope);
 	}, 500);
 })
 .controller("levelCard", function($scope, $http, $q) {
