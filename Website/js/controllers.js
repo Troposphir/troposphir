@@ -31,7 +31,7 @@ var requests = function(http_module, promise_module) {
 						description: level.description,
 						playCount: level.dc,
 						author: level.author,
-						screenshot: SERVER_PATH+"image/maps/?id="+level.screenshotId+"&lid="+level.id,
+						screenshot: SERVER_PATH+"image/?id="+level.screenshotId+"&lid="+level.id,
 						rating: level.rating,
 						difficulty: level.difficulty,
 						ratingPercent: ((level.rating/5)*100),
@@ -52,7 +52,7 @@ var requests = function(http_module, promise_module) {
 					description: level.description,
 					playCount: level.downloads,
 					author: level.author,
-					screenshot: SERVER_PATH+"image/maps/?id="+level.screenshotId+"&lid="+level.id,
+					screenshot: SERVER_PATH+"image/?id="+level.screenshotId+"&lid="+level.id,
 					rating: level.rating,
 					difficulty: level.difficulty,
 					ratingPercent: ((level.rating/5)*100),
@@ -137,6 +137,70 @@ var requests = function(http_module, promise_module) {
 };
 //START ANGULAR
 angular.module("troposphir", [])
+.directive("searchFilter", function($compile) {
+	return {
+		restrict: "E",
+		scope: false,
+		terminal: true,
+		priority: 1000,
+		compile: function(element, attrs) {
+			element = angular.element(element);
+			function fillTemplate(template, valGetter) {
+				return template.replace(/\{([-a-zA-Z]*)\}/g, function(match, field) {
+					return valGetter(field);
+				});
+			}
+			element.addClass("filter");
+			switch (element.attr("type")) {
+			case "text":
+				var html = fillTemplate('<input type="search">', element.attr.bind(element));
+				element.html(html);
+				break;
+			case "checkbox":
+				var html = fillTemplate('<input type="{type}" id="{name}_checkbox"><label for="{name}_checkbox">{label}</label>', function(attr) {
+					if (attr == "label") {
+						return element.html();
+					} else if (attr == "name") {
+						
+						return element.attr(attr).replace(".", "_");
+					} else {
+						return element.attr(attr);
+					}
+				});
+				element.html(html);
+				break;
+			}
+			return function postLink($scope, element, attributes) {
+				console.log(attributes);
+				function onChange(newValue) {
+					$scope.$eval(attributes.name+" = "+JSON.stringify(newValue));
+					return $scope.$eval(attributes.update);
+				}
+				var input = element.children("input");
+				if (attributes.type == "checkbox") {
+					input[0].indeterminate = true;
+					input.on("mouseup", function(event) {
+						var elm = input[0];
+						if (event.which == 3) {
+							elm.checked = false;
+							elm.indeterminate = true;
+						} else {
+							elm.indeterminate = false;
+						}
+						onChange(elm.indeterminate? null : elm.checked);
+					});
+				} else {
+					input.on("input", function(event) {
+						onChange(input.val());
+					});
+				}
+				input.on("contextmenu", function(event) {
+					event.preventDefault();
+				});
+			};
+		}
+	};
+})
 .controller("navigation", function($scope, $location) {
 	var updatePage = function() {
 		var temp = $location.path().substring(1).split("/");
@@ -158,13 +222,15 @@ angular.module("troposphir", [])
 })
 .controller("levelBrowser", function($scope, $http) {
 	var request = requests($http);
-	console.log(request);
 	$scope.levels = [];
+	$scope.search = {};
+	window.__$scp = $scope;
 	request.getPage(0, 10).then(function(data) {
 		$scope.levels = data;
 	});
 	$scope.doSearch = _.debounce(function() {
 		//TODO: do search
+		console.log($scope);
 	}, 500);
 })
 .controller("levelCard", function($scope, $http, $q) {
