@@ -1,24 +1,30 @@
 var SERVER_PATH = "/Troposphir/Server/";
-var requests = function(http_module, promise_module) {
-	var doRequest = function($http, body) {
-		return $http({
-			method: "POST",
-			url: SERVER_PATH,
-			params: {
-				json: {
-					header: {
-						_t: "mfheader"
-					},
-					body: body
+function requests(http_module, promise_module) {
+	this.$http = http_module;
+	this.$q = promise_module;
+}
+Object.defineProperties(requests.prototype, {
+	doRequest: {
+		value: function(body) {
+			return this.$http({
+				method: "POST",
+				url: SERVER_PATH,
+				params: {
+					json: {
+						header: {
+							_t: "mfheader"
+						},
+						body: body
+					}
 				}
-			}
-		});
-	};
-	return {
-		getPage: function(page, size) {
-			return doRequest(http_module, {
+			});
+		}
+	},
+	query: {
+		value: function(page, size, query) {
+			return this.doRequest({
 				_t: "a_llsReq",
-				query: "",
+				query: query,
 				freq: {
 					start: page,
 					blockSize: size
@@ -32,36 +38,30 @@ var requests = function(http_module, promise_module) {
 						playCount: level.dc,
 						author: level.author,
 						screenshot: SERVER_PATH+"image/?id="+level.screenshotId+"&lid="+level.id,
-						rating: level.rating,
-						difficulty: level.difficulty,
-						ratingPercent: ((level.rating/5)*100),
-						difficultyPercent: ((level.difficulty/5)*100)
+						rating: +level.rating,
+						difficulty: +level.difficulty,
+						ratingPercent: ((+level.rating/5)*100),
+						difficultyPercent: ((+level.difficulty/5)*100)
 					};
 				});
 			});
-		},
-		getLevel: function(id) {
-			return doRequest(http_module, {
-				_t: "getLevelByIdReq",
-				levelId: id
-			}).then(function(response) {
-				var level = response.data.body.level;
-				return {
-					id: level.id,
-					name: level.name,
-					description: level.description,
-					playCount: level.downloads,
-					author: level.author,
-					screenshot: SERVER_PATH+"image/?id="+level.screenshotId+"&lid="+level.id,
-					rating: level.rating,
-					difficulty: level.difficulty,
-					ratingPercent: ((level.rating/5)*100),
-					difficultyPercent: ((level.difficulty/5)*100)
-				};
+		}
+	},
+	getPage: {
+		value: function(page, size) {
+			return this.query(page, size, "");
+		}
+	},
+	getLevel: {
+		value: function(id) {
+			return this.query(0, 1, "id:"+id).then(function(results) {
+				return results[0];
 			});
-		},
-		getUser: function(id) {
-			return doRequest(http_module, {
+		}
+	},
+	getUser: {
+		value: function(id) {
+			return this.doRequest({
 				_t: "getUserByIdReq",
 				uid: id
 			}).then(function(response) {
@@ -71,23 +71,25 @@ var requests = function(http_module, promise_module) {
 					name: user.username
 				};
 			});
-		},
-		getComments: function(id, start, size) {
-			return doRequest(http_module, {
+		}
+	},
+	getComments: {
+		value: function(id, start, size) {
+			return this.doRequest({
 				_t: "getLevelCommentsReq",
 				levelId: id,
 				freq: {
 					start: start,
 					blockSize: size || 0
 				}
-			}).then(function(response) {
+			}).then((function(response) {
 				var comments = response.data.body.fres.results;
 				if (comments.length > 0) {
 					var promises = [];
 					for (var i = comments.length-1; i >= 0; i-=1) {
-						promises.push(requests.getUser(comments[i].uid));
+						promises.push(this.getUser(comments[i].uid));
 					}
-					return promise_module.all(promises).then(function(users) {
+					return this.$q.all(promises).then(function(users) {
 						var cmts = [];
 						for (var i = users.length-1; i >= 0; i-=1) {
 							cmts.push({
@@ -100,24 +102,26 @@ var requests = function(http_module, promise_module) {
 				} else {
 					return [];
 				}
-			});
-		},
-		getScores: function(id, start, size) {
-			return doRequest(http_module, {
+			}).bind(this));
+		}
+	},
+	getScores: {
+		value: function(id, start, size) {
+			return this.doRequest({
 				_t: "getLeaderboardReq",
 				cid: id,
 				freq: {
 					start: start,
 					blockSize: size || 0
 				}
-			}).then(function(response) {
+			}).then((function(response) {
 				var scores = response.data.body.fres.results;
 				if (scores.length > 0) {
 					var promises = [];
 					for (var i = scores.length-1; i >= 0; i-=1) {
 						promises.push(this.getUser(scores[i].uid));
 					}
-					return $q.all(promises).then(function(users) {
+					return this.$q.all(promises).then(function(users) {
 						var scrs = [];
 						for (var i = users.length-1; i >= 0; i-=1) {
 							scrs.push({
@@ -131,10 +135,10 @@ var requests = function(http_module, promise_module) {
 				} else {
 					return [];
 				}
-			});
+			}).bind(this));
 		}
-	};
-};
+	}
+});
 //START ANGULAR
 angular.module("troposphir", [])
 .directive("searchFilter", function($compile) {
@@ -153,7 +157,7 @@ angular.module("troposphir", [])
 			element.addClass("filter");
 			switch (element.attr("type")) {
 			case "text":
-				var html = fillTemplate('<input type="search">', element.attr.bind(element));
+				var html = fillTemplate('<input type="search" placeholder="{placeholder}">', element.attr.bind(element));
 				element.html(html);
 				break;
 			case "checkbox":
@@ -172,7 +176,7 @@ angular.module("troposphir", [])
 			}
 			return function postLink($scope, element, attributes) {
 				function onChange(newValue) {
-					$scope.$eval(attributes.name+" = "+JSON.stringify(newValue));
+					$scope[attributes.group][attributes.name] = newValue;
 					return $scope.$eval(attributes.update);
 				}
 				var input = element.children("input");
@@ -186,7 +190,7 @@ angular.module("troposphir", [])
 						} else {
 							elm.indeterminate = false;
 						}
-						onChange(elm.indeterminate? null : elm.checked);
+						onChange(elm.indeterminate? null : !elm.checked);
 					});
 				} else {
 					input.on("input", function(event) {
@@ -217,22 +221,41 @@ angular.module("troposphir", [])
 	$scope.$on("$locationChangeSuccess", function(event, data) {
 		updatePage();
 	});
-	$scope.changePage("browser");
+	if ($location.path().length == 0) $scope.changePage("browser");
 })
 .controller("levelBrowser", function($scope, $http) {
-	var request = requests($http);
+	var request = new requests($http);
 	$scope.levels = [];
 	$scope.search = {};
-	window.__$scp = $scope;
-	request.getPage(0, 10).then(function(data) {
+	request.getPage(0, 20).then(function(data) {
 		$scope.levels = data;
 	});
 	$scope.doSearch = _.debounce(function() {
-		//TODO: do search
+		function craftQuery(queryData) {
+			var query = "(draft:false AND deleted:false AND version:2 AND xgms:1)";
+			var appenders = {
+				string: function appendString(field, string) {
+					if (string.length > 0)  query += ' AND (' + field + ':"' + string.replace('"', '\\"').replace("'", "\\'") + '")';
+				},
+				boolean: function appendFlag(field, flag) {
+					if (flag != null) query += " AND (" + field + ":" + flag + ")";
+				}
+			};
+			for (var key in queryData) {
+				var val = queryData[key];
+				if (val != null) {
+					appenders[typeof val](key, val);
+				}
+			}
+			return query;
+		}
+		request.query(0, 20, craftQuery($scope.search)).then(function(data) {
+			$scope.levels = data;
+		});
 	}, 500);
 })
 .controller("levelCard", function($scope, $http, $q) {
-	var request = requests($http, $q);
+	var request = new requests($http, $q);
 	$scope.$watch("args", function() {
 		if ($scope.args.length > 0 && $scope.page == "level") {
 			request.getLevel($scope.args[0]).then(function(level) {
