@@ -6,7 +6,7 @@
  * Version: 1.0
  * Author: Nin
  * Author URI: 
- * License: WTFPL
+ * License: GPL2
  */
  
  if( !function_exists('get_avatar') ) {
@@ -56,7 +56,7 @@
 			$email = $id_or_email;
 		}
 		
-		if (id == -1 | email == '') {
+		if (id == -1 | email == '' || is_admin()) {
 					if ( empty($default) ) {
 				$avatar_default = get_option('avatar_default');
 				if ( empty($avatar_default) )

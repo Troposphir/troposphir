@@ -35,11 +35,9 @@ if (!is_user_logged_in() && $xf->isLoggedIn()) {
 		$user_data["user_email"]    = $xfuser["email"];
 		wp_insert_user($user_data);
 	}
-} else if (is_user_logged_in() && !$xf->isLoggedIn()) {
-	//If user is logged in Wordpress but not in Xenforo, logout user from Wordpress.
-	//Should work in theory, but this logs you out when you're
-	//in the admin panel.
-	//wp_logout();
+} else if (!is_admin() && is_user_logged_in() && !$xf->isLoggedIn()) {
+	//if user is logged out of forum, forcefully log user out of blog as well
+	wp_logout();
 }
  
 
