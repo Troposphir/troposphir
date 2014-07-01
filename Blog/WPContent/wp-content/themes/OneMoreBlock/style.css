@@ -1,0 +1,338 @@
+﻿/*
+Theme Name: OneMoreBlock Theme
+Theme URI: http://onemoreblock.com/
+Author: Adam Gaskins
+Author URI: http://theadamgaskins.com/
+Description: The official theme of OneMoreBlock.
+Version: 1.0.1
+License: GNU General Public License
+License URI: https://www.gnu.org/licenses/gpl.html
+Tags:
+Text Domain: onemoreblock
+
+OneMoreBlock WordPress Theme © 2014 Adam Gaskins
+OneMoreBlock is distributed under the terms of the GNU GPL
+*/
+
+
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{padding:0;border:0;margin:0;vertical-align:baseline}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}.clear{clear:both}
+.sticky{}.bypostauthor{}.wp-caption{}.wp-caption-text{}.gallery-caption{}.alignright{}.alignleft{}.aligncenter{}
+
+
+a
+{
+color: rgb(124, 179, 218);
+}
+
+h1.entry-title
+{
+    /* font-size: 1.5em; */
+}
+
+
+#wrapper
+{
+    width: 85%;
+    margin: auto;
+    min-width: 930px;
+}
+
+#site-title
+{
+    font-weight: bold;
+    font-size: 3em;
+    text-align: center;
+    padding-top: 20px;
+    padding-bottom: 4px;
+}
+
+#site-title a
+{
+    text-decoration: none;
+    color: #59B3DA;
+}
+
+#site-description
+{
+    text-decoration: italic;
+    font-size: 1.2em;
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+#container
+{
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background-color: #132648;
+    border: 1px solid #142F68;
+    width: 100%;
+}
+
+#menu
+{
+    margin-bottom: 15px;
+}
+
+
+.menu-menu-1-container
+{
+    padding: 0px;
+}
+
+.menu-item
+{
+    position:relative;
+    top:0px;
+    padding-top: 0px;
+    margin-top: 0px; 
+    display: inline-block;
+    height: 30px;
+}
+
+.menu-item a
+{    
+    padding-top: 5px;
+    padding-left: 15px;
+    padding-right: 15px;
+    display: inline-block;
+    height: 100%;
+    text-decoration: none;
+    color: #A9C6FC;
+    font-size: 11px;
+}
+
+
+#search .screen-reader-text
+{
+    display:none;
+}
+
+input[type=text], textarea
+{
+    border-radius: 4px;
+    background-color: rgb(8, 26, 57);
+    color: #F0F7FC;
+    font-size: 12px;
+    padding: 4px;
+}
+
+
+#footer
+{
+    padding: 20px;
+}
+
+#copyright
+{
+    font-style: italic;
+    text-align: right;
+}
+
+/* CONTENT */
+
+.entry-title a
+{
+    font-size:1.5em;
+    text-decoration: none;
+    font-weight: bold;
+    padding-right: 10px;
+}
+
+.entry-title
+{
+    display: block;
+}
+
+.cat-links a
+{
+    text-decoration:underline
+}
+
+.cat-links
+{
+    font-size: 11px;
+    padding: 4px 4px 4px 0px;
+    display: block;
+}
+
+.tag-links
+{
+    font-size: 11px;
+}
+
+.tag-links a
+{
+    text-decoration:underline
+}
+
+.entry-meta
+{
+    display: inline-block;
+    padding: 10px 10px 10px 0px;
+    /*margin-bottom: 20px;*/
+    background: #06132C;
+}
+
+a.post-edit-link
+{
+    vertical-align: baseline;
+}
+
+.entry-meta a
+{
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#container { display: block; overflow:hidden; }
+
+section#content, aside#sidebar
+{
+    /*display: inline-block;*/
+}
+
+section#content
+{
+    padding: 4px 4px 4px 4px;    
+}
+
+aside#sidebar
+{
+}
+
+article.post, #comments
+{
+    padding: 20px;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    border: 1px solid #16315B;
+    border-radius: 10px;
+    box-shadow: 0px 1px 1px rgba(3, 18, 43, 0.5);
+    background: none repeat scroll 0% 0% rgba(4, 17, 41, 0.9) !important;    
+}
+
+article.page, #comments
+{
+    padding: 20px;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    border: 1px solid #16315B;
+    border-radius: 10px;
+    box-shadow: 0px 1px 1px rgba(3, 18, 43, 0.5);
+    background: none repeat scroll 0% 0% rgba(4, 17, 41, 0.9) !important;    
+}
+
+.entry-content, .entry-summary
+{
+    background: #081A39;
+    padding:20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+p
+{
+    line-height: 1.2em;
+    padding-bottom: 14px;
+
+}
+
+.post img
+{
+    max-width: 100%;
+    height: auto;
+}
+
+.widget-title
+{
+    font-size: 12pt;
+    color: #A5CAE4;
+    padding-bottom: 2px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid #176093;
+}
+
+.widget-container
+{
+    margin: 15px;
+    
+    padding: 10px;
+    background-image: url('imgs/breadcrumb-custom.png');
+    background-repeat: repeat;
+    border: 5px solid #132E67;
+    border-radius: 5px;
+    background-color: rgba(8, 26, 57, 0.9) !important;
+}
+
+.widget-area li
+{
+    width: 228px;
+    margin-left: 0px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    white-space:nowrap; 
+    text-overflow:ellipsis;
+}
+
+/* COMMENTS */
+
+.comments-title
+{
+    padding: 10px;
+}
+
+.comment .avatar
+{
+    vertical-align:middle;
+    padding-bottom: 8px;
+}
+
+.comment .comment-author
+{
+    display: inline-block;
+    padding-right: 30px;
+}
+
+.comment div.comment-meta
+{
+    display: inline-block;
+}
+
+.comment cite.fn
+{
+    padding-left: 20px;
+}
+
+.comment p
+{
+    padding: 20px;
+    margin-bottom: 10px;
+    background: #12346C;
+}
+
+.comment span.says, #commentform p.form-allowed-tags
+{
+    display: none;
+}
+
+label[for=comment]
+{
+    display: none;
+}
+
+#comment
+{
+    width: 85%;
+}
+
+.comment-body
+{
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #284779;
+    background: #081A39;
+    border-radius: 5px;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.5);
+}
