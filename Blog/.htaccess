@@ -1,0 +1,27 @@
+ErrorDocument 401 default
+ErrorDocument 403 default
+ErrorDocument 404 default
+ErrorDocument 500 default
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+
+	#Append trailing slash
+ 	RewriteCond %{REQUEST_URI} /+[^\.]+$
+ 	RewriteRule ^(.+[^/])$ %{REQUEST_URI}/ [R=301,L]
+
+
+	#Redirect non-existent folders and files to /forum/
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+	RewriteRule ^(.*)$ http://onemoreblock.com/forum/$1 [L,R]
+
+	#Redirect Xenforo files
+	RewriteCond %{REQUEST_FILENAME} -f [OR]
+	RewriteCond %{REQUEST_FILENAME} -l [OR]
+	RewriteCond %{REQUEST_FILENAME} -d
+	RewriteRule ^.*$ - [NC,L]	
+	RewriteRule ^(data/|js/|styles/|install/|favicon\.ico)(.*) http://onemoreblock.com/forum/$1$2 [NC,L]
+	RewriteRule css.php(.*) http://onemoreblock.com/forum/css.php$1 [NC,L]
+	RewriteRule ^.*$ index.php [NC,L]
+</IfModule>
