@@ -13,29 +13,36 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 //GET PLAYER'S CURRENTLY EQUIPPED ITEMS
 //INCOMPLETE
 if (!defined("INCLUDE_SCRIPT")) return;
 class findItemInstanceSetsReq extends RequestResponse {
 	public function work($json) {
-		if (!isset($json['body']['oid'])) return;
+		if (!isset($json['body']['oid'])) return; //userID
 		if (!isset($json['body']['name'])) return;
 
-		$itemSetsList = array();				
-		
+		$itemSetsList = array();
+		//Atmo client does this on update: "removals":[131, 133], "additions":[136, 137, 100],
+
+		//1 - male character
+		//2 - wooden sword
+		//3 - female character
+		//6 - Atmo Shirt
+		//7 - skin_b_02
+
 		$itemSetOne = array();
 		$itemSetOne['id']     = 142;
-		$itemSetOne['itemis'] = array(132, 131,133); 
+		$itemSetOne['itemis'] = array(1,3, 6, 7, 2);
 		$itemSetsList[] = $itemSetOne;
-	
+
 		$fres = array(
 			"total" => 1,
 			"results" => $itemSetsList
 		);
-	
+
 		$this->addBody("fres", $fres);
 	}
 }
