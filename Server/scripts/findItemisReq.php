@@ -13,12 +13,12 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 
 //GET PLAYER OWNED ITEMS
-//note: itemId relates to ItemCategory values
+//note: itemId relates to ItemCategory values - FALSE
 /*
  ITEM CATEGORY:
 basicProp = 5,
@@ -74,39 +74,57 @@ if (!defined("INCLUDE_SCRIPT")) return;
 class findItemisReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json["body"]["ownerId"])) return;
-		
-		$itemList = array();				
-		
+
+		$itemList = array();
+
 		$item = array();
 		$item["itemId"]  = 1;
-		$item["id"]      = 132;
+		$item["id"]      = 1;
 		$item["created"] = 9000;
 		$itemList[] = $item;
-		
+
 		$item = array();
 		$item["itemId"]  = 2;
-		$item["id"]      = 131;
+		$item["id"]      = 2;
 		$item["created"] = 9000;
 		$itemList[] = $item;
-	
+
 		$item = array();
 		$item["itemId"]  = 3;
-		$item["id"]      = 133;
+		$item["id"]      = 3;
 		$item["created"] = 9000;
 		$itemList[] = $item;
-	
+
 		$item = array();
 		$item["itemId"]  = 4;
-		$item["id"]      = 134;
+		$item["id"]      = 4;
 		$item["created"] = 9000;
 		$itemList[] = $item;
-	
+
 		$item = array();
 		$item["itemId"]  = 5;
-		$item["id"]      = 135;
+		$item["id"]      = 5;
 		$item["created"] = 9000;
 		$itemList[] = $item;
-	
+
+		$item = array();
+		$item["itemId"]  = 6;
+		$item["id"]      = 6;
+		$item["created"] = 9000;
+		$itemList[] = $item;
+
+		$item = array();
+		$item["itemId"]  = 7;
+		$item["id"]      = 7;
+		$item["created"] = 9000;
+		$itemList[] = $item;
+
+		$item = array();
+		$item["itemId"]  = 8;
+		$item["id"]      = 8;
+		$item["created"] = 9000;
+		$itemList[] = $item;
+
 		$this->addBody("fres", array("results" => $itemList));
 	}
 }
