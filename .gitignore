@@ -217,7 +217,6 @@ pip-log.txt
 #Project-specific
 Other Stuff/
 devtools/
-image/
 Sever/map/*.atmo
 Server/client/ClientFiles
 Server/map/
