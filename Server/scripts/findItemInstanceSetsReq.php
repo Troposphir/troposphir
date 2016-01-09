@@ -17,6 +17,15 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 //GET PLAYER'S CURRENTLY EQUIPPED ITEMS
+
+//Atmo client does this on update: "removals":[131, 133], "additions":[136, 137, 100],
+
+//1 - male character
+//2 - wooden sword
+//3 - female character
+//6 - Atmo Shirt
+//7 - skin_b_02
+
 //INCOMPLETE
 if (!defined("INCLUDE_SCRIPT")) return;
 class findItemInstanceSetsReq extends RequestResponse {
@@ -24,19 +33,16 @@ class findItemInstanceSetsReq extends RequestResponse {
 		if (!isset($json['body']['oid'])) return; //userID
 		if (!isset($json['body']['name'])) return;
 
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+		$statement = $db->query("SELECT userId, equippedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['oid'], null);
+
 		$itemSetsList = array();
-		//Atmo client does this on update: "removals":[131, 133], "additions":[136, 137, 100],
-
-		//1 - male character
-		//2 - wooden sword
-		//3 - female character
-		//6 - Atmo Shirt
-		//7 - skin_b_02
-
-		$itemSetOne = array();
-		$itemSetOne['id']     = 142;
-		$itemSetOne['itemis'] = array(1,3, 6, 7, 2);
-		$itemSetsList[] = $itemSetOne;
+		for ($count = 0; $row = $statement->fetch(); $count++) {
+			$itemSetOne = array();
+			$itemSetOne['id']     = (int)$row['userId']; //Passing the user's ID as the ItemSet ID, because #yolo
+			$itemSetOne['itemis'] = explode((string)$row['equippedItems'], ";");
+			$itemSetsList[] = $itemSetOne;
+		}
 
 		$fres = array(
 			"total" => 1,
