@@ -1,0 +1,21 @@
+Categories
+
+Premium Sets Id: 0
+Gloves ID: 10
+Boots ID: 15
+Mouths ID: 18
+Eyes ID: 16
+Hats ID: 7
+Hair ID: 6
+Shirt ID: 9
+Glasses ID: 24
+Back ID: 13
+Pants ID: 8
+Melee Weapon ID: 5
+Energy Weapon ID: 23
+Shield ID: 22
+Bomb Weapon ID: 25
+Firearm Weapon ID: 52
+Persistent Multiplier ID: 33
+Animation ID: 26
+Vehicle ID: 53
