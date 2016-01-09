@@ -40,7 +40,7 @@ class findItemInstanceSetsReq extends RequestResponse {
 		for ($count = 0; $row = $statement->fetch(); $count++) {
 			$itemSetOne = array();
 			$itemSetOne['id']     = (int)$row['userId']; //Passing the user's ID as the ItemSet ID, because #yolo
-			$itemSetOne['itemis'] = explode((string)$row['equippedItems'], ";");
+			$itemSetOne['itemis'] = array_map('intval', explode(";", (string)$row['equippedItems']));
 			$itemSetsList[] = $itemSetOne;
 		}
 
