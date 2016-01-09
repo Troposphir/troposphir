@@ -13,8 +13,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 
 //INCOMPLETE
@@ -24,15 +24,15 @@ class findAccountsReq extends RequestResponse {
 	public function work($json) {
 		//Check input
 		if (!isset($json['body']['oid'])) return;
-		
+
 		//Get user account
 		$db = $this->getConnection();
-		$statement = $db->prepare("SELECT `userId`, `username`, `cid`, `amt` 
-			FROM `" . $this->config['table_user'] . "` 
+		$statement = $db->prepare("SELECT `userId`, `username`, `cid`, `amt`, `cid2`, `amt2`
+			FROM `" . $this->config['table_user'] . "`
 			WHERE `userId`=:userId");
 		$statement->bindValue(':userId', $json['body']['oid'], PDO::PARAM_INT);
 		$statement->execute();
-		
+
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
@@ -42,13 +42,15 @@ class findAccountsReq extends RequestResponse {
 				$account = array();
 				$account['id']   = (integer)$row['userId'];
 				$account['name'] = (string)$row['username'];
-				
+
 				$balance = array();
 				$balance['cid'] = (integer)$row['cid'];
 				$balance['amt'] = (integer)$row['amt'];
 				$account['balance'] = $balance;
+
 				$accountList[] = $account;
-			}	
+
+			}
 			$this->addBody("fres", array("results" => $accountList));
 		}
 	}
