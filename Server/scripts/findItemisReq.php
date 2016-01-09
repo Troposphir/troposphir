@@ -65,6 +65,7 @@ charCategoryMapping[0x16L] = CharCategory.shield = 150;
 charCategoryMapping[0x1aL] = CharCategory.animation = 190;
 charCategoryMapping[0x21L] = CharCategory.extra = 200;
 }
+
 */
 //id:1 = ci_gender_male
 //id:2 = ci_gender_female
@@ -75,55 +76,22 @@ class findItemisReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json["body"]["ownerId"])) return;
 
+		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
+		$statement = $db->query("SELECT userId, ownedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['ownerId'], null);
+
+		$ownedItems = array();
+		for ($count = 0; $row = $statement->fetch(); $count++) {
+			$ownedItems = array_map('intval', explode(";", (string)$row['ownedItems']));
+		}
+
 		$itemList = array();
-
-		$item = array();
-		$item["itemId"]  = 1;
-		$item["id"]      = 1;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 2;
-		$item["id"]      = 2;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 3;
-		$item["id"]      = 3;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 4;
-		$item["id"]      = 4;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 5;
-		$item["id"]      = 5;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 6;
-		$item["id"]      = 6;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 7;
-		$item["id"]      = 7;
-		$item["created"] = 9000;
-		$itemList[] = $item;
-
-		$item = array();
-		$item["itemId"]  = 8;
-		$item["id"]      = 8;
-		$item["created"] = 9000;
-		$itemList[] = $item;
+		foreach ($ownedItems as $ownedItemId) {
+			$item = array();
+			$item["itemId"]  = $ownedItemId;
+			$item["id"]      = $ownedItemId;
+			$item["created"] = 0;
+			$itemList[] = $item;
+		}
 
 		$this->addBody("fres", array("results" => $itemList));
 	}
