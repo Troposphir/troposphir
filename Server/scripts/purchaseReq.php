@@ -42,7 +42,7 @@ class purchaseReq extends RequestResponse {
       $totalToDeduct = $totalToDeduct + (int)$row['price'];
     }
 
-    if(array_count_values($itemsToPurchase) == 0) return;
+    if(count($itemsToPurchase) != count($oitemsToPurchase)) {echo 'ERROR: Not all requested items have their offerID set. '; return;}
 
     // GET CURRENT INVENTORY AND BALANCE
     $statement = $db->query("SELECT userId, ownedItems, amt FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
@@ -70,6 +70,8 @@ class purchaseReq extends RequestResponse {
       //UPDATE funds
       $newBalance = $myMoney - $totalToDeduct;
       $db->query("UPDATE ".$this->config['table_user']." SET amt=".$newBalance." WHERE `userId`=".$userId);
+    } else {
+      {echo 'ERROR: Not enough funds. '; return;}
     }
 	}
 }
