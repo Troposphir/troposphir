@@ -50,6 +50,17 @@ class findAccountsReq extends RequestResponse {
 
 				$accountList[] = $account;
 
+				$account = array();
+				$account['id']   = (integer)$row['userId'];
+				$account['name'] = (string)$row['username'];
+
+				$balance = array();
+				$balance['cid'] = (integer)$row['cid2'];
+				$balance['amt'] = (integer)$row['amt2'];
+				$account['balance'] = $balance;
+
+				$accountList[] = $account;
+
 			}
 			$this->addBody("fres", array("results" => $accountList));
 		}
