@@ -1,7 +1,7 @@
 <?php
 /*==============================================================================
-  Troposphir - Part of the Troposphir Project
-  Copyright (C) 2013  Troposphir Development Team
+  Troposphir - Part of the Tropopshir Project
+  Copyright (C) 2013  Kevin Sonoda, Leonardo Giovanni Scur
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Affero General Public License as
@@ -13,8 +13,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class getGameContextReq extends RequestResponse {
@@ -26,7 +26,7 @@ class getGameContextReq extends RequestResponse {
 		$this->addBody('masterServerPort', 80);
 		$this->addBody('natFacilitatorPort', 0);
 		$this->addBody('redCarpetTutorialLevelId', 1);
-		$this->addBody('charCustLevelId', 1);
+		$this->addBody('charCustLevelId', 24); //24
 		$this->addBody('levelBrowserLevelId', 1);
 		$this->addBody('tutorialUserId', 0);
 		$this->addBody('unityBundleUrl', "");
