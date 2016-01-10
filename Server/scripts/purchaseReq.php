@@ -23,53 +23,79 @@ class purchaseReq extends RequestResponse {
 		if (!isset($json['body']['oids'])) return;
 		if (!isset($json['header']['auth'])) return; //Using this to get the user since we don't have a userId
 
+		$isCurrencyPurchase = false;
+		$totalToDeductStrat = 0;
+		$totalToDeduct = 0;
+
     //Convert oid to regular item id
     $oitemsToPurchase = $json['body']['oids'];
+
+		$stratAdd = 0;
     $oitemsAsQuery = "";
     foreach($oitemsToPurchase as $oI){
       if($oitemsAsQuery != "")
         $oitemsAsQuery .= " OR `oid`=";
       $oitemsAsQuery .= $oI;
+
+			if($oI == 962){
+				$isCurrencyPurchase = true;
+				$stratAdd = $stratAdd + 1; //1400 is atmo/1 strato
+				$totalToDeduct = $totalToDeduct + 1400;
+			}
     }
+		$totalToDeductStrat = -($stratAdd);
 
 		$db = $this->getConnection();
-    $stmt = $db->query("SELECT id, price FROM " . $this->config['table_items'] . " WHERE `oid`=".$oitemsAsQuery, null);
+		if(!$isCurrencyPurchase){
+			$stmt = $db->query("SELECT id, price, currency, name FROM " . $this->config['table_items'] . " WHERE `oid`=".$oitemsAsQuery, null);
 
-    $itemsToPurchase = array();
-    $totalToDeduct = 0;
-    for($count = 0; $row = $stmt->fetch(); $count++){
-      $itemsToPurchase[] = $row['id'];
-      $totalToDeduct = $totalToDeduct + (int)$row['price'];
-    }
+			$itemsToPurchase = array();
 
-    if(count($itemsToPurchase) != count($oitemsToPurchase)) {echo 'ERROR: Not all requested items have their offerID set. '; return;}
+			for($count = 0; $row = $stmt->fetch(); $count++){
+				$itemsToPurchase[] = $row['id'];
+
+				if((integer)$row['currency'] == 1)
+					$totalToDeduct = $totalToDeduct + (int)$row['price'];
+				if((integer)$row['currency'] == 2)
+					$totalToDeductStrat = $totalToDeduct + (int)$row['price'];
+			}
+		}
+
+    if((count($itemsToPurchase) != count($oitemsToPurchase)) && !$isCurrencyPurchase) {echo 'ERROR: Not all requested items have their offerID set. '; return;}
 
     // GET CURRENT INVENTORY AND BALANCE
-    $statement = $db->query("SELECT userId, ownedItems, amt FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
+    $statement = $db->query("SELECT userId, ownedItems, amt, amt2 FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
 		$myInventory = array();
     $myMoney = 0;
+		$myStrat = 0;
     $userId = 0;
 		for ($count = 0; $row = $statement->fetch(); $count++) {
 			$myInventory = array_map('intval', explode(";", (string)$row['ownedItems']));
       $myMoney = $row['amt'];
+			$myStrat = $row['amt2'];
       $userId = $row['userId'];
 		}
 
-    if($myMoney >= $totalToDeduct){ //Check if user has enough funds
+    if($myMoney >= $totalToDeduct && $myStrat >= $totalToDeductStrat){ //Check if user has enough funds
       $myInventory = array_merge($myInventory, $itemsToPurchase); //Add existing items with new items
 
-  		//Convert the array back into a string delimited by ';'
-  		$updatedInventory = "";
-  		foreach($myInventory as $item){
-  			if(!$updatedInventory == "") $updatedInventory .= ";";
-  			$updatedInventory .= $item;
-  		}
+			if(!$isCurrencyPurchase){
+				//Convert the array back into a string delimited by ';'
+	  		$updatedInventory = "";
+	  		foreach($myInventory as $item){
+	  			if(!$updatedInventory == "") $updatedInventory .= ";";
+	  			$updatedInventory .= $item;
+	  		}
 
-      //UPDATE THE INVENTORY
-  		$db->query("UPDATE ".$this->config['table_user']." SET ownedItems='".$updatedInventory."' WHERE `userId`=".$userId);
+				//UPDATE THE INVENTORY
+	  		$db->query("UPDATE ".$this->config['table_user']." SET ownedItems='".$updatedInventory."' WHERE `userId`=".$userId);
+			}
+
       //UPDATE funds
       $newBalance = $myMoney - $totalToDeduct;
+			$newStratBalance = $myStrat - $totalToDeductStrat;
       $db->query("UPDATE ".$this->config['table_user']." SET amt=".$newBalance." WHERE `userId`=".$userId);
+			$db->query("UPDATE ".$this->config['table_user']." SET amt2=".$newStratBalance." WHERE `userId`=".$userId);
     } else {
       {echo 'ERROR: Not enough funds. '; return;}
     }
