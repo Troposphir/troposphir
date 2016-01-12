@@ -21,25 +21,16 @@ class updatePlaycountReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json['body']['levelId'])) return;
 
-		/*
 		$db = $this->getConnection();
-		$stmt = $db->prepare("SELECT COUNT(id) as playCount 
-			FROM `" . $this->config['table_history'] . "` 
-			WHERE `levelId`=:levelId");
-		$stmt->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
-		$stmt->execute();
 	
         $row = $stmt->fetch();    
-        $newPlayCount = $row["playCount"]; // calculate new play count
         	
 		//Update level data id
 		$stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
-			SET `dc`=:playCount 
-			WHERE `id`=:levelId");
-		$stmt->bindValue(':playCount', $newPlayCount, PDO::PARAM_INT);
+			SET `dc`=`dc`+1 
+			WHERE `id`=:levelId");		
 		$stmt->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
 		$stmt->execute();            
-		*/
 	}
 }
 ?>
