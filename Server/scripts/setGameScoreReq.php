@@ -66,7 +66,6 @@ class setGameScoreReq extends RequestResponse {
         // Calculate the rewards.
         $atmos_deserved = 0;
         $xp_deserved = 0;
-
         if($level["isLOTD"])
         {
             $atmos_deserved = $this->config["atmos_for_lotd"];
@@ -89,12 +88,23 @@ class setGameScoreReq extends RequestResponse {
         if($atmos_to_give < 0) $atmos_to_give = 0;
         if($xp_to_give < 0) $xp_to_give = 0;
 
-        // Give the rewards!
-        $rewards = $db->prepare("UPDATE `".$this->config["table_user"]."` SET `xpp`=(`xpp`+:xp), `amt`=(`amt`+:atmos) WHERE `userId`=:userId");
-        $rewards->bindParam(':xp', $xp_to_give, PDO::PARAM_INT);
-        $rewards->bindParam(':atmos', $atmos_to_give, PDO::PARAM_INT);
-        $rewards->bindParam('userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
-        $rewards->execute();
+
+        if($this->config["give_rewards"] === 1)
+        {
+            // Give the rewards!
+            $rewards = $db->prepare("UPDATE `".$this->config["table_user"]."` SET `xpp`=(`xpp`+:xp), `amt`=(`amt`+:atmos) WHERE `userId`=:userId");
+            $rewards->bindParam(':xp', $xp_to_give, PDO::PARAM_INT);
+            $rewards->bindParam(':atmos', $atmos_to_give, PDO::PARAM_INT);
+            $rewards->bindParam('userId', $json['body']['gameScore']['uid'], PDO::PARAM_INT);
+            $rewards->execute();
+        }
+        else // wait! we're not giving rewards. just reset everything
+        {
+            $atmos_deserved = $atmos_previously_given;
+            $xp_deserved = $xp_previously_given;
+            $atmos_to_give = 0;
+            $xp_to_give = 0;
+        }
 
         // Post the scoreboard entry. Make sure to update with the total rewards that were given
 		if ($scoreboard_entry == false || $scoreboard_entry == null) 

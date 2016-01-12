@@ -44,6 +44,9 @@ $config = array(
 	'dir_avatars'   => 'image/avatars',
 	'dir_maps'		=> 'map',
 	'dir_assets'	=> 'asset',
+
+    //Rewards
+    'give_rewards'       => 0, // disabled for now
     //Atmo Rewards
     'atmos_for_lotd'    => 150,
     'atmos_for_xp'      => 50,
