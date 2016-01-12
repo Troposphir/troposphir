@@ -55,7 +55,7 @@ class setRatingEntryReq extends RequestResponse {
 		$db = $this->getConnection();
 		//Check for existing entry
 		$statement = $db->prepare("SELECT `levelId`, `userId`, `$field` 
-			FROM `" . $this->config['table_playRecord'] . "`
+			FROM `" . $this->config['table_ratings'] . "`
 			WHERE `userId`=:userId
 			AND `levelId`=:levelId");
 		$statement->bindParam(':userId', $json['body']['ratingKey']['raterId'], PDO::PARAM_INT);
@@ -67,51 +67,38 @@ class setRatingEntryReq extends RequestResponse {
 			//no entry exists for this user
 			
 			//insert a new entry
-			$statement = $db->prepare("INSERT INTO `" . $this->config["table_playRecord"] . "` (`userId`, `levelId`, `$field`) 
+			$statement = $db->prepare("INSERT INTO `" . $this->config["table_ratings"] . "` (`userId`, `levelId`, `$field`) 
 				VALUES (:userid, :levelId, :rating)");
 			$statement->bindValue(':userid', $json['body']['ratingKey']['raterId'], PDO::PARAM_INT);
 			$statement->bindValue(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT);
 			$statement->bindValue(':rating', $json['body']['rating'], PDO::PARAM_INT);
 			$statement->execute();
-		
-			//apply entry rating to level using following algorithm:
-			//avgRating = ((currentRating*currentRatingCount) + userVote) / (currentRatingCount + 1)
-			$statement = $db->prepare("UPDATE " . $this->config['table_map'] . " SET `$field`=(((`$field`*`" . $field . "Count`) + :userVote)/(`" . $field . "Count`+1)), `" . $field . "Count`=`" . $field . "Count`+1  WHERE `id`=:levelId");
-			$statement->bindParam(':userVote', $t = ($json['body']['rating'] / 20), PDO::PARAM_INT);
-			$statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT); 
-			$statement->execute();
-			
 		} else {
 			//The record entry already exists for user.
 			
 			//Modify the existing record entry to reflect change.
-			$statement = $db->prepare("UPDATE " . $this->config['table_playRecord'] . " SET `$field`=:userVote 
+			$statement = $db->prepare("UPDATE " . $this->config['table_ratings'] . " SET `$field`=:userVote 
 				WHERE `userId`=:userId
 				AND `levelId`=:levelId");
 			$statement->bindParam(':userVote', $json['body']['rating'], PDO::PARAM_INT);
 			$statement->bindParam(':userId', $json['body']['ratingKey']['raterId'], PDO::PARAM_INT);
 			$statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT);
 			$statement->execute();
-			
-			//Reflect the change in the level data.
-			if ($entryResult[$field] == 0) {
-				//This rating type (difficulty/star) was not initially set.
-				//Set it using the following algorithm:
-				//avgRating = ((currentRating*currentRatingCount) + (userVote/20)) / (currentRatingCount + 1)
-				$statement = $db->prepare("UPDATE " . $this->config['table_map'] . " SET `$field`=(((`$field`*`" . $field . "Count`) + :userVote)/(`" . $field . "Count`+1)), `" . $field . "Count`=`" . $field . "Count`+1  WHERE `id`=:levelId");
-				$statement->bindParam(':userVote', $t = ($json['body']['rating'] / 20), PDO::PARAM_INT);
-				$statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT); 
-				$statement->execute();
-			} else {
-				//Set it using the following algorithm:
-				//avgRating = ((currentRating * currentRatingCount) - (prevRating/20) + (newRating/20))/(currentRatingCount) 
-				$statement = $db->prepare("UPDATE " . $this->config['table_map'] . " SET `$field`=((((`$field` * `" . $field . "Count`) - :prevUserVote) + :newUserVote)/(`" . $field . "Count`)) WHERE `id`=:levelId");
-				$statement->bindParam(':prevUserVote', $t = ($entryResult[$field] / 20), PDO::PARAM_INT);
-				$statement->bindParam(':newUserVote', $t = ($json['body']['rating'] / 20), PDO::PARAM_INT);
-				$statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT);
-				$statement->execute();
-			}
 		}
+
+        //apply entry rating to level
+
+        $statement = $db->prepare("SELECT IF(COUNT(`$field`), ROUND(SUM(`$field`)/COUNT(`$field`)/20), 0) as value FROM `".$this->config["table_ratings"]."` WHERE `$field` <> 0 AND `levelId`=:levelId");
+        $statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT); 
+        $statement->execute();
+        $rating = $statement->fetch()["value"];
+
+        $statement = $db->prepare("UPDATE `".$this->config["table_map"]."`
+            SET `$field`=:value
+            WHERE `id`=:levelId");
+        $statement->bindParam(':value', $rating, PDO::PARAM_INT);
+        $statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT);
+        $statement->execute();
 	}
 }
 ?>

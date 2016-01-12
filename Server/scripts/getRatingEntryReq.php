@@ -64,7 +64,7 @@ class getRatingEntryReq extends RequestResponse {
       
 		$db = $this->getConnection();
 		$statement = $db->prepare("SELECT `$field` 
-			FROM `" . $this->config['table_playRecord'] . "` 
+			FROM `" . $this->config['table_ratings'] . "` 
 			WHERE `levelId`=:levelId 
 			AND `userId`=:userId");
 		$statement->bindParam(':levelId', $json['body']['ratingKey']['thingKey']['id'], PDO::PARAM_INT);

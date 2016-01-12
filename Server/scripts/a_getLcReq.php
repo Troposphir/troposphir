@@ -44,15 +44,19 @@ class a_getLcReq extends RequestResponse {
 			$this->error("NOT_FOUND");
 		} else {	
 			$props = array();
-			//$row['isLOTD']   = ((bool)$row['isLOTD']) ? 'true' : 'false';
+
 			foreach ($fields as $field) {
 				$props[$field] = (string)$row[$field];
 			}
             $props["xgms"] = $props["gms"];
-			$props["is.lotd"] = $props['isLOTD']; unset($props['isLOTD']);
-			$props["xp.reward"] = $props['xpReward']; unset($props['xpReward']);
-            $props["xp.level"] = $props['xpLevel'];
+			$props["is.lotd"] = $props['isLOTD'];
+            $props["xp.reward"] = $props['xpReward'];
+			$props["xxp.reward"] = $props['xpReward'];
 			
+            unset($props['isLOTD']);
+            unset($props['xpLevel']);
+            unset($props['xpReward']);
+
 			$this->addBody("lc", array("props" => $props));
 		}
 	}

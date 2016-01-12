@@ -246,13 +246,20 @@ SetupTable($config['table_assets'], "(
 SetupTable($config['table_playRecord'], "(
  levelId INT NOT NULL,
  userId INT NOT NULL,
- rating FLOAT NOT NULL DEFAULT 0,
- difficulty FLOAT NOT NULL DEFAULT 0,
  score INT NOT NULL DEFAULT 0,
+ atmosGained INT NOT NULL DEFAULT 0,
+ xpGained INT NOT NULL DEFAULT 0,
  UNIQUE KEY(`levelId`, `userId`)
  )", "(levelId, userId, rating, difficulty, score)");
 
-
+SetupTable($config['table_ratings'], "(
+ levelId INT NOT NULL,
+ userId INT NOT NULL,
+ rating FLOAT NOT NULL DEFAULT 0,
+ difficulty FLOAT NOT NULL DEFAULT 0,
+ UNIQUE KEY(`levelId`, `userId`)
+ )", "(levelId, userId, rating, difficulty)");
+ 
 SetupTable($config['table_comments'], "(
  commentId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
  userId INT NOT NULL DEFAULT 0,
