@@ -38,10 +38,21 @@ $config = array(
 	'table_assets'  => 'asset',
 	'table_comments'=> 'comments',
 	'table_playRecord' => 'playRecord',
+    'table_ratings' => 'ratings',
 	//Directory Setup
 	'dir_imgs'		=> 'image',
 	'dir_avatars'   => 'image/avatars',
 	'dir_maps'		=> 'map',
-	'dir_assets'	=> 'asset'
+	'dir_assets'	=> 'asset',
+
+    //Rewards
+    'give_rewards'       => 0, // disabled for now
+    //Atmo Rewards
+    'atmos_for_lotd'    => 150,
+    'atmos_for_xp'      => 50,
+    'atmos_for_level'   => 0,
+    //XP Rewards
+    'xp_per_tier'       => 10,
+    'xp_tier_of_lotds'  => 5,
 );
 ?>

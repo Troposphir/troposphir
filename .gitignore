@@ -220,3 +220,4 @@ devtools/
 Sever/map/*.atmo
 Server/client/ClientFiles
 Server/map/
+Server/image/maps/
