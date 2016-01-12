@@ -91,8 +91,16 @@ class a_llsReq extends RequestResponse {
                  //echo "$field:$value";
                  if(!in_array(strtolower($field), $ignoreFields))
                  {
-                     if(strlen($query) > 0) $query .= " OR ";
-                     $query .= "`" . $field . "` LIKE '%" . $value . "%'";
+                    if(strlen($query) > 0) $query .= " OR ";
+                    if($field === "xpLevel")
+                    {
+                        if($value === 1) // show xp levels
+                            $query .= "`xpReward` > 0";
+                        else // hide xp levels
+                            $query .= "`xpReward = 0";
+                    }
+                    else
+                       $query .= "`" . $field . "` LIKE '%" . $value . "%'";
                  }
              }
          }
@@ -137,15 +145,14 @@ class a_llsReq extends RequestResponse {
 					if ($field == 'deleted') continue;
 					$level[$field] = $row[$field];
 				}
-				//$level['isLOTD']    = ((bool)$level['isLOTD']) ? 'true' : 'false';
 				$level["xis.lotd"]  = $level['isLOTD'];
 				$level["is.lotd"]   = $level['isLOTD'];
+                $level["xp.reward"] = $level['xpReward'];
+                $level["xxp.reward"] = $level['xpReward'];
+                
                 unset($level['isLOTD']);
-                $level["xp.level"]  = "true";
-				$level["xp.reward"] = $level['xpReward'];
                 unset($level['xpReward']);
                 unset($level['xpLevel']);
-	
 				
 				$props = array();
 				$props["gcid"]     = (string)$row["gcid"];
