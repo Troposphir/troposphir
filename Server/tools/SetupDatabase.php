@@ -3,13 +3,13 @@ require('./../configs.php');
 require('./../include/CDatabase.php');
 $db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
 
-function SetupTable($table_name, $query, $query2) 
+function SetupTable($table_name, $query, $query2)
 {
 	if ($table_name == "") {
 		echo "SETUP ABORTED. <br> Table name can not be empty. </br>";
 		die();
 	}
-	
+
 	global $db;
 	//* (1) Create the table if it doesn't exist *//
 	$db->query("CREATE TABLE $table_name " . $query, null);
@@ -20,10 +20,10 @@ function SetupTable($table_name, $query, $query2)
 	if ($lastError[0] != "00000" && $lastError[0] != "42S01") {
 		echo "SETUP ABORTED. <br> Failed to create a temporary table for the following reason: <i>$lastError[2]</i>";
 		die();
-	}	
-	//* (3) Fill the temporary table with data from the original *// 
-	$db->query("INSERT INTO " . $table_name . "_temp $query2 
-		SELECT * 
+	}
+	//* (3) Fill the temporary table with data from the original *//
+	$db->query("INSERT INTO " . $table_name . "_temp $query2
+		SELECT *
 		FROM $table_name"
 	, null);
 	$lastError = $db->errorInfo();
@@ -38,7 +38,7 @@ function SetupTable($table_name, $query, $query2)
 }
 
 //Create user table
-SetupTable($config['table_user'], "( 
+SetupTable($config['table_user'], "(
 	userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	username VARCHAR(255) NOT NULL UNIQUE,
 	password VARCHAR(255) NOT NULL,
@@ -60,7 +60,9 @@ SetupTable($config['table_user'], "(
 	paidBy VARCHAR(255) NOT NULL DEFAULT '',
 	sapo VARCHAR(255) NOT NULL DEFAULT '',
 	vehicleInstanceSetId INT NOT NULL DEFAULT 0,
-	activableItemShorcuts VARCHAR(255) NOT NULL DEFAULT '0;0;0;0;0;0;0;0;',
+	activableItemShorcuts VARCHAR(255) NOT NULL DEFAULT '0;3;4;195;0;0;0;0;0;0;',
+	equippedItems VARCHAR(255) NOT NULL DEFAULT '1;2;3',
+	ownedItems VARCHAR(255) NOT NULL DEFAULT '1;2;3;4;5;195',
 	saInstalled BOOL NOT NULL DEFAULT 0,
 	signature VARCHAR(255) NOT NULL DEFAULT '',
 	finished BOOL NOT NULL DEFAULT 0,
@@ -72,21 +74,23 @@ SetupTable($config['table_user'], "(
 	levelDesigned INT NOT NULL DEFAULT 0,
 	levelComments INT NOT NULL DEFAULT 0,
 	designModeTime INT NOT NULL DEFAULT 0,
-	cid INT NOT NULL DEFAULT 0,
+	cid INT NOT NULL DEFAULT 12,
 	amt INT NOT NULL DEFAULT 0,
-	ipAddress VARCHAR(252) NOT NULL DEFAULT '' 
+	cid2 INT NOT NULL DEFAULT 13,
+	amt2 INT NOT NULL DEFAULT 0,
+	ipAddress VARCHAR(252) NOT NULL DEFAULT ''
 )", "(
-	userId, username, password, email, token, created, avaid, sessionToken, 
+	userId, username, password, email, token, created, avaid, sessionToken,
 	isDev, isLOTDMaster, isXPMaster, development, external, flags, locale,
-	verified, xpp, isClubMember, paidBy, sapo, vehicleInstanceSetId, 
-	activableItemShorcuts, saInstalled, signature, finished, wins,
-	losses, abandons, memberSince, clubMemberSince, levelDesigned, 
-	levelComments, designModeTime, cid, amt, ipAddress
+	verified, xpp, isClubMember, paidBy, sapo, vehicleInstanceSetId,
+	activableItemShorcuts, equippedItems, ownedItems, saInstalled, signature, finished, wins,
+	losses, abandons, memberSince, clubMemberSince, levelDesigned,
+	levelComments, designModeTime, cid, amt, cid2, amt2, ipAddress
 )" );
 
 
 //Create map table
-SetupTable($config['table_map'], "( 
+SetupTable($config['table_map'], "(
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(255) NOT NULL,
 	description VARCHAR(255) NOT NULL DEFAULT '',
@@ -158,21 +162,23 @@ SetupTable($config['table_map'], "(
 	dopc INT NOT NULL DEFAULT 0,
 	dpoc INT NOT NULL DEFAULT 0
 )", "(
-	id, name, description, ct, author, dc, rating, difficulty, 
+	id, name, description, ct, author, dc, rating, difficulty,
 	ownerId, downloads, dataId, screenshotId, version, draft, nextLevelId,
 	editable, deleted, gcid, editMode, xisLOTD, isLOTD, xpReward,
 	xgms, gms, gmm, gff, gsv, gbs, gde, gdb, gctf, gab, gra, gco, gtc,
 	gmmp1, gmmp2, gmcp1, gmcp2, gmcdt, gmcff, ast, aal, ghosts, ipad,
-	dcap, dmic, xpLevel, denc, dpuc, dcoc, dtrc, damc, dphc, ddoc, dkec, 
+	dcap, dmic, xpLevel, denc, dpuc, dcoc, dtrc, damc, dphc, ddoc, dkec,
 	dgcc, dmvc, dsbc, dhzc, dmuc, dtmi, ddtm, dttm, dedc, dtsc, dopc, dpoc
 )");
 
 //Create item table
-SetupTable($config['table_items'], "( 
+SetupTable($config['table_items'], "(
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	oid INT DEFAULT NULL,
 	name VARCHAR(255) NOT NULL UNIQUE,
 	description VARCHAR(255) NOT NULL DEFAULT '',
 	itypeId INT NOT NULL DEFAULT 0,
+	price VARCHAR(20) NOT NULL DEFAULT 0,
 	created INT NOT NULL DEFAULT 0,
 	isid INT NOT NULL DEFAULT 0,
 	levels INT NOT NULL DEFAULT 0,
@@ -198,18 +204,39 @@ SetupTable($config['table_items'], "(
 	label VARCHAR(255) NOT NULL DEFAULT '',
 	genders VARCHAR(255) NOT NULL DEFAULT ''
 )" , "(
-	id, name, description, itypeId, created, isid, levels, shown, vehicleCategory, 
-	isFree, isPro, isGift, isFeatured, duration, upgradeDescription, isRCExtra, 
-	quickEquipped, gearType, damagePoints, damagePluses, blockFactorPoints, 
-	blockFactorPluses, impulsePoints, impulsePluses, impulseBlockFactorPoints, 
+	id, oid, name, description, itypeId, price, created, isid, levels, shown, vehicleCategory,
+	isFree, isPro, isGift, isFeatured, duration, upgradeDescription, isRCExtra,
+	quickEquipped, gearType, damagePoints, damagePluses, blockFactorPoints,
+	blockFactorPluses, impulsePoints, impulsePluses, impulseBlockFactorPoints,
 	impulseBlockFactorPluses, label, genders
+)");
+
+//Create itemSet table
+SetupTable("itemSets", "(
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	oid INT DEFAULT NULL,
+	name VARCHAR(255) NOT NULL UNIQUE,
+	description VARCHAR(255) NOT NULL DEFAULT '',
+	items VARCHAR(255) NOT NULL DEFAULT '18',
+	price VARCHAR(20) NOT NULL DEFAULT 0,
+	setCategory INT NOT NULL DEFAULT 0,
+	created INT NOT NULL DEFAULT 0,
+	shown BOOL NOT NULL DEFAULT 1,
+	isfree BOOL NOT NULL DEFAULT 0,
+	ispro BOOL NOT NULL DEFAULT 0,
+	isgift BOOL NOT NULL DEFAULT 0,
+	isfeatured BOOL NOT NULL DEFAULT 0,
+	label VARCHAR(255) NOT NULL DEFAULT '',
+	genders VARCHAR(255) NOT NULL DEFAULT ''
+)" , "(
+	id, oid, name, description, items, price, setCategory, created, shown, isfree, ispro, isgift, isfeatured, label, genders
 )");
 
 SetupTable($config['table_assets'], "(
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	uploadedBy VARCHAR(255) NOT NULL DEFAULT '',
 	origFileName VARCHAR(255) NOT NULL DEFAULT '',
-	fileName VARCHAR(255) NOT NULL DEFAULT '',	
+	fileName VARCHAR(255) NOT NULL DEFAULT '',
 	size INT NOT NULL DEFAULT 0,
 	created INT NOT NULL DEFAULT 0
 )", "(
@@ -224,27 +251,27 @@ SetupTable($config['table_playRecord'], "(
  score INT NOT NULL DEFAULT 0,
  UNIQUE KEY(`levelId`, `userId`)
  )", "(levelId, userId, rating, difficulty, score)");
- 
- 
+
+
 SetupTable($config['table_comments'], "(
  commentId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
  userId INT NOT NULL DEFAULT 0,
  levelId INT NOT NULL DEFAULT 0,
  body VARCHAR(2048) NOT NULL DEFAULT ''
  )", "(commentId, userId, levelId, body)");
-  
+
 //Create Minimal Table Entries
 $db->exec("INSERT INTO " . $config['table_user'] . " (userId, username, password)
          VALUES (1, 'OkaySamurai', 'NotARealAccount')");
 $db->exec("INSERT INTO " . $config['table_assets'] . " (id, origFileName, fileName, size)
-         VALUES (1, 'Cosa Plains 1-1', 
+         VALUES (1, 'Cosa Plains 1-1',
 		         '52aa6f023fae4_30d14851cc000fc3060b1af0e3915b07.atmo',
 		         66510)");
 $db->exec("INSERT INTO " . $config['table_map'] . " (id, name, description, author, ownerId, dataId, gms, xgms)
- VALUES (1, 'Cosa Plains 1-1', 
+ VALUES (1, 'Cosa Plains 1-1',
 		 'Start your adventures with the first in the series of the official Atmosphir tutorial.',
 		 'OkaySamurai', 1, 1, 1, 1)");
 
-$db = null;	
+$db = null;
 echo 'SETUP COMPLETED.';
 ?>
