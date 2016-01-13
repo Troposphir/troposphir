@@ -19,12 +19,21 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class postEventReq extends RequestResponse {
 	public function work($json) {
-		if (!isset($json["body"]["event"]["type"]));
-		switch ($json["body"]["event"]["type"]) {
-			case "firstInstallAndLogin":
-				break;
-			case "guestPlay":
-				$db = $this->getConnection();
+		if (!isset($json["body"]["event"]["type"])) return;
+				
+        $db = $this->getConnection();
+
+        switch ($json["body"]["event"]["type"]) {
+            case "loading":
+                $stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
+                    SET `dc`=`dc`+1 
+                    WHERE `id`=:levelId");      
+                $stmt->bindValue(':levelId', $json['body']['event']['props']['levelId'], PDO::PARAM_INT);
+                $stmt->execute();
+                break;
+            case "firstInstallAndLogin":
+                break;
+            case "guestPlay":
 				$statement = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
 					SET `dc`=`dc`+1 
 					WHERE `id`=':id'");
