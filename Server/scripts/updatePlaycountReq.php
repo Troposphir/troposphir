@@ -23,14 +23,12 @@ class updatePlaycountReq extends RequestResponse {
 
 		$db = $this->getConnection();
 	
-        $row = $stmt->fetch();    
-        	
 		//Update level data id
-		$stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
-			SET `dc`=`dc`+1 
-			WHERE `id`=:levelId");		
-		$stmt->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
-		$stmt->execute();            
+		// $stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
+		// 	SET `dc`=`dc`+1 
+		// 	WHERE `id`=:levelId");		
+		// $stmt->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
+		// $stmt->execute();            
 	}
 }
 ?>
