@@ -25,15 +25,13 @@ class getLeaderboardReq extends RequestResponse {
 			!isset($json["body"]["freq"])) {
 			return;
 		}
+
 		$db = $this->getConnection();
 		//Retrieve leaderboard scores.
 		$statement = $db->prepare("SELECT levelId, score, userId FROM " . $this->config["table_playRecord"] . "
 			WHERE `levelId`=:levelId
-			ORDER BY `score` DESC
-			LIMIT :start,18446744073709551615");
+			ORDER BY `score` DESC");
 		$statement->bindParam(':levelId', $json['body']['cid'], PDO::PARAM_INT);
-		$statement->bindParam(':start', $json['body']['freq']['start'], PDO::PARAM_INT);
-		//$statement->bindParam(':size', $json['body']['freq']['blockSize'], PDO::PARAM_INT);
 		$statement->execute();
 
 		if ($statement == null || $statement == false) {
@@ -41,13 +39,17 @@ class getLeaderboardReq extends RequestResponse {
 		} else {
 			$scores = array();
 			$row = null;
+			$minCount = (int)$json["body"]["freq"]["start"];
+			$amt = (int)$json['body']['freq']['blockSize'];
 			$count = 0;
+			$amtCount = 0;
 			for (; $row = $statement->fetch(); $count++) {
-				if($count < $json['body']['freq']['blockSize']){
+				if($amtCount < $amt && $count > $minCount){
 					$scores[] = array(
 						"uid"         => intval($row["userId"], 10),
 						"s1"         => intval($row["score"], 10)
 					);
+					$amtCount++;
 				}
       }
 
