@@ -44,7 +44,7 @@ class getLeaderboardReq extends RequestResponse {
 			$count = 0;
 			$amtCount = 0;
 			for (; $row = $statement->fetch(); $count++) {
-				if($amtCount < $amt && $count > $minCount){
+				if($amtCount < $amt && $count >= $minCount){
 					$scores[] = array(
 						"uid"         => intval($row["userId"], 10),
 						"s1"         => intval($row["score"], 10)
