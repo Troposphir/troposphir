@@ -29,7 +29,7 @@ class getLeaderboardReq extends RequestResponse {
 		$db = $this->getConnection();
 		//Retrieve leaderboard scores.
 		$statement = $db->prepare("SELECT levelId, score, userId FROM " . $this->config["table_playRecord"] . "
-			WHERE `levelId`=:levelId
+			WHERE `levelId`=:levelId AND (`state`='WON' OR `state` = '' OR `state` is NULL)
 			ORDER BY `score` DESC");
 		$statement->bindParam(':levelId', $json['body']['cid'], PDO::PARAM_INT);
 		$statement->execute();

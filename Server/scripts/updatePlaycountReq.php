@@ -13,8 +13,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class updatePlaycountReq extends RequestResponse {
@@ -22,13 +22,13 @@ class updatePlaycountReq extends RequestResponse {
 		if (!isset($json['body']['levelId'])) return;
 
 		$db = $this->getConnection();
-	
+
 		//Update level data id
-		// $stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
-		// 	SET `dc`=`dc`+1 
-		// 	WHERE `id`=:levelId");		
-		// $stmt->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
-		// $stmt->execute();            
+		$stmt = $db->prepare("UPDATE `" . $this->config['table_map'] . "` 
+			SET `dc`=`dc`+1
+			WHERE `id`=:levelId");
+		$stmt->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
+		$stmt->execute();
 	}
 }
 ?>
