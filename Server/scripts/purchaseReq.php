@@ -46,8 +46,11 @@ class purchaseReq extends RequestResponse {
 		$totalToDeductStrat = -($stratAdd);
 
 		$db = $this->getConnection();
+		$itemSetItemsCount = 0;
+		$itemSetsCount = 0;
 		if(!$isCurrencyPurchase){
 			$stmt = $db->query("SELECT id, price, currency, name FROM " . $this->config['table_items'] . " WHERE `oid`=".$oitemsAsQuery, null);
+			$stmt2 = $db->query("SELECT price, items FROM itemSets WHERE `oid`=".$oitemsAsQuery, null);
 
 			$itemsToPurchase = array();
 
@@ -59,9 +62,19 @@ class purchaseReq extends RequestResponse {
 				if((integer)$row['currency'] == 2)
 					$totalToDeductStrat = $totalToDeduct + (int)$row['price'];
 			}
+
+			for($count = 0; $row = $stmt2->fetch(); $count++){
+				$itemSetsCount++;
+				$itemSetItems = array_map('intval', explode(";", (string)$row['items']));
+				foreach($itemSetItems as $item){
+					$itemsToPurchase[] = $item;
+					$itemSetItemsCount++;
+				}
+				$totalToDeduct = $totalToDeduct + (int)$row['price'];
+			}
 		}
 
-    if((count($itemsToPurchase) != count($oitemsToPurchase)) && !$isCurrencyPurchase) {echo 'ERROR: Not all requested items have their offerID set. '; return;}
+    if(((count($itemsToPurchase) + $itemSetsCount) != (count($oitemsToPurchase) + $itemSetItemsCount)) && !$isCurrencyPurchase) {echo 'ERROR: Not all requested items have their offerID set. '; return;}
 
     // GET CURRENT INVENTORY AND BALANCE
     $statement = $db->query("SELECT userId, ownedItems, amt, amt2 FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
