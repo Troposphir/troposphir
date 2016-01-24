@@ -13,8 +13,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class a_llsReq extends RequestResponse {
@@ -24,25 +24,25 @@ class a_llsReq extends RequestResponse {
 		if (!isset($json["body"]["freq"]["start"])) return;
 		if (!is_numeric($json["body"]["freq"]["start"])) return;
 		if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
-		
-		$fields = array( 
-			"isLOTD", "xpReward", "gms", "gmm", "gff", 
-			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco", 
-			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt", 
-			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic", 
-			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc", 
-			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi", 
-			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted"
+
+		$fields = array(
+			"isLOTD", "xpReward", "gms", "gmm", "gff",
+			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco",
+			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt",
+			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic",
+			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc",
+			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi",
+			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted", "xgmc"
 		);
-		
+
 /*		//Adjust user's query syntax to conform to appropriate database syntax.
 		$query = $json["body"]["query"];
 		$begpos = strpos($query, "AND ct:[");
 		if ($begpos !== false) {
-			$endpos = strpos($query, ']', $begpos) + 1; 
+			$endpos = strpos($query, ']', $begpos) + 1;
 			$query = substr($query, 0, $begpos) . substr($query, $endpos, strlen($query));
-		}  
-		
+		}
+
 		//Todo: Change dll instead from Lucene to SQL format.
 		//This doesn't work in all cases.
 		$query = str_replace(':', '=', $query);
@@ -52,27 +52,27 @@ class a_llsReq extends RequestResponse {
 		$query = str_replace('xp.level', "'xpLevel'", $query);
 		$query = str_replace('deleted=false', 'deleted=0', $query);
 		$query = str_replace('deleted=true', 'deleted=1', $query); */
-	
+
 	 // super cheap hack to get basic level searching working
          $lQuery = $json["body"]["query"];
          $query = "";
-         
+
          $pattern = '/([a-zA-Z\.]+)\:"([^"]*[^\\\\])"/'; // matches    name:"hi dude"
          preg_match_all($pattern, $lQuery, $quoteMatches);
- 
+
          $pattern = '/([a-zA-Z\.]+)\:([^" )]+)/'; // matches    name:hi
          preg_match_all($pattern, $lQuery, $noquoteMatches);
-         
+
          $matches = array(
              array_merge($quoteMatches[0], $noquoteMatches[0]),
              array_merge($quoteMatches[1], $noquoteMatches[1]),
              array_merge($quoteMatches[2], $noquoteMatches[2]),
              );
-                
+
                 //print_r($matches);
-                
+
          $ignoreFields = array("draft", "ct", "xgms", "version", "deleted");
-         
+
          if(count($matches) >= 3 && count($matches[0]) >= 2)
          {
              for($i = 0; $i < count($matches[0]); $i++)
@@ -87,7 +87,7 @@ class a_llsReq extends RequestResponse {
                  if($field === "is.lotd") $field = "isLOTD";
                  if($field === "xis.lotd") $field = "isLOTD";
                  if($field === "xp.reward") $field = "xpReward";
-                                  
+
                  //echo "$field:$value";
                  if(!in_array(strtolower($field), $ignoreFields))
                  {
@@ -104,16 +104,16 @@ class a_llsReq extends RequestResponse {
                  }
              }
          }
-         
+
          if(strlen($query) > 0)
          {
              $query = "AND (".$query.")";
          }
-                 
+
         //echo $query;
   		$db = $this->getConnection();
- 		$stmt = $db->query("SELECT * FROM `" . $this->config['table_map'] . "` 
-			WHERE `deleted`=0 AND `draft`='false' @query 
+ 		$stmt = $db->query("SELECT * FROM `" . $this->config['table_map'] . "`
+			WHERE `deleted`=0 AND `draft`='false' @query
 			ORDER BY ct DESC", array(
   			"query" 	=> $query
   		));
@@ -125,13 +125,13 @@ class a_llsReq extends RequestResponse {
 			for ($count = 0; $row = $stmt->fetch(); $count++) {
 				if ($count >= ($json['body']['freq']['start'] + $json['body']['freq']['blockSize'])) continue;
 				if ($count < $json['body']['freq']['start']) continue;
-				
+
 				$level = array();
 				$level["id"]           = (string)$row["id"];
 				$level["name"]         = (string)$row["name"];
 				$level["description"]  = (string)$row["description"];
 				$level["ownerId"]      = (string)$row["ownerId"];
-				$level["dc"]           = (string)$row["dc"]; 
+				$level["dc"]           = (string)$row["dc"];
 				$level["version"]      = (string)$row["version"];
 				$level["draft"]        = ((bool)$row['draft']) ? 'true' : 'false';
 				$level["author"]       = (string)$row["author"];
@@ -139,8 +139,9 @@ class a_llsReq extends RequestResponse {
 				$level['screenshotId'] = (string)$row['screenshotId'];
 				$level['rating']       = (string)$row['rating'];
 				$level['difficulty']   = (string)$row['difficulty'];
+				$level['xgmc']				 = (string)$row['xgmc'];
 				$level['xgms']         = (string)$row['gms']; // fixes solo play bug
-                
+
 				foreach ($fields as $field) {
 					if ($field == 'deleted') continue;
 					$level[$field] = $row[$field];
@@ -149,7 +150,7 @@ class a_llsReq extends RequestResponse {
 				$level["is.lotd"]   = $level['isLOTD'];
                 $level["xp.reward"] = $level['xpReward'];
                 $level["xxp.reward"] = $level['xpReward'];
-                
+
                 unset($level['isLOTD']);
                 unset($level['xpReward']);
                 unset($level['xpLevel']);
@@ -158,7 +159,7 @@ class a_llsReq extends RequestResponse {
 				$props["gcid"]     = (string)$row["gcid"];
 				$props["editMode"] = (string)$row["editMode"];
 				$level["props"]    = $props;
-				
+
 				$levelList[] = $level;
 			}
 			$fres = array(
