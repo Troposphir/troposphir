@@ -13,22 +13,22 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class getProfilesReq extends RequestResponse {
 	public function work($json) {
 		//Check input
 		if (!isset($json['body']['uid'])) return;
-		
+
 		//Retrieve user profile
 		$db = $this->getConnection();
-		$statement = $db->prepare("SELECT * FROM `" . $this->config['table_user'] . "` 
+		$statement = $db->prepare("SELECT * FROM `" . $this->config['table_user'] . "`
 			WHERE `userId`=:userId");
 		$statement->bindParam(':userId', $json['body']['uid'], PDO::PARAM_INT);
 		$statement->execute();
-		
+
 		if ($statement == false || $db->getRowCount($statement) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
@@ -38,7 +38,8 @@ class getProfilesReq extends RequestResponse {
 				$profile = array();
 				$profile["id"]      = (integer)$row['userId'];
 				$profile["created"] = (integer)$row['created'];
-				
+				$profile["xpp"] 			= (integer)$row["xpp"];
+
 				$props = array();
 				$props["avaid"]                 = (string)$row["avaid"];
 				$props["signature"]             = (string)$row["signature"];
