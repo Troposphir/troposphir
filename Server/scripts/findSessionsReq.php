@@ -20,31 +20,68 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class findSessionsReq extends RequestResponse {
 	public function work($json) {
-    $itemSets = array();
-		$itemSet = array();
-		$itemSet["id"]        = 8;
-		$itemSet["created"]   = 0;
-    $itemSet["lastUpdated"]   = 0;
-    $itemSet["ownerId"] = 55;
-    $itemSet["levelId"] = 1;
-    $itemSet["ipAddress_external"] = 19216811;
-    $itemSet["ipAddress_nat"] = 127001;
-    $itemSet["port"] = 4033;
-    $itemSet["natPort"] = 4033;
-    $itemSet["name"] = "My Game";
-    $itemSet["status"] = "ACTIVE";
-    $itemSet["maxUsers"] = 10;
+		if (!isset($json['body']['state'])) return;
+		if($json['body']['state'] == "ACTIVE" || $json['body']['state'] == "CLOSED"){
+			$stateSearch = $json['body']['state'];
+		} else {
+			$this->addBody("fres", array("total" => 0, "results" => array()));
+			return;
+		}
 
-		$props = array();
-		$props['mode']   = 'comp';
-		$props['connectedPlayers'] = 1;
-		$props['ip']  = 19216811;
-		$props['nat'] = 'false';
-		$itemSet['props'] = $props;
+		$db = $this->getConnection();
+		$statement = $db->query("SELECT * FROM `" . $this->config['table_mpSessions']."` WHERE `status`='".$stateSearch."'", null);
 
-    $itemSets[] = $itemSet;
+    $mpSessions = array();
+		$sessionCount = 0;
+		for ($count = 0; $row = $statement->fetch(); $count++) {
+			$mpSession = array();
+			$mpSession["id"]        				 = (integer)$row["id"];
+			$mpSession["created"]   				 = 0;
+	    $mpSession["lastUpdated"]  			 = 0;
+	    $mpSession["ownerId"] 					 = (integer)$row["ownerId"];
+	    $mpSession["levelId"] 					 = (integer)$row['levelId'];
+	    $mpSession["ipAddress_external"] = (integer)$row['ipAddress_external'];
+	    $mpSession["ipAddress_nat"] 	   = (integer)$row['ipAddress_nat'];
+	    $mpSession["port"] 							 = (integer)$row['port'];
+	    $mpSession["natPort"]						 = (integer)$row['natPort'];
+	    $mpSession["name"]							 = $row["name"];
+	    $mpSession["status"]						 = $row["status"];
+	    $mpSession["maxUsers"]					 = (integer)$row["maxUsers"];
 
-		$this->addBody("fres", array("total" => 1, "results" => $itemSets));
+			$props = array();
+			$props['mode']   								 = (string)$row['mode'];
+			$props['connectedPlayers']			 = (string)$row['connectedPlayers'];
+			$props['ip'] 										 = (string)$row['ip'];
+			$props['nat']										 = ($row['nat'] == 1) ? 'true' : 'false';
+			$mpSession['props']							 = $props;
+
+			$mpSessions[] = $mpSession;
+			$sessionCount++;
+		}
+		// $itemSet = array();
+		// $itemSet["id"]        = 0;
+		// $itemSet["created"]   = 0;
+    // $itemSet["lastUpdated"]   = 0;
+    // $itemSet["ownerId"] = 55;
+    // $itemSet["levelId"] = 931;
+    // $itemSet["ipAddress_external"] = 2130706433;
+    // $itemSet["ipAddress_nat"] = 2130706433;
+    // $itemSet["port"] = 25000;
+    // $itemSet["natPort"] = 50000;
+    // $itemSet["name"] = "My Game Test";
+    // $itemSet["status"] = "ACTIVE";
+    // $itemSet["maxUsers"] = 10;
+		//
+		// $props = array();
+		// $props['mode']   = "FC";
+		// $props['connectedPlayers'] = "55";
+		// $props['ip']  = "127.0.0.1";
+		// $props['nat'] = "false";
+		// $itemSet['props'] = $props;
+		//
+		// $itemSets[] = $itemSet;
+
+		$this->addBody("fres", array("total" => $sessionCount, "results" => $mpSessions));
 	}
 }
 ?>

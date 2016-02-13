@@ -13,20 +13,20 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class getLevelByIdReq extends RequestResponse {
 	public function work($json) {
 		$fields = array( //We don't need the myriad of properties stored in the maps table, so we'll query only the columns we need.
-			"id", "name", "description", "ownerId", 
-			"dc", "author", "downloads", "dataId", 
-			"screenshotId", "draft", "version", 
-			"nextLevelId", "editable", "gcid", 
+			"id", "name", "description", "ownerId",
+			"dc", "author", "downloads", "dataId",
+			"screenshotId", "draft", "version",
+			"nextLevelId", "editable", "gcid",
 			"editMode"
 		);
-		if (!isset($json["body"]["levelId"]) || 
+		if (!isset($json["body"]["levelId"]) ||
 			!is_numeric($json["body"]["levelId"])){
 			return;
 		}
@@ -36,13 +36,13 @@ class getLevelByIdReq extends RequestResponse {
 		" WHERE `id`=:levelId");
 		$statement->bindValue(':levelId', $json['body']['levelId'], PDO::PARAM_INT);
 		$statement->execute();
-		
+
 		$row = $statement->fetch();
 		if ($row == false || count($row) <= 0) {
 			$this->error("NOT_FOUND");
 		} else {
 			$level = array();
-			
+
 			$level["id"]          = (integer)$row["id"];
 			$level["name"]        = (string)$row["name"];
 			$level["description"] = (string)$row["description"];
@@ -55,15 +55,15 @@ class getLevelByIdReq extends RequestResponse {
 			$level["version"]     = (integer)$row["version"];
 			$level["nextLevelId"] = (integer)$row["nextLevelId"];
 			$level["editable"]    = ((bool)$row['editable']) ? true : false;
-			
+
 			$props = array();
 			$props["gcid"]     = (string)$row["gcid"];
 			$props["editMode"] = (string)$row["editMode"];
 			$level["props"] = $props;
-			
+
 			$this->addBody("level", $level);
 		}
 	}
-	
+
 }
 ?>
