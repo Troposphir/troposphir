@@ -32,7 +32,8 @@ class a_llsReq extends RequestResponse {
 			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic",
 			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc",
 			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi",
-			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted", "xgmc"
+			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted",
+			"gmc"
 		);
 
 /*		//Adjust user's query syntax to conform to appropriate database syntax.
@@ -87,6 +88,8 @@ class a_llsReq extends RequestResponse {
                  if($field === "is.lotd") $field = "isLOTD";
                  if($field === "xis.lotd") $field = "isLOTD";
                  if($field === "xp.reward") $field = "xpReward";
+								 if($field === "xgmc") $field = "gmc";
+								 if($field === "xgmm") $field = "gmm";
 
                  //echo "$field:$value";
                  if(!in_array(strtolower($field), $ignoreFields))
@@ -139,7 +142,8 @@ class a_llsReq extends RequestResponse {
 				$level['screenshotId'] = (string)$row['screenshotId'];
 				$level['rating']       = (string)$row['rating'];
 				$level['difficulty']   = (string)$row['difficulty'];
-				$level['xgmc']				 = (string)$row['xgmc'];
+				$level['xgmc']				 = (string)$row['gmc'];
+				$level['xgmm']				 = (string)$row['gmm'];
 				$level['xgms']         = (string)$row['gms']; // fixes solo play bug
 
 				foreach ($fields as $field) {
@@ -154,7 +158,7 @@ class a_llsReq extends RequestResponse {
                 unset($level['isLOTD']);
                 unset($level['xpReward']);
                 unset($level['xpLevel']);
-				
+
 				$props = array();
 				$props["gcid"]     = (string)$row["gcid"];
 				$props["editMode"] = (string)$row["editMode"];

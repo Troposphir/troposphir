@@ -49,6 +49,8 @@ class a_getLcReq extends RequestResponse {
 				$props[$field] = (string)$row[$field];
 			}
             $props["xgms"] = $props["gms"];
+						$props["xgmc"] = $props["gmc"];
+						$props["xgmm"] = $props["gmm"];
 			$props["is.lotd"] = $props['isLOTD'];
             $props["xp.reward"] = $props['xpReward'];
 			$props["xxp.reward"] = $props['xpReward'];
