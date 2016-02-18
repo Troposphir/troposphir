@@ -13,21 +13,21 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class a_setLcReq extends RequestResponse {
 	public function work($json) {
 		if (!isset($json['body']['lc']['id'])) return;
 		if (!isset($json['body']['lc']['props'])) return;
-		
+
 		//Build query
 		$fields = array('gms', 'gmmp1', 'gmmp2', 'gff',
 			'gsv', 'gbs', 'gde', 'gdb', 'gmc', 'gmcp1', 'gmcp2', 'gctf', 'gab', 'gra',
 			'gco', 'gtc', 'gmcdt', 'gmcff', 'ast', 'aal', 'ghosts', 'ipad', 'dcap', 'dmic',
 			'denc', 'dpuc', 'dcoc', 'dtrc', 'damc', 'dphc', 'ddoc', 'dkec', 'dgcc', 'dmvc',
-			'dsbc', 'dhzc', 'dmuc', 'dtmi', 'ddtm', 'dttm', 'dedc', 'dtsc', 'dopc', 'dpoc' 
+			'dsbc', 'dhzc', 'dmuc', 'dtmi', 'ddtm', 'dttm', 'dedc', 'dtsc', 'dopc', 'dpoc'
 		);
 		$params = array();
 		$cond = array();
@@ -35,6 +35,11 @@ class a_setLcReq extends RequestResponse {
 			if (in_array($propname, $fields)) {
 				$cond[] = "`$propname` = ?";
 				$params[] = $propvalue;
+
+				if ($propname == 'gmmp2') {
+					$cond[] = "`gmm` = ?";
+					$params[] = "1";
+				}
 			}
 			else if ($propname == 'is.lotd') {
 				$cond[] = "`isLOTD` = ?";
@@ -46,9 +51,12 @@ class a_setLcReq extends RequestResponse {
 			}
 		}
 		$params[] = $json['body']['lc']['id'];
-		
+
+print_r($cond);
+print_r($params);
+
 		//Set level config
-		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] . 
+		$stmt = $this->getConnection()->prepare("UPDATE " . $this->config['table_map'] .
 			" SET " . implode(' , ', $cond) .
 			" WHERE `id`=?");
 		$stmt->execute($params);
