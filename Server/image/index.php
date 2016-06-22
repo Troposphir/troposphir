@@ -26,9 +26,6 @@ $id  = $_REQUEST['id'];  //asset id
 //Try to retrieve item icon
 $item = $_REQUEST['item'];
 
-//Set header to correct mimetype
-header("Content-Type: image/png");
-
 //Requesting level screenshot?
 if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
 { 

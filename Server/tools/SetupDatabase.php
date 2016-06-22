@@ -162,7 +162,7 @@ SetupTable($config['table_map'], "(
 	dopc INT NOT NULL DEFAULT 0,
 	dpoc INT NOT NULL DEFAULT 0
 )", "(
-	id, name, description, ct, author, dc, rating, difficulty,
+	id, name, description, ct, author, dc, rating, ratingCount, difficulty,
 	ownerId, downloads, dataId, screenshotId, version, draft, nextLevelId,
 	editable, deleted, gcid, editMode, xisLOTD, isLOTD, xpReward,
 	xgms, gms, gmm, gff, gsv, gbs, gde, gdb, gctf, gab, gra, gco, gtc,
@@ -259,7 +259,7 @@ SetupTable($config['table_ratings'], "(
  difficulty FLOAT NOT NULL DEFAULT 0,
  UNIQUE KEY(`levelId`, `userId`)
  )", "(levelId, userId, rating, difficulty)");
- 
+
 SetupTable($config['table_comments'], "(
  commentId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
  userId INT NOT NULL DEFAULT 0,
