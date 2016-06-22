@@ -219,6 +219,10 @@ Other Stuff/
 devtools/
 Sever/map/*.atmo
 Server/client/ClientFiles
+Server/configs.php
+Server/asset/
 Server/map/
+admin/
 Server/image/maps/
 Server/image/avatars/
+Server/image/asseticons/

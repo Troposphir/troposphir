@@ -39,6 +39,7 @@ $config = array(
 	'table_comments'=> 'comments',
 	'table_playRecord' => 'playRecord',
     'table_ratings' => 'ratings',
+		'table_mpSessions' => 'mpSessions',
 	//Directory Setup
 	'dir_imgs'		=> 'image',
 	'dir_avatars'   => 'image/avatars',
