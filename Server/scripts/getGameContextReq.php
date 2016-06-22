@@ -17,6 +17,14 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class getGameContextReq extends RequestResponse {
 	public function work($json) {
+		$cust_levels = array(
+				928, // Untitled by freekboy31
+				931, // Dreamland by Baufritz
+				975  // Cirrus by zardini123
+		);
+
+		$cust_level = $cust_levels[rand(0, count($cust_levels)-1)];
+
 		$this->addBody('assetEndpoint', $this->config['site'] . $this->config['dir_assets']);
 		$this->addBody('mailboxEndpoint', "");
 		$this->addBody('friendsUrl', "");
@@ -24,8 +32,8 @@ class getGameContextReq extends RequestResponse {
 		$this->addBody('masterServerPort', 4530);
 		$this->addBody('natFacilitatorPort', 50005);
 		$this->addBody('redCarpetTutorialLevelId', 1);
-		$this->addBody('charCustLevelId', 1);
-		$this->addBody('levelBrowserLevelId', 1);
+		$this->addBody('charCustLevelId', $cust_level);
+		$this->addBody('levelBrowserLevelId', $cust_level);
 		$this->addBody('tutorialUserId', 0);
 		$this->addBody('unityBundleUrl', "");
 		$this->addBody('staticImagesUrl', $this->config['site'] . $this->config['dir_imgs']);
