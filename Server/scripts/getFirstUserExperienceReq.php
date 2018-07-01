@@ -17,64 +17,47 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.    
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
-class getFirstUserExperienceReq extends RequestResponse {
-	public function work($json) {
-		if (!isset($json["body"]["freq"]["start"])) return;
-		if (!is_numeric($json["body"]["freq"]["start"])) return;
-		if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
-		
-		$fields = array( 
-			"id", "name", "description", "author", 
-			"ownerId", "downloads", "dataId", 
-			"screenshotId", "draft", "version",
- 			"nextLevelId", "editable", "gcid", "editMode"
-		);
-		$json['body']['retDeleted'] = (strtolower($json['body']['retDeleted']) == 'true') ? 1 : 0;
-		
-		$db = $this->getConnection();
-		$stmt = $db->prepare("SELECT id, name, description, author, ownerId,
-				downloads, dataId, screenshotId, draft, version, nextLevelId,
-				editable, gcid, editMode	
-			FROM " . $this->config['table_map'] . "
-			WHERE `deleted`=:deleted
-			AND `draft`='false'
-			ORDER BY ct DESC");
-		$stmt->bindParam(':deleted', $json['body']['retDeleted'], PDO::PARAM_INT);
-		$stmt->execute();
-		
-		if ($stmt == false || $db->getRowCount($stmt) <= 0) {
-			$this->error("NOT_FOUND");
-		} else {
-			$levelList = array();
-			for ($count = 0; $row = $stmt->fetch(); $count++) {
-				if ($count >= ($json['body']['freq']['start'] + $json['body']['freq']['blockSize'])) continue;
-				if ($count < $json['body']['freq']['start']) continue;
-				
-				$level = array();
-				$level["id"]            = (integer)$row["id"];
-				$level["name"]          = (string)$row["name"];
-				$level["description"]   = (string)$row["description"];
-				$level["ownerId"]       = (integer)$row["ownerId"];
-				$level["draft"]         = ((bool)$row['draft']) ? true : false;
-				$level["downloads"]     = (integer)$row["downloads"];
-				$level["version"]       = (integer)$row["version"];
-				$level["editable"]      = ((bool)$row['editable']) ? true : false;
-				$level["dataId"]        = (integer)$row["dataId"];
-				$level["screenshotId"]  = (integer)$row["screenshotId"];
-				
-				$props = array();
-				$props["gcid"]     = (string)$row["gcid"];
-				$props["editMode"] = (string)$row["editMode"];
-				$level["props"] = $props;
-				
-				$levelList[] = $level;
-			}
-			$fres = array(
-				"total" => $count,
-				"results" => $levelList
-			);
-			$this->addBody("fres", $fres);
-		}
+include 'a_llsReq.php';
+
+class getFirstUserExperienceReq extends a_llsReq {
+	protected function get_statement($json) {
+		$maps = $this->config["table_map"];
+		$records = $this->config["table_playRecord"];
+
+		$stmt = $this->getConnection()->prepare("
+			SELECT m.*
+			FROM `$maps` m
+			INNER JOIN `$records` r  ON m.`id` = r.`levelId`
+			WHERE
+				`deleted` = 0
+				AND `draft` = 0
+				AND m.`rating` > 3
+				AND m.`difficulty` > 3
+			GROUP BY m.`id`
+			HAVING (COUNT(IF(r.`state`='WON', 1, NULL)) / COUNT(*)) > 0.75
+			ORDER BY m.`rating`;
+		");
+
+		return $stmt;
+	}
+
+	protected function validate_query($json) {
+		return true;
+	}
+
+	protected function row_to_level($row) {
+		$level = parent::row_to_level($row);
+
+		$level["id"] 			= (integer)$row["id"];
+		$level["draft"] 		= (bool)$row["draft"];
+		$level["editable"] 		= (bool)$row["editable"];
+		$level["ownerId"] 		= (integer)$row["ownerId"];
+		$level["downloads"] 	= (integer)$row["downloads"];
+		$level["version"] 		= (integer)$row["version"];
+		$level["dataId"] 		= (integer)$row["dataId"];
+		$level["screenshotId"] 	= (integer)$row["screenshotId"];
+
+		return $level;
 	}
 }
 ?>

@@ -18,160 +18,168 @@
 ==============================================================================*/
 if (!defined("INCLUDE_SCRIPT")) return;
 class a_llsReq extends RequestResponse {
-	public function work($json) {
-		//Check input
-		if (!isset($json["body"]["query"])) return;
-		if (!isset($json["body"]["freq"]["start"])) return;
-		if (!is_numeric($json["body"]["freq"]["start"])) return;
-		if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
+    static $fields = array(
+        "isLOTD", "xpReward", "gms", "gmm", "gff", "ct", "ownerId",
+        "gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco",
+        "gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt",
+        "gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic",
+        "denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc",
+        "dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi",
+        "ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted",
+        "gmc", "draft", "version", "name", "description", "rating", "author"
+    );
 
-		$fields = array(
-			"isLOTD", "xpReward", "gms", "gmm", "gff",
-			"gsv", "gbs", "gde", "gdb", "gctf", "gab", "gra", "gco",
-			"gtc", "gmmp1", "gmmp2", "gmcp1", "gmcp2", "gmcdt",
-			"gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic",
-			"denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc",
-			"dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi",
-			"ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted",
-			"gmc"
-		);
+    protected function get_statement($json) {
+        // The lucene2sql binary must be built from
+        // https://github.com/Troposphir/lucene2sql/
 
-/*		//Adjust user's query syntax to conform to appropriate database syntax.
-		$query = $json["body"]["query"];
-		$begpos = strpos($query, "AND ct:[");
-		if ($begpos !== false) {
-			$endpos = strpos($query, ']', $begpos) + 1;
-			$query = substr($query, 0, $begpos) . substr($query, $endpos, strlen($query));
-		}
+        $lucene2sql = proc_open(
+            dirname(realpath(__FILE__)) . "/lucene2sql",
+            array(
+                0 => array("pipe", "r"),
+                1 => array("pipe", "w"),
+                2 => array("pipe", "w")
+            ),
+            $pipes
+        );
 
-		//Todo: Change dll instead from Lucene to SQL format.
-		//This doesn't work in all cases.
-		$query = str_replace(':', '=', $query);
-		$query = str_replace('xis.lotd', "'xisLOTD'", $query);
-		$query = str_replace('is.lotd', "`isLOTD`", $query);
-		$query = str_replace('xp.reward', "'xpReward'", $query);
-		$query = str_replace('xp.level', "'xpLevel'", $query);
-		$query = str_replace('deleted=false', 'deleted=0', $query);
-		$query = str_replace('deleted=true', 'deleted=1', $query); */
+        if (!is_resource($lucene2sql)) {
+            $this->error("INTERNAL");
+            return;
+        }
 
-	 // super cheap hack to get basic level searching working
-         $lQuery = $json["body"]["query"];
-         $query = "";
+        fwrite($pipes[0], json_encode(array(
+            "query" => $json["body"]["query"],
+            "default_fields" => array("name", "description"),
+            "allowed_fields" => $this::$fields,
+            "renames" => array(
+                "xp.level" => "xpLevel",
+                "is.lotd" => "isLOTD",
+                "xis.lotd" => "isLOTD",
+                "xp.reward" => "xpReward",
+                "xgmc" => "gmc",
+                "xgmm" => "gmm",
+                "xgms" => "gms",
+                "designer" => "author"
+            ),
+            "expressions" => array(
+                "xpLevel" => array(
+                    array(true, "`xpReward` > 0"),
+                    array(1, "`xpReward` > 0"),
+                    array(false, "`xpReward` = 0"),
+                    array(0, "`xpReward` = 0"),
+                ),
+                "deleted" => array(
+                    array(null, "`deleted` = 0")
+                ),
+                "draft" => array(
+                    array(null, "`draft` = 0")
+                )
+            ),
+            "table" => $this->config['table_map']
+        )));
+        fclose($pipes[0]);
 
-         $pattern = '/([a-zA-Z\.]+)\:"([^"]*[^\\\\])"/'; // matches    name:"hi dude"
-         preg_match_all($pattern, $lQuery, $quoteMatches);
+        $queryText = stream_get_contents($pipes[1]);
+        fclose($pipes[1]);
 
-         $pattern = '/([a-zA-Z\.]+)\:([^" )]+)/'; // matches    name:hi
-         preg_match_all($pattern, $lQuery, $noquoteMatches);
+        $error = stream_get_contents($pipes[2]);
+        fclose($pipes[2]);
 
-         $matches = array(
-             array_merge($quoteMatches[0], $noquoteMatches[0]),
-             array_merge($quoteMatches[1], $noquoteMatches[1]),
-             array_merge($quoteMatches[2], $noquoteMatches[2]),
-             );
+        if (proc_close($lucene2sql) != 0) {
+            $this->log($error);
+            $this->error("INVALID");
+            return;
+        }
 
-                //print_r($matches);
+        $query = json_decode($queryText);
 
-         $ignoreFields = array("draft", "ct", "xgms", "version", "deleted");
+        $stmt = $this->getConnection()->prepare($query->body);
+        foreach ($query->params as $param => $value) {
+            $type = PDO::PARAM_STR;
+            if (is_bool($value) || is_integer($value)) {
+                $type = PDO::PARAM_INT;
+            }
 
-         if(count($matches) >= 3 && count($matches[0]) >= 2)
-         {
-             for($i = 0; $i < count($matches[0]); $i++)
-             {
-                 $field = $matches[1][$i];
-                 $value = $matches[2][$i];
-                 if($field === "xp.level" || $field === "is.lotd")
-                    $value = ($value === "true") ? 1 : 0;
-                    //$value = ($value == 0) ? "false" : "true";
+            $stmt->bindValue($param + 1, $value, $type);
+        }
 
-                 if($field === "xp.level") $field = "xpLevel";
-                 if($field === "is.lotd") $field = "isLOTD";
-                 if($field === "xis.lotd") $field = "isLOTD";
-                 if($field === "xp.reward") $field = "xpReward";
-								 if($field === "xgmc") $field = "gmc";
-								 if($field === "xgmm") $field = "gmm";
+        return $stmt;
+    }
 
-                 //echo "$field:$value";
-                 if(!in_array(strtolower($field), $ignoreFields))
-                 {
-                    if(strlen($query) > 0) $query .= " OR ";
-                    if($field === "xpLevel")
-                    {
-                        if($value === 1) // show xp levels
-                            $query .= "`xpReward` > 0";
-                        else // hide xp levels
-                            $query .= "`xpReward = 0";
-                    }
-                    else
-                       $query .= "`" . $field . "` LIKE '%" . $value . "%'";
-                 }
-             }
-         }
+    protected function validate_query($json) {
+        return isset($json["body"]["query"]);
+    }
 
-         if(strlen($query) > 0)
-         {
-             $query = "AND (".$query.")";
-         }
+    protected function row_to_level($row) {
+        $level = array();
 
-        //echo $query;
-  		$db = $this->getConnection();
- 		$stmt = $db->query("SELECT * FROM `" . $this->config['table_map'] . "`
-			WHERE `deleted`=0 AND `draft`='false' @query
-			ORDER BY ct DESC", array(
-  			"query" 	=> $query
-  		));
+        foreach ($this::$fields as $field) {
+            if ($field == 'deleted') continue;
+            $level[$field] = $row[$field];
+        }
 
-		if ($stmt == false ) {
-			$this->error("NOT_FOUND");
-		} else {
-			$levelList = array();
-			for ($count = 0; $row = $stmt->fetch(); $count++) {
-				if ($count >= ($json['body']['freq']['start'] + $json['body']['freq']['blockSize'])) continue;
-				if ($count < $json['body']['freq']['start']) continue;
+        $level["id"]           = (string)$row["id"];
+        $level["name"]         = (string)$row["name"];
+        $level["description"]  = (string)$row["description"];
+        $level["ownerId"]      = (string)$row["ownerId"];
+        $level["dc"]           = (string)$row["dc"];
+        $level["version"]      = (string)$row["version"];
+        $level["draft"]        = (bool)$row['draft'] ? 'true' : 'false';
+        $level["author"]       = (string)$row["author"];
+        $level["editable"]     = (bool)$row['editable'] ? 'true' : 'false';
+        $level['screenshotId'] = (string)$row['screenshotId'];
+        $level['rating']       = (string)$row['rating'];
+        $level['difficulty']   = (string)$row['difficulty'];
+        $level['xgmc']         = (string)$row['gmc'];
+        $level['xgmm']         = (string)$row['gmm'];
+        $level['xgms']         = (string)$row['gms']; // fixes solo play bug
 
-				$level = array();
-				$level["id"]           = (string)$row["id"];
-				$level["name"]         = (string)$row["name"];
-				$level["description"]  = (string)$row["description"];
-				$level["ownerId"]      = (string)$row["ownerId"];
-				$level["dc"]           = (string)$row["dc"];
-				$level["version"]      = (string)$row["version"];
-				$level["draft"]        = ((bool)$row['draft']) ? 'true' : 'false';
-				$level["author"]       = (string)$row["author"];
-				$level["editable"]     = ((bool)$row['editable']) ? 'true' : 'false';
-				$level['screenshotId'] = (string)$row['screenshotId'];
-				$level['rating']       = (string)$row['rating'];
-				$level['difficulty']   = (string)$row['difficulty'];
-				$level['xgmc']				 = (string)$row['gmc'];
-				$level['xgmm']				 = (string)$row['gmm'];
-				$level['xgms']         = (string)$row['gms']; // fixes solo play bug
+        $level["xis.lotd"]  = $level['isLOTD'];
+        $level["is.lotd"]   = $level['isLOTD'];
+        $level["xp.reward"] = $level['xpReward'];
+        $level["xxp.reward"] = $level['xpReward'];
 
-				foreach ($fields as $field) {
-					if ($field == 'deleted') continue;
-					$level[$field] = $row[$field];
-				}
-				$level["xis.lotd"]  = $level['isLOTD'];
-				$level["is.lotd"]   = $level['isLOTD'];
-                $level["xp.reward"] = $level['xpReward'];
-                $level["xxp.reward"] = $level['xpReward'];
+        unset($level['isLOTD']);
+        unset($level['xpReward']);
+        unset($level['xpLevel']);
 
-                unset($level['isLOTD']);
-                unset($level['xpReward']);
-                unset($level['xpLevel']);
+        $props = array();
+        $props["gcid"]     = (string)$row["gcid"];
+        $props["editMode"] = (string)$row["editMode"];
+        $level["props"]    = $props;
 
-				$props = array();
-				$props["gcid"]     = (string)$row["gcid"];
-				$props["editMode"] = (string)$row["editMode"];
-				$level["props"]    = $props;
+        return $level;
+    }
 
-				$levelList[] = $level;
-			}
-			$fres = array(
-				"total" 	=> $count,
-				"results" 	=> $levelList
-			);
-			$this->addBody("fres", $fres);
-		}
-	}
+    public function work($json) {
+        //Check input
+        if (!$this->validate_query($json)) return;
+        if (!isset($json["body"]["freq"]["start"])) return;
+        if (!is_numeric($json["body"]["freq"]["start"])) return;
+        if (!is_numeric($json["body"]["freq"]["blockSize"])) return;
+
+        $stmt = $this->get_statement($json);
+
+        $stmt->execute();
+
+        if ($stmt == false) {
+            $this->error("NOT_FOUND");
+            return;
+        }
+
+        $levelList = array();
+        for ($count = 0; $row = $stmt->fetch(); $count++) {
+            if ($count >= ($json['body']['freq']['start'] + $json['body']['freq']['blockSize'])) continue;
+            if ($count < $json['body']['freq']['start']) continue;
+
+            $levelList[] = $this->row_to_level($row);
+        }
+        $fres = array(
+            "total"     => $count,
+            "results"   => $levelList
+        );
+        $this->addBody("fres", $fres);
+    }
 }
 ?>

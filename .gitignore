@@ -226,3 +226,7 @@ admin/
 Server/image/maps/
 Server/image/avatars/
 Server/image/asseticons/
+node_modules/
+.idea/
+Server/scripts/lucene2sql
+Server/scripts/lucene2sql.exe
