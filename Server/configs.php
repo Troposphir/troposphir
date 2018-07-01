@@ -22,7 +22,7 @@ $path_parts["dirname"] = stripslashes($path_parts['dirname']) . '/';
 
 $config = array(
 	'site'			=> $_SERVER['SERVER_NAME'] . $path_parts['dirname'],
-	'logging'		=> "enabled",
+	'logging'		=> "disabled",
 	'request_log'	=> $_SERVER['DOCUMENT_ROOT'] . $path_parts['dirname'] . "request.log",
 	//Database Credentials
 	'driver'		=> 'mysql',
