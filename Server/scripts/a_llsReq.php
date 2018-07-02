@@ -25,7 +25,7 @@ class a_llsReq extends RequestResponse {
         "gmcff", "ast", "aal", "ghosts", "ipad", "dcap", "dmic",
         "denc", "dpuc", "dcoc", "dtrc", "damc", "dphc", "ddoc",
         "dkec", "dgcc", "dmvc", "dsbc", "dhzc", "dmuc", "dtmi",
-        "ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted",
+        "ddtm", "dttm", "dedc", "dtsc", "dopc", "dpoc", "deleted", "difficulty",
         "gmc", "draft", "version", "name", "description", "rating", "author"
     );
 
@@ -60,6 +60,11 @@ class a_llsReq extends RequestResponse {
                 "xgmc" => "gmc",
                 "xgmm" => "gmm",
                 "xgms" => "gms",
+                "xgco" => "gco",
+                "xgtc" => "gtc",
+                "xgctf" => "gctf",
+                "xgab" => "gab",
+                "xgra" => "gra",
                 "designer" => "author"
             ),
             "expressions" => array(
