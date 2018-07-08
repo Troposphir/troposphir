@@ -98,6 +98,7 @@ class a_llsReq extends RequestResponse {
         }
 
         $query = json_decode($queryText);
+        $query->body = preg_replace("/;\$/", " ORDER BY `ct` DESC;", $query->body);
 
         $stmt = $this->getConnection()->prepare($query->body);
         foreach ($query->params as $param => $value) {
