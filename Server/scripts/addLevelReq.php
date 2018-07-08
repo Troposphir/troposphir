@@ -53,7 +53,7 @@ class addLevelReq extends RequestResponse {
 		$stmt->bindParam(':author', $user["username"], PDO::PARAM_STR);
 		$stmt->bindParam(':name', $json['body']['level']['name'], PDO::PARAM_STR);
 		$stmt->bindParam(':description', $json['body']['level']['description'], PDO::PARAM_STR);
-		$stmt->bindValue(':ct', time(), PDO::PARAM_STR); //created time
+		$stmt->bindValue(':ct', time() * 1000, PDO::PARAM_STR); //created time
 		$json['body']['level']['editable'] = ($json['body']['level']['editable'] == true) ? 1 : 0;
 		$stmt->bindParam(':editable', $json['body']['level']['editable'], PDO::PARAM_INT);
 		$stmt->bindParam(':version', $json['body']['level']['version'], PDO::PARAM_INT);
