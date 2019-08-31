@@ -19,7 +19,7 @@ $items = json_decode($jsonItems, true);
 
 foreach ($items as $item) {
   $sql = "INSERT INTO items (id, `oid`, name, itypeId, price, genders) VALUES (".$item['thingForSaleId'].", ".$item['id'].", '".$item['name']."', ".$item['itemCategoryId'].", ".$item['cost'].", '".$item['genders']."')";
-  if($conn->query($sql) === TRUE) {
+  if($conn->query($sql, null) === TRUE) {
     echo "Added item.";
   } else {
     echo "Error: " . $sql . "<br>" . $conn->error;
@@ -31,7 +31,7 @@ $itemSets = json_decode($jsonItemSets, true);
 
 foreach ($itemSets as $item) {
   $sql = "INSERT INTO itemSets (id, `oid`, name, price) VALUES (".$item['thingForSaleId'].", ".$item['id'].", '".$item['name']."', ".$item['cost'].")";
-  if($conn->query($sql) === TRUE) {
+  if($conn->query($sql, null) === TRUE) {
     echo "Added itemset.";
   } else {
     echo "Error: " . $sql . "<br>" . $conn->error;

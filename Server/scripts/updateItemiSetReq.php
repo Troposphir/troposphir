@@ -48,7 +48,7 @@ class updateItemiSetReq extends RequestResponse {
 			$updatedItemSet .= $item;
 		}
 
-		$db->query("UPDATE ".$this->config['table_user']." SET equippedItems='".$updatedItemSet."' WHERE `userId`=".$the_user);
+		$db->query("UPDATE ".$this->config['table_user']." SET equippedItems='".$updatedItemSet."' WHERE `userId`=".$the_user, null);
 	}
 }
 ?>

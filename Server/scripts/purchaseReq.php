@@ -101,14 +101,14 @@ class purchaseReq extends RequestResponse {
 	  		}
 
 				//UPDATE THE INVENTORY
-	  		$db->query("UPDATE ".$this->config['table_user']." SET ownedItems='".$updatedInventory."' WHERE `userId`=".$userId);
+	  		$db->query("UPDATE ".$this->config['table_user']." SET ownedItems='".$updatedInventory."' WHERE `userId`=".$userId, null);
 			}
 
       //UPDATE funds
       $newBalance = $myMoney - $totalToDeduct;
 			$newStratBalance = $myStrat - $totalToDeductStrat;
-      $db->query("UPDATE ".$this->config['table_user']." SET amt=".$newBalance." WHERE `userId`=".$userId);
-			$db->query("UPDATE ".$this->config['table_user']." SET amt2=".$newStratBalance." WHERE `userId`=".$userId);
+      $db->query("UPDATE ".$this->config['table_user']." SET amt=".$newBalance." WHERE `userId`=".$userId, null);
+			$db->query("UPDATE ".$this->config['table_user']." SET amt2=".$newStratBalance." WHERE `userId`=".$userId, null);
     } else {
       {echo 'ERROR: Not enough funds. '; return;}
     }
