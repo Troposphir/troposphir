@@ -35,6 +35,7 @@ class deleteLevelCommentReq extends RequestResponse {
 		}
 		
 		//Insert level data
+		$db = $this->getConnection();
 		$stmt = $db->prepare("DELETE FROM " . $this->config['table_comments'] .
 			" WHERE `commentId`=:commentId AND `userId`=:userId");
 		$stmt->bindParam(':commentId', $json['body']['messageId'], PDO::PARAM_INT);
