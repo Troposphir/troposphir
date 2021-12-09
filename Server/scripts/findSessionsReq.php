@@ -29,7 +29,7 @@ class findSessionsReq extends RequestResponse {
 		}
 
 		$db = $this->getConnection();
-		$statement = $db->query("SELECT * FROM `" . $this->config['table_mpSessions']."` WHERE `status`='".$stateSearch."'", null);
+		$statement = $db->query_legacy("SELECT * FROM `" . $this->config['table_mpSessions']."` WHERE `status`='".$stateSearch."'", null);
 
     $mpSessions = array();
 		$sessionCount = 0;

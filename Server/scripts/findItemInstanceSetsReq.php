@@ -34,7 +34,7 @@ class findItemInstanceSetsReq extends RequestResponse {
 		if (!isset($json['body']['name'])) return;
 
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT userId, equippedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['oid'], null);
+		$statement = $db->query_legacy("SELECT userId, equippedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['oid'], null);
 
 		$itemSetsList = array();
 		for ($count = 0; $row = $statement->fetch(); $count++) {

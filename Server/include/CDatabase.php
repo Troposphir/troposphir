@@ -21,15 +21,16 @@ class Database extends PDO {
 		parent::__construct("$driver:host=$host;dbname=$dbname", $user, $password);
 	}
 	
-	public function query($query, $params) {
+	public function query_legacy($query, $params) {
 		//PDO doesn't prevent SQL Injections through the query() function
 		if (!is_null($params)) {	
 			foreach ($params as $i =>$param) {
 				$query = str_replace("@".$i, $param, $query);
 			}
 		}
-		return parent::query(stripslashes($query));
+		return parent::query(stripslashes($query), PDO::FETCH_ASSOC);
 	}
+
 	public function arrayToSQLGroup($array = array(), $decorators = array("(", ")", "`")) {
 		$str = $decorators[0];
 		foreach ($array as $i => $field) {
@@ -41,6 +42,7 @@ class Database extends PDO {
 		$str = $str.$decorators[1];
 		return $str;
 	}
+
 	public function getRowCount($PDOStatement) {
 		//PDOStatement::rowCount does not return the number of rows returned by a 
 		//  SELECT statement on some databases.

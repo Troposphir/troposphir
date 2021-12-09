@@ -24,7 +24,7 @@ class getLevelSessionBatchReq extends RequestResponse {
 		if (!isset($json['header']['auth'])) return; //Using this to get the user since we don't have a userId
 
 		$db = $this->getConnection();
-    $statement = $db->query("SELECT userId FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
+    $statement = $db->query_legacy("SELECT userId FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
     $userId = 0;
     for ($count = 0; $row = $statement->fetch(); $count++) {
 			$userId = $row['userId'];
@@ -38,7 +38,7 @@ class getLevelSessionBatchReq extends RequestResponse {
       $levelsAsQuery .= $lv;
     }
 
-		$statement = $db->query("SELECT levelId, userId levelSessionMode, state FROM " . $this->config['table_playRecord'] . " WHERE (levelId = " . $levelsAsQuery . ") AND userId = '".$userId."'", null);
+		$statement = $db->query_legacy("SELECT levelId, userId levelSessionMode, state FROM " . $this->config['table_playRecord'] . " WHERE (levelId = " . $levelsAsQuery . ") AND userId = '".$userId."'", null);
     $sessions = array();
     for($count = 0; $row = $statement->fetch(); $count++){
       $session = array();

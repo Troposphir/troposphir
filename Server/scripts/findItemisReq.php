@@ -77,7 +77,7 @@ class findItemisReq extends RequestResponse {
 		if (!isset($json["body"]["ownerId"])) return;
 
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT userId, ownedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['ownerId'], null);
+		$statement = $db->query_legacy("SELECT userId, ownedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['ownerId'], null);
 
 		$ownedItems = array();
 		for ($count = 0; $row = $statement->fetch(); $count++) {

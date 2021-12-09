@@ -12,17 +12,17 @@ function SetupTable($table_name, $query, $query2)
 
 	global $db;
 	//* (1) Create the table if it doesn't exist *//
-	$db->query("CREATE TABLE $table_name " . $query, null);
+	$db->query_legacy("CREATE TABLE $table_name " . $query, null);
 	//* (2) Create a temporary table *//
-	$db->query("DROP TABLE " . $table_name . "_temp", null);
-	$db->query("CREATE TABLE " . $table_name . "_temp " . $query, null);
+	$db->query_legacy("DROP TABLE " . $table_name . "_temp", null);
+	$db->query_legacy("CREATE TABLE " . $table_name . "_temp " . $query, null);
 	$lastError = $db->errorInfo();
 	if ($lastError[0] != "00000" && $lastError[0] != "42S01") {
 		echo "SETUP ABORTED. <br> Failed to create a temporary table for the following reason: <i>$lastError[2]</i>";
 		die();
 	}
 	//* (3) Fill the temporary table with data from the original *//
-	$db->query("INSERT INTO " . $table_name . "_temp $query2
+	$db->query_legacy("INSERT INTO " . $table_name . "_temp $query2
 		SELECT *
 		FROM $table_name"
 	, null);
@@ -32,9 +32,9 @@ function SetupTable($table_name, $query, $query2)
 		die();
 	}
 	//* (4) drop the original *//
-	$db->query("DROP TABLE $table_name", null);
+	$db->query_legacy("DROP TABLE $table_name", null);
 	//* (5) rename the temporary table name to the original *//
-	$db->query("RENAME TABLE `" . $table_name . "_temp` TO `$table_name`", null);
+	$db->query_legacy("RENAME TABLE `" . $table_name . "_temp` TO `$table_name`", null);
 }
 
 //Create user table

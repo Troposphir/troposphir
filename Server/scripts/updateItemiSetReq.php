@@ -26,7 +26,7 @@ class updateItemiSetReq extends RequestResponse {
 		if (!isset($json['body']['additions'])) return;
 
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT userId, equippedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['ownerId'], null);
+		$statement = $db->query_legacy("SELECT userId, equippedItems FROM " . $this->config['table_user'] . " WHERE userId = " . $json['body']['ownerId'], null);
 
 		$the_user = 0;
 		$itemSet = array();
@@ -48,7 +48,7 @@ class updateItemiSetReq extends RequestResponse {
 			$updatedItemSet .= $item;
 		}
 
-		$db->query("UPDATE ".$this->config['table_user']." SET equippedItems='".$updatedItemSet."' WHERE `userId`=".$the_user, null);
+		$db->query_legacy("UPDATE ".$this->config['table_user']." SET equippedItems='".$updatedItemSet."' WHERE `userId`=".$the_user, null);
 	}
 }
 ?>

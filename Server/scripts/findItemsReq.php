@@ -28,7 +28,7 @@ class findItemsReq extends RequestResponse {
 	public function work($json) {
 
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM " . $this->config['table_items'], null);
+		$statement = $db->query_legacy("SELECT * FROM " . $this->config['table_items'], null);
 
 		$itemList = array();
 		for ($count = 0; $row = $statement->fetch(); $count++) {

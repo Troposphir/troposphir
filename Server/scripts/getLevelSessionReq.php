@@ -29,7 +29,7 @@ class getLevelSessionReq extends RequestResponse {
     if (!isset($json['body']['userId'])) return;
 
 		$db = $this->getConnection();
-    $getAmt = $db->query("SELECT levelId FROM " . $this->config['table_playRecord'] . " WHERE levelId = " . $json['body']['levelId'] . " AND userId = ".$json['body']['userId'], null);
+    $getAmt = $db->query_legacy("SELECT levelId FROM " . $this->config['table_playRecord'] . " WHERE levelId = " . $json['body']['levelId'] . " AND userId = ".$json['body']['userId'], null);
 
     $results = 0;
     for(; $row = $getAmt->fetch(); $results++){}
@@ -43,7 +43,7 @@ class getLevelSessionReq extends RequestResponse {
       $stmt->execute();
     }
 
-    $statement = $db->query("SELECT levelId, userId levelSessionMode, state FROM " . $this->config['table_playRecord'] . " WHERE levelId = " . $json['body']['levelId'] . " AND userId = '".$json['body']['userId']."' AND levelSessionMode = '".$json['body']['levelSessionMode']."'", null);
+    $statement = $db->query_legacy("SELECT levelId, userId levelSessionMode, state FROM " . $this->config['table_playRecord'] . " WHERE levelId = " . $json['body']['levelId'] . " AND userId = '".$json['body']['userId']."' AND levelSessionMode = '".$json['body']['levelSessionMode']."'", null);
     $sessions = array();
     $lvSess = array();
     for($count = 0; $row = $statement->fetch(); $count++){

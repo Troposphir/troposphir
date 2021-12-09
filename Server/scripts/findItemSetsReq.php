@@ -28,7 +28,7 @@ class findItemSetsReq extends RequestResponse {
 		$fres = array();
 
 		$db = new Database($this->config['driver'], $this->config['host'], $this->config['dbname'], $this->config['user'], $this->config['password']);
-		$statement = $db->query("SELECT * FROM itemSets", null);
+		$statement = $db->query_legacy("SELECT * FROM itemSets", null);
 
 		$itemSetsList = array();
 		for ($count = 0; $row = $statement->fetch(); $count++) {

@@ -19,7 +19,7 @@
 if (!defined("INCLUDE_SCRIPT")) return;
 class pingReq extends RequestResponse {
 	public function work($json) {
-		$ping = mktime();
+		$ping = time();
 		$this->addBody("timestamp", $ping);
 	}
 }

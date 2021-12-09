@@ -27,7 +27,7 @@ if(isset($_REQUEST["json"])) {
 	header('Expires: Mon, 01 Jan 1996 00:00:00 GMT');
 	header('Content-Type: application/json');
 			
-	$json = get_magic_quotes_gpc() ? json_decode(stripslashes($_REQUEST['json']), true) : json_decode($_REQUEST['json'], true);
+	$json = json_decode($_REQUEST['json'], true);
 	if (!isset($json['header'])) return;
 	if (!isset($json['body'])) return;
 	if (!isset($json['body']['_t'])) return;

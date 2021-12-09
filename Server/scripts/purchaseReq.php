@@ -49,8 +49,8 @@ class purchaseReq extends RequestResponse {
 		$itemSetItemsCount = 0;
 		$itemSetsCount = 0;
 		if(!$isCurrencyPurchase){
-			$stmt = $db->query("SELECT id, price, currency, name FROM " . $this->config['table_items'] . " WHERE `oid`=".$oitemsAsQuery, null);
-			$stmt2 = $db->query("SELECT price, items FROM itemSets WHERE `oid`=".$oitemsAsQuery, null);
+			$stmt = $db->query_legacy("SELECT id, price, currency, name FROM " . $this->config['table_items'] . " WHERE `oid`=".$oitemsAsQuery, null);
+			$stmt2 = $db->query_legacy("SELECT price, items FROM itemSets WHERE `oid`=".$oitemsAsQuery, null);
 
 			$itemsToPurchase = array();
 
@@ -77,7 +77,7 @@ class purchaseReq extends RequestResponse {
     if(((count($itemsToPurchase) + $itemSetsCount) != (count($oitemsToPurchase) + $itemSetItemsCount)) && !$isCurrencyPurchase) {echo 'ERROR: Not all requested items have their offerID set. '; return;}
 
     // GET CURRENT INVENTORY AND BALANCE
-    $statement = $db->query("SELECT userId, ownedItems, amt, amt2 FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
+    $statement = $db->query_legacy("SELECT userId, ownedItems, amt, amt2 FROM " . $this->config['table_user'] . " WHERE token = " . $json['header']['auth'], null);
 		$myInventory = array();
     $myMoney = 0;
 		$myStrat = 0;
@@ -101,14 +101,14 @@ class purchaseReq extends RequestResponse {
 	  		}
 
 				//UPDATE THE INVENTORY
-	  		$db->query("UPDATE ".$this->config['table_user']." SET ownedItems='".$updatedInventory."' WHERE `userId`=".$userId, null);
+	  		$db->query_legacy("UPDATE ".$this->config['table_user']." SET ownedItems='".$updatedInventory."' WHERE `userId`=".$userId, null);
 			}
 
       //UPDATE funds
       $newBalance = $myMoney - $totalToDeduct;
 			$newStratBalance = $myStrat - $totalToDeductStrat;
-      $db->query("UPDATE ".$this->config['table_user']." SET amt=".$newBalance." WHERE `userId`=".$userId, null);
-			$db->query("UPDATE ".$this->config['table_user']." SET amt2=".$newStratBalance." WHERE `userId`=".$userId, null);
+      $db->query_legacy("UPDATE ".$this->config['table_user']." SET amt=".$newBalance." WHERE `userId`=".$userId, null);
+			$db->query_legacy("UPDATE ".$this->config['table_user']." SET amt2=".$newStratBalance." WHERE `userId`=".$userId, null);
     } else {
       {echo 'ERROR: Not enough funds. '; return;}
     }
