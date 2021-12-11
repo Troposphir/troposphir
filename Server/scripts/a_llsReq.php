@@ -122,7 +122,7 @@ class a_llsReq extends RequestResponse {
 
         foreach ($this::$fields as $field) {
             if ($field == 'deleted') continue;
-            $level[$field] = $row[$field];
+            $level[$field] = (string)$row[$field];
         }
 
         $level["id"]           = (string)$row["id"];
