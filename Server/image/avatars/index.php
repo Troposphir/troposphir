@@ -13,8 +13,8 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU Affero General Public License for more details.
 
-  You should have received a copy of the GNU Affero General Public License 
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.    
+  You should have received a copy of the GNU Affero General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
 //Get level screenshot
 error_reporting(0);
@@ -23,23 +23,26 @@ require("../../include/CDatabase.php");
 
 $uid = $_REQUEST['uid']; //user id
 $id  = $_REQUEST['id'];  //asset id
+
+header("Content-Type: image/png");
+
 if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
-{ 
+{
 	//Cross check request with map data
-	$db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);	
-	$stmt = $db->prepare("SELECT avaid, userId FROM " . $config['table_users'] . " 
+	$db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
+	$stmt = $db->prepare("SELECT avaid, userId FROM " . $config['table_user'] . "
 		WHERE `userId`=:userId
 		AND `avaid`=:avaid");
 	$stmt->bindParam(':userId', $uid, PDO::PARAM_INT);
 	$stmt->bindParam(':avaid', $id, PDO::PARAM_INT);
 	$stmt->execute();
-	
+
 	//Invalid uid and id pair
 	$result = $stmt->fetch();
 	if ($stmt == false) { die(); }
-	
+
 	//Retrieve map file
-	$stmt = $db->prepare("SELECT fileName FROM " . $config['table_assets'] . " 
+	$stmt = $db->prepare("SELECT fileName FROM " . $config['table_assets'] . "
 		WHERE `id`=:id");
 	$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 	$stmt->execute();
@@ -48,11 +51,8 @@ if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
 	$result = $stmt->fetch();
 	if ($stmt == false) { die(); }
 
-	$file = $result['fileName'];	
+	$file = $result['fileName'];
 	if (file_exists("./$file")) {
 		echo file_get_contents("./$file");
 	}
 }
-
-
-?>
