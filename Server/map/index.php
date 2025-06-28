@@ -45,6 +45,8 @@ if (isset($lid) && is_numeric($lid) &&
 	$stmt->bindParam(':id', $id, PDO::PARAM_INT);
 	$stmt->execute();
 
+	header("Content-Type: application/octet-stream");
+
 	//Shouldn't happen at this point, but asset id doesn't exist.
 	if ($stmt == false || $db->getRowCount($stmt) <= 0) {
 		die();
@@ -53,9 +55,7 @@ if (isset($lid) && is_numeric($lid) &&
 	$row = $stmt->fetch();
 	$file = $row['fileName'];
 
-	if (file_exists("./$file")) {
-		echo file_get_contents("./$file");
-	}
+	readfile("./$file");
 }
 
 ?>
