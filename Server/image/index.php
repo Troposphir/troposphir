@@ -19,7 +19,7 @@
 error_reporting(0);
 require("../configs.php");
 
-//Try to retrieve level screenshot
+//Try to retrieve item icon
 $uid = $_REQUEST['lid']; //user id
 $id  = $_REQUEST['id'];  //asset id
 
@@ -28,10 +28,10 @@ $item = $_REQUEST['item'];
 
 header('Content-Type: image/png');
 
-//Requesting level screenshot?
+//Requesting Item icon?
 if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
 {
-	//Cross check request with map data
+	//Cross check request with item data
 	$db = new PDO($config['driver'] . ":host=" . $config['host'] . ";dbname=" . $config['dbname'], $config['user'], $config['password']);
 	$stmt = $db->prepare("SELECT avaid, userId FROM " . $config['table_user'] . "
 		WHERE `userId`=:userId
@@ -44,7 +44,7 @@ if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
 	$result = $stmt->fetch();
 	if ($stmt == false) { die(); }
 
-	//Retrieve map file
+	//Retrieve item icon
 	$stmt = $db->prepare("SELECT fileName FROM " . $config['table_assets'] . "
 		WHERE `id`=:id");
 	$stmt->bindParam(':id', $id, PDO::PARAM_INT);
