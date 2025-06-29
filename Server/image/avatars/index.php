@@ -16,7 +16,7 @@
   You should have received a copy of the GNU Affero General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ==============================================================================*/
-//Get level screenshot
+//Get Avatar screenshot
 error_reporting(0);
 require("../../configs.php");
 require("../../include/CDatabase.php");
@@ -28,7 +28,7 @@ header("Content-Type: image/png");
 
 if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
 {
-	//Cross check request with map data
+	//Cross check request with player data
 	$db = new Database($config['driver'], $config['host'], $config['dbname'], $config['user'], $config['password']);
 	$stmt = $db->prepare("SELECT avaid, userId FROM " . $config['table_user'] . "
 		WHERE `userId`=:userId
@@ -41,7 +41,7 @@ if (isset($uid) && is_numeric($uid) && isset($id) && is_numeric($id))
 	$result = $stmt->fetch();
 	if ($stmt == false) { die(); }
 
-	//Retrieve map file
+	//Retrieve avatar file
 	$stmt = $db->prepare("SELECT fileName FROM " . $config['table_assets'] . "
 		WHERE `id`=:id");
 	$stmt->bindParam(':id', $id, PDO::PARAM_INT);
